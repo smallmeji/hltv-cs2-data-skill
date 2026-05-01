@@ -9,7 +9,7 @@ metadata:
 
 ## Purpose
 
-`hltv-cs2-data` is the Codex skill for the `hltv-cs2` product concept: an HLTV CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
+`hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
 
 It prepares factual data packs directly from HLTV pages by default, then organizes model-ready `Decision Inputs`. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
 

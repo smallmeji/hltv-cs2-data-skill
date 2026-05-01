@@ -1,6 +1,6 @@
 # hltv-cs2-data Skill
 
-`hltv-cs2-data` is a Codex skill for collecting and structuring CS2 data from HLTV into model-ready data packs.
+`hltv-cs2-data` is a skill for collecting and structuring CS2 data from HLTV into model-ready data packs.
 
 The skill is intentionally strategy-neutral. It provides factual HLTV-derived data, organizes useful decision inputs, and keeps any model judgment separate from the data layer. It does not include a built-in betting model, private correction rules, EV logic, or stake sizing.
 
@@ -31,24 +31,43 @@ This repository does not provide:
 
 The default mode works from public HLTV pages available in the current session. A future warehouse/API can provide richer and more reproducible snapshots, but it is optional.
 
-## Installation
+## Installation / Use
+
+This repository is not tied to one specific runtime. At its core, it is a structured instruction folder:
+
+- If your tool supports skill folders, install `hltv-cs2-data/` as a skill.
+- If your tool supports `.skill` packages, install `hltv-cs2-data.skill`.
+- If your tool does not support skills, load `hltv-cs2-data/SKILL.md` as the main instruction file and load files under `hltv-cs2-data/references/` only when needed.
 
 ### Option 1: Install the folder
 
-Copy the `hltv-cs2-data/` folder into your Codex skills directory:
+Copy the `hltv-cs2-data/` folder into your skills directory:
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R hltv-cs2-data ~/.codex/skills/
+SKILLS_HOME=/path/to/skills
+mkdir -p "$SKILLS_HOME"
+cp -R hltv-cs2-data "$SKILLS_HOME/"
 ```
 
-Restart Codex or reload skills if your environment requires it.
+Restart or reload skills if your environment requires it.
 
 ### Option 2: Install the packaged skill
 
-Use `hltv-cs2-data.skill` if your Codex environment supports installing `.skill` packages.
+Use `hltv-cs2-data.skill` if your environment supports installing `.skill` packages.
 
 The package contains the same `hltv-cs2-data/` skill folder and references.
+
+### Option 3: Use as plain instructions
+
+For any model or workflow that does not have native skill support:
+
+1. Use `hltv-cs2-data/SKILL.md` as the main system or project instruction.
+2. Load only the relevant reference file for the task:
+   - Match/team query: `references/query-workflow.md`
+   - Output schema: `references/data-pack-contract.md`
+   - Direct HLTV mode: `references/standalone-mode.md`
+   - Backtest: `references/backtest-mode.md`
+3. Ask the model to follow the fact-vs-inference boundary described in the skill.
 
 ## Quick Usage
 
