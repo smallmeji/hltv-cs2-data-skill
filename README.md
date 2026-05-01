@@ -20,6 +20,8 @@ Typical use cases:
 
 The skill can support prediction workflows, but it does not make predictions by default. If the user explicitly asks the model to judge win rates or probabilities, the skill instructs the model to place that output under a separate `Model Inference` section.
 
+User-facing Markdown follows the user's language. For Chinese prompts, the skill should output Chinese headings, labels, warnings, and concise tables, while keeping JSON field names stable in English.
+
 ## What It Is Not
 
 This repository does not provide:

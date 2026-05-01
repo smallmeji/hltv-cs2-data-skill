@@ -19,6 +19,7 @@ Workflow:
 5. Return Markdown + JSON factual data pack.
 6. Build `Decision Inputs` from available facts.
 7. If the user explicitly asks for judgment, append a separate `Model Inference` section after the data pack.
+8. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Match URL Query
 
@@ -36,6 +37,7 @@ Workflow:
 4. Fetch lineups and ratings if visible/reachable.
 5. Fetch map pool and map history if visible/reachable.
 6. Include veto/scores only if available and visible for the requested mode.
+7. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 
 ## Event Ratings Query
 
@@ -80,6 +82,19 @@ If the data warehouse/API is not available:
 ```
 
 Do not fall back to private prediction reports, private notebooks, or hidden strategy documents as substitute data sources.
+
+For Chinese output, missing data should be explicit and brief:
+
+```text
+数据缺口：
+- 赛事 rating：未加载
+- Veto：赛前不可见
+- 精确 as_of 快照：不可用，本次只能标记为重建数据
+
+不能推断：
+- 不能把缺失 rating 补成估计值
+- 不能把历史胜率当成预测胜率
+```
 
 ## Model Inference Request
 

@@ -25,6 +25,48 @@ Do not add prediction, probability, EV, strategy, or betting fields inside the f
 
 If the user explicitly asks for judgment, add a separate `Model Inference` section after the factual pack. The section must state that it is model-derived and not HLTV fact data.
 
+## Language and Readability
+
+User-facing Markdown should follow the user's language. If the user writes in Chinese, use Chinese section titles, table labels, warnings, and short explanatory notes. Keep JSON field names in English so the output remains stable for programs and downstream models.
+
+Default Chinese Markdown structure:
+
+1. `数据状态`
+   - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
+   - Start with a short sentence such as: `这是事实数据包，不包含预测、投注建议、EV 或仓位。`
+2. `比赛信息`
+   - Match ID, event, tier, LAN/online, BO format, schedule, status.
+3. `队伍与阵容`
+   - Team names, HLTV IDs, rank snapshots, starters, coach/stand-in flags.
+4. `选手数据`
+   - Annual rating and event rating when available.
+   - Mark missing values as `缺失`, not as guessed values.
+5. `地图池`
+   - Per-map comparison table.
+   - Include sample size next to every win-rate field.
+   - Show both raw win rate and weighted win rate when available.
+6. `近期记录 / H2H`
+   - Recent match rows and direct matchup rows when available.
+   - If unavailable, say `未加载` or `HLTV 当前页面未提供`.
+7. `Veto / 比分`
+   - Veto steps, map order, score state, result state.
+8. `给模型的决策输入`
+   - Factual inputs grouped into `地图池`, `选手状态`, `阵容状态`, `比赛环境`, `数据质量`.
+   - Do not put predicted win rates or recommendations here.
+9. `数据缺口`
+   - Explicitly list missing data and what cannot be inferred.
+10. `JSON`
+   - Factual data and decision inputs with stable English keys.
+11. Optional `模型推理`
+   - Only when the user asks for judgment.
+
+Readability rules:
+
+- Prefer compact tables over long paragraphs.
+- Use `缺失`, `未加载`, `不可见`, `样本不足`, and `重建数据` consistently.
+- Keep the top-level Markdown concise; put full machine-readable detail in JSON.
+- Do not output English headings for a Chinese prompt unless the user asks for English.
+
 ## Phase 1 Fields
 
 Phase 1 data packs must support these field groups when available:

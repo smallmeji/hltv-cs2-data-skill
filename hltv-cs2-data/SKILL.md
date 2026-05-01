@@ -57,9 +57,10 @@ The skill must be usable by someone who only installs the skill and has no acces
    - If API base URL and key are configured, call API mode first.
    - If API is unavailable or unconfigured, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
-4. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
-5. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
-6. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
+4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.
+5. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
+6. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
+7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
 
 ## Output Rules
 
@@ -77,6 +78,20 @@ Every data pack should include:
 - `decision_inputs`: model-ready factual factors such as map pool, head-to-head, player form, roster state, match context, and data quality.
 - `warnings`: small sample, stale data, roster changes, missing event data, low confidence parsing.
 - `not_included`: explicit note that model inference fields are not part of the HLTV fact data pack.
+
+For Chinese user-facing output, prefer this compact Markdown order:
+
+1. `数据状态`: source, freshness, completeness, missing high-impact fields.
+2. `比赛信息`: match ID, event, format, time, status.
+3. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
+4. `选手数据`: annual/event ratings and missing rating flags.
+5. `地图池`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
+6. `Veto / 比分`: veto, map order, scores, result when visible.
+7. `给模型的决策输入`: factual factors grouped by map pool, player form, roster state, match context, and data quality.
+8. `数据缺口`: what is missing and what must not be inferred.
+9. `JSON`: stable English-key JSON for downstream use.
+
+Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
 
 If the user requested judgment, append:
 
