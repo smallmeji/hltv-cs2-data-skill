@@ -1,0 +1,131 @@
+---
+name: hltv-cs2-data
+description: "Use when a user needs the hltv-cs2 product/data skill: CS2 data packs from HLTV-derived data, including team resolution, match data, map pool history, player ratings, veto, lineup, event ratings, score history, model-inference-ready context, or backtest/time-travel context. This skill prepares Markdown and JSON data outputs for downstream user-owned analysis. The HLTV data pack must keep facts separate from inference; if the user explicitly asks for prediction or probabilities, provide them only in a clearly labeled Model Inference section."
+metadata:
+  short-description: Strategy-neutral HLTV CS2 data packs
+---
+
+# HLTV CS2 Data
+
+## Purpose
+
+`hltv-cs2-data` is the Codex skill for the `hltv-cs2` product concept: an HLTV CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
+
+It prepares factual data packs directly from HLTV pages by default, then organizes model-ready `Decision Inputs`. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
+
+Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
+
+The skill must be usable by someone who only installs the skill and has no access to any private database, scraper, or API.
+
+## Source Policy
+
+- Default source: direct HLTV pages and public HLTV stats pages.
+- Optional enhanced source: HLTV-derived central data warehouse or API, only when explicitly configured or requested.
+- Original upstream source: HLTV pages only.
+- Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
+- Do not require end users to run a local database or scraper.
+- Retrieve only data visible from HLTV pages during the session and label unavailable deeper fields as missing.
+- A central collector/API may improve completeness and backtesting later, but it is not required for normal skill use.
+- If Cloudflare or access controls block collection, fail safely and report freshness/missing data. Do not fabricate data or bypass protections.
+
+## Operating Modes
+
+- **Direct HLTV mode**: default for shared skill users. Accept match URLs or team names, read HLTV pages directly, output Markdown + JSON with missing-field warnings. No private database required.
+- **API mode**: optional enhanced mode. If a central API/warehouse is configured, it can fill richer fields and exact snapshots.
+- **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
+
+## Workflow
+
+1. Classify the request:
+   - Product/API brief or scope clarification.
+   - Team identity resolution.
+   - Match data pack.
+   - Team-vs-team comparison.
+   - Event player rating data.
+   - Backtest/time-travel data pack.
+   - Collector/API design or validation.
+2. Load only the needed reference:
+   - Product positioning: `references/product-brief.md`.
+   - Standalone use: `references/standalone-mode.md`.
+   - Data pack schema: `references/data-pack-contract.md`.
+   - Decision input schema: `references/decision-inputs.md`.
+   - API contract: `references/api-contract.md`.
+   - HLTV collector requirements: `references/collector-contract.md`.
+   - Backtest rules: `references/backtest-mode.md`.
+   - Query examples: `references/query-workflow.md`.
+3. Gather data from the best available source:
+   - Default to direct HLTV pages.
+   - Use API/warehouse only when explicitly configured or requested.
+   - If neither is available, output a partial pack with missing-source warnings.
+4. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
+5. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
+6. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
+
+## Output Rules
+
+Every data pack should include:
+
+- `metadata`: query, source, retrieved time, data cutoff, version, missing fields.
+- `teams`: resolved team identity, aliases, HLTV IDs, rank snapshots.
+- `match`: event, schedule, format, LAN/online context, status.
+- `lineups`: expected or confirmed players, stand-ins, coaches, missing ratings.
+- `players`: annual and event ratings when available.
+- `maps`: map stats, match history, pick/ban data, sample sizes, tier filters.
+- `head_to_head`: direct team-vs-team history when available.
+- `recent_matches`: recent map and match rows used for downstream modeling.
+- `match_detail`: format, event, date, veto, map order, scores when available.
+- `decision_inputs`: model-ready factual factors such as map pool, head-to-head, player form, roster state, match context, and data quality.
+- `warnings`: small sample, stale data, roster changes, missing event data, low confidence parsing.
+- `not_included`: explicit note that model inference fields are not part of the HLTV fact data pack.
+
+If the user requested judgment, append:
+
+- `model_inference`: clearly labeled model-derived interpretation, separated from facts.
+
+## Query Examples
+
+Use this skill for prompts like:
+
+```text
+Use hltv-cs2-data to fetch a FaZe + FURIA data pack. Output Markdown and JSON.
+```
+
+```text
+Use hltv-cs2-data for this match URL:
+https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1
+```
+
+```text
+Backtest match 2393335 as of 2026-04-30 22:30 Asia/Shanghai. Only return data visible at that time.
+```
+
+If the user asks which team has the higher win rate, provide the relevant data pack first. If the user explicitly asks this model to judge after collecting data, append `Model Inference`.
+
+Default user-facing input can be simple natural language. Do not require users to know API parameters.
+
+## Boundaries
+
+Allowed:
+
+- Summarize and structure facts.
+- Compute descriptive aggregates already defined in the data contract, such as sample counts, raw win rate, weighted win rate from the data warehouse, and freshness.
+- Organize factual features into `decision_inputs` for downstream user-owned models.
+- Identify data quality issues.
+- Produce Markdown and JSON.
+- Provide model inference only when explicitly requested, and only after a separate factual HLTV data pack.
+
+Not allowed:
+
+- Mix model inference into factual HLTV fields.
+- Treat `decision_inputs` as predictions.
+- Present model-derived probability as HLTV data.
+- Use private correction logs, private prediction frameworks, or hidden strategy rules as a model.
+- Recommend bets.
+- Compute Kelly, EV, or max buy price.
+- Fill missing data by intuition.
+
+## Backtest Discipline
+
+When `as_of_date` is provided, only include data visible before that timestamp. See `references/backtest-mode.md`.
+
+If exact historical snapshots are unavailable, mark the field as reconstructed or unavailable. Never leak post-match results into a pre-match data pack.
