@@ -36,7 +36,7 @@ This repository does not provide:
 - A local database or private data dependency.
 - Guaranteed complete historical snapshots in direct HLTV mode.
 
-The default lightweight mode works from public HLTV pages available in the current session. A maintained API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
+The default lightweight mode works from public HLTV pages available in the current session. Maintained static JSON data packs or API/warehouse mode can provide richer and more reproducible snapshots when configured, but they are optional.
 
 ## Product Tiers
 
@@ -45,9 +45,10 @@ The skill is useful in two tiers:
 | Tier | Best For | What To Expect |
 |:--|:--|:--|
 | Lightweight mode | One-off public HLTV lookups | Works immediately after installation. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
+| Static JSON mode | Shared data packs for Claude/GPT/user models | Preferred distribution path when hosted JSON exists. Avoids live HLTV/Cloudflare failures and gives stable team, match, event, and compare packs. |
 | API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
 
-Lightweight mode is enough for one-off public HLTV lookups. API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
+Lightweight mode is enough for one-off public HLTV lookups. Static JSON or API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
 
 In lightweight mode, the host model's web reader may fail on HLTV stats pages. This is expected. The skill marks those fields as missing and uses warning code `core_data_insufficient_for_numeric_inference` when the missing fields are too important for numeric probability output.
 
@@ -68,7 +69,29 @@ Use this mode when you only want the skill instructions and public HLTV pages.
 
 This is the easiest mode for users who want to install the skill and start asking for match or team data immediately.
 
-### 2. Pro / API Mode
+### 2. Static JSON Mode
+
+Use this mode when a maintained static data export is available.
+
+Example layout:
+
+```text
+/latest/manifest.json
+/latest/teams/6667/summary.json
+/latest/matches/2393346/data-pack.json
+/latest/events/8250/player-ratings.json
+/latest/compare/g2-vs-faze.json
+```
+
+Configure:
+
+```text
+HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
+```
+
+In this mode, the skill should read static JSON before trying live HLTV pages.
+
+### 3. Pro / API Mode
 
 Use this mode when a maintained HLTV data API is available.
 

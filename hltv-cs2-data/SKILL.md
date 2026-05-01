@@ -21,7 +21,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 
 - Default source: direct HLTV pages and public HLTV stats pages.
 - Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
-- Optional enhanced source: HLTV-derived central data warehouse or API, only when explicitly configured or requested.
+- Preferred enhanced source: HLTV-derived static JSON data packs or central data warehouse/API, when configured or provided.
 - Original upstream source: HLTV pages only.
 - Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
 - Do not require end users to run a local database, scraper, local browser, CDP session, or Playwright session.
@@ -33,6 +33,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
+- **Static JSON mode**: distribution mode for external users and hosted data packs. Read standardized JSON files such as `/latest/manifest.json`, `/latest/teams/<hltvTeamId>/summary.json`, or `/latest/matches/<matchId>/data-pack.json` before attempting live HLTV access.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
@@ -59,6 +60,7 @@ The skill must be usable by someone who only installs the skill and has no acces
    - Backtest rules: `references/backtest-mode.md`.
    - Query examples: `references/query-workflow.md`.
 3. Gather data from the best available source:
+   - If `HLTV_CS2_STATIC_BASE_URL`, a static `manifest.json`, or a user-provided static data-pack URL is available, read static JSON mode first.
    - If API base URL and key are configured, call API mode first.
    - If API is unavailable or unconfigured, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.

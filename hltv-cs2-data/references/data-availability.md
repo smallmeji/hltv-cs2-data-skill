@@ -9,6 +9,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Lightweight direct | None beyond the host model's normal web/page-reading/search tools | Best-effort public data pack |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
+| Static JSON | Hosted or local exported JSON data packs | Stable public distribution without live HLTV reads |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide
@@ -31,20 +32,20 @@ Lightweight direct data can be useful but incomplete. If current-year map summar
 
 ### Detailed Matrix
 
-| Data Type | Lightweight Direct | In-App / Browser Session | Internal Collector | API / Warehouse |
-|:---|:---:|:---:|:---:|:---:|
-| Match page basics: teams, event, time, format, status | Usually yes | Yes | Yes | Yes |
-| Match page visible lineup | Usually yes when visible | Yes | Yes | Yes |
-| Match page veto/result/scores | Yes when visible | Yes | Yes | Yes |
-| Team page current roster/rank/period rating | Usually yes | Yes | Yes | Yes |
-| Match page recent-core map stats | Usually yes | Yes | Yes | Yes |
-| Team map summary stats for current year | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes |
-| Team annual player stats for current year | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes |
-| Event player ratings by event ID | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes |
-| Per-map CT/T side win rates | No by default; requires map detail pages | Possible but slow | Yes | Yes |
-| Match-specific CT/T score splits | No guarantee | Possible when visible | Phase 2 | Phase 2 / when collected |
-| Exact historical as-of snapshots | No | No guarantee | Yes if collected then | Yes |
-| Round-level/pistol/opening-side data | No | No guarantee | Phase 2+ | Phase 2+ |
+| Data Type | Lightweight Direct | In-App / Browser Session | Internal Collector | Static JSON | API / Warehouse |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| Match page basics: teams, event, time, format, status | Usually yes | Yes | Yes | Yes when exported | Yes |
+| Match page visible lineup | Usually yes when visible | Yes | Yes | Yes when exported | Yes |
+| Match page veto/result/scores | Yes when visible | Yes | Yes | Yes when exported | Yes |
+| Team page current roster/rank/period rating | Usually yes | Yes | Yes | Yes when exported | Yes |
+| Match page recent-core map stats | Usually yes | Yes | Yes | Yes when exported | Yes |
+| Team map summary stats for current year | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes when exported | Yes |
+| Team annual player stats for current year | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes when exported | Yes |
+| Event player ratings by event ID | Attempt only; may fail with cache miss/CF | Usually yes after session is valid | Yes | Yes when exported | Yes |
+| Per-map CT/T side win rates | No by default; requires map detail pages | Possible but slow | Yes | Yes when exported | Yes |
+| Match-specific CT/T score splits | No guarantee | Possible when visible | Phase 2 | Yes when exported | Phase 2 / when collected |
+| Exact historical as-of snapshots | No | No guarantee | Yes if collected then | Snapshot only if exported | Yes |
+| Round-level/pistol/opening-side data | No | No guarantee | Phase 2+ | No unless exported | Phase 2+ |
 
 ## Direct Mode Failure Labels
 
@@ -69,11 +70,12 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 
 For a match URL:
 
-1. Read match page facts.
-2. Resolve team IDs, slugs, and event ID.
-3. Attempt team page roster/rank/period rating.
-4. Attempt current-year team map summary stats.
-5. Attempt current-year team player stats.
-6. Attempt event player ratings if event ID is known.
-7. If any deep stats page fails, output the known canonical URL and a warning code.
-8. If full coverage is required, recommend API/warehouse mode.
+1. If a static JSON manifest/API is configured, read it first.
+2. Read match page facts only when no static/API pack exists.
+3. Resolve team IDs, slugs, and event ID.
+4. Attempt team page roster/rank/period rating.
+5. Attempt current-year team map summary stats.
+6. Attempt current-year team player stats.
+7. Attempt event player ratings if event ID is known.
+8. If any deep stats page fails, output the known canonical URL and a warning code.
+9. If full coverage is required, recommend static JSON/API/warehouse mode.

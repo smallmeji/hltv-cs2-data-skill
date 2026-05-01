@@ -12,7 +12,7 @@ faze + 黑豹
 
 Workflow:
 
-1. Resolve aliases to HLTV IDs using HLTV pages/search by default; use API/warehouse only if explicitly configured.
+1. If static JSON/API is configured, resolve aliases from that source first; otherwise resolve aliases using HLTV pages/search.
 2. Fetch current or `as_of_date` team snapshots if available.
 3. Fetch map stats for the requested tier/filter if available.
 4. Fetch player ratings and lineup if a match is specified and the source is reachable.
@@ -32,7 +32,7 @@ https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1
 Workflow:
 
 1. Extract `hltvMatchId`.
-2. Read the HLTV match page directly by default; use API/warehouse only if explicitly configured.
+2. Read static JSON/API data-pack first when available; otherwise read the HLTV match page directly.
 3. Resolve event, teams, format, schedule.
 4. Resolve both canonical team IDs and slugs from match-page team links or team pages. Do not stop at match-page summary data.
 5. Fetch lineups from the match page when visible.

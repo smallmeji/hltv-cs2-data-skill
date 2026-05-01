@@ -10,9 +10,11 @@ This is the default mode. It must be useful, but honest about missing data. If t
 
 Direct mode is often enough for match basics and simple context. It is not enough for confident numeric probabilities when HLTV blocks the yearly stats pages. In that case, output the partial data pack and missing fields, but do not produce exact win-rate percentages.
 
-If API credentials are configured, API mode should be tried first. Direct HLTV mode is still the public lightweight fallback.
+If static JSON data packs or API credentials are configured, those should be tried first. Direct HLTV mode is the public lightweight fallback.
 
 Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
+
+If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source before live HLTV pages. Static JSON is preferred for Claude/GPT-style users because it avoids Cloudflare failures on HLTV stats pages.
 
 ## Accepted Inputs
 
