@@ -49,13 +49,13 @@ Default Chinese Markdown structure:
 6. `近期记录 / H2H`
    - Recent match rows and direct matchup rows when available.
    - If unavailable, say `未加载` or `HLTV 当前页面未提供`.
-7. `警匪分边`
-   - CT/T side score splits by map when visible or available through API/warehouse.
+7. `警匪胜率`
+   - CT-side and T-side win rates by team and map from HLTV team map stats pages, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=YYYY-01-01&endDate=YYYY-12-31` and detailed map pages.
    - If unavailable, say `未加载` and explain whether the source page did not expose it or the collector does not support it yet.
 8. `Veto / 比分`
    - Veto steps, map order, score state, result state.
 9. `给模型的决策输入`
-   - Factual inputs grouped into `地图池`, `对位数据`, `选手状态`, `阵容状态`, `警匪分边`, `比赛环境`, `数据质量`.
+   - Factual inputs grouped into `地图池`, `对位数据`, `选手状态`, `阵容状态`, `警匪胜率`, `比赛环境`, `数据质量`.
    - Do not put predicted win rates or recommendations here.
 10. `数据缺口`
    - Explicitly list missing data and what cannot be inferred.
@@ -78,10 +78,11 @@ Phase 1 data packs must support these field groups when available:
 - `teams`: identity, aliases, HLTV IDs, ranking snapshots.
 - `match`: match ID, event, tier, LAN/online, format, schedule, status.
 - `maps`: pick/ban, raw win rate, weighted win rate, sample size, tier/data filters, recent map rows.
+- `map_side_stats`: CT-side and T-side win rates by team/map from HLTV team map stats pages.
 - `players`: annual ratings, event ratings, missing rating status.
 - `lineups`: starters, coaches, stand-ins, roster-change warnings.
 - `head_to_head`: direct matchup records and map rows.
-- `side_scores`: CT/T score splits by map when visible or available from API/warehouse.
+- `side_scores`: match-specific CT/T score splits by map when visible or available from API/warehouse.
 - `veto`: veto steps, map order, decider.
 - `scores`: map scores, match score, result status.
 - `decision_inputs`: factual model-ready factors grouped for downstream strategy.
@@ -179,6 +180,19 @@ Phase 2 can add these fields after collector and warehouse support exists:
         "ban_pct": 5.0,
         "recent_matches": []
       }
+    }
+  ],
+  "map_side_stats": [
+    {
+      "team_hltv_id": 6667,
+      "team_name": "FaZe",
+      "map": "Mirage",
+      "data_type": "year_2026",
+      "ct_side_win_rate": null,
+      "t_side_win_rate": null,
+      "ct_rounds": null,
+      "t_rounds": null,
+      "source": "https://www.hltv.org/stats/teams/maps/6667/faze?startDate=2026-01-01&endDate=2026-12-31"
     }
   ],
   "head_to_head": {

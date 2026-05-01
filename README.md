@@ -14,7 +14,7 @@ Typical use cases:
 
 - Get a data pack for one HLTV match URL.
 - Compare two teams across map pool, player form, roster status, and head-to-head history.
-- Inspect map-specific win rates, head-to-head records, recent player form, and CT/T side score splits when available.
+- Inspect map-specific win rates, CT/T side win rates, head-to-head records, and recent player form when available.
 - Pull event player ratings when an event stats page is available.
 - Build backtest-ready context with an `as_of` cutoff.
 - Feed structured Markdown and JSON into a separate model or strategy layer.

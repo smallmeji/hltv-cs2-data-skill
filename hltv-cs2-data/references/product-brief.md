@@ -90,6 +90,7 @@ Phase 1 must support:
 - Players.
 - Lineups.
 - Head-to-head records.
+- Per-map CT/T side win rates from team map stats pages when available.
 - Veto.
 - Scores and results.
 - Warnings.
@@ -99,7 +100,7 @@ Phase 1 must support:
 
 Phase 2 can add:
 
-- CT/T side score.
+- Match-specific CT/T side score splits.
 - Half scores.
 - Starting side.
 - Round-level data if HLTV exposes it reliably.

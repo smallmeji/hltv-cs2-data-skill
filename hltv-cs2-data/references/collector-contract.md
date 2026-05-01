@@ -21,12 +21,13 @@ Collect these source types:
 - `rankings`: team rankings and rank date.
 - `calendar`: upcoming matches and event metadata.
 - `team_map_stats`: pick/ban and map summary stats.
+- `team_map_side_stats`: CT-side and T-side win rates by team/map from HLTV team map stats pages and detailed map pages.
 - `team_match_history`: per-team map match rows.
 - `team_player_ratings`: team player annual ratings.
 - `event_player_ratings`: event-specific player ratings.
 - `match_detail`: match page facts.
 - `match_result`: completed score and per-map result.
-- `side_scores`: CT/T side score splits by map when HLTV exposes them reliably.
+- `side_scores`: match-specific CT/T side score splits by map when HLTV exposes them reliably.
 - `veto`: veto steps and map order.
 - `lineup`: confirmed or expected players.
 
@@ -65,6 +66,7 @@ Minimum product tables or API entities:
 - `head_to_head_matches`: direct team-vs-team match and map records.
 - `player_rating_snapshots`: player/team/event/year rating rows.
 - `team_map_snapshots`: map stats by team, tier/data type, date window.
+- `team_map_side_stats`: CT/T win-rate fields can be stored in `team_map_snapshots` or a separate normalized view, but must be exposed as `map_side_stats` in the API.
 - `team_map_matches`: per-map match history rows.
 - `collection_jobs`: job status, started time, finished time, failures.
 
@@ -106,6 +108,19 @@ Rating resolution order:
 
 Only use fallback ratings when the response marks the source and reason.
 
+## Team Map Side Stats Collector
+
+For each relevant team/date window, parse:
+
+- Team map summary URL, for example `https://www.hltv.org/stats/teams/maps/6667/faze?startDate=2026-01-01&endDate=2026-12-31`.
+- Detailed map pages linked from the summary when required.
+- Per-map CT-side win rate.
+- Per-map T-side win rate.
+- CT/T round or side sample counts when visible.
+- Date window and source URL.
+
+Expose these records as `map_side_stats` in the data pack. This is different from `side_scores`, which is a match-specific score split.
+
 ## Backtest Collection Requirement
 
 To support exact time travel, retain timestamped snapshots:
@@ -127,6 +142,7 @@ Phase 1 required:
 - Lineup.
 - Scores and results.
 - Side score schema and API field; collector should fill it when visible, otherwise mark it missing.
+- Map side win-rate fields from team map stats pages.
 - Head-to-head records.
 - Raw snapshots.
 - Central data-pack API shape.

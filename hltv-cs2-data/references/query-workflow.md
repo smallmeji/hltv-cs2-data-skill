@@ -43,9 +43,9 @@ Workflow:
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
 6. Fetch map pool and map history if visible/reachable.
 7. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
-8. Fetch CT/T side score splits when visible or available through API/warehouse; if not available, mark `side_scores` as `未加载`.
+8. Fetch CT/T side win rates by map from HLTV team map stats pages, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=YYYY-01-01&endDate=YYYY-12-31`; if unavailable, mark `map_side_stats` as `未加载`.
 9. Include veto/scores only if available and visible for the requested mode.
-10. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪分边`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+10. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 
 ## Event Ratings Query
 
@@ -99,7 +99,7 @@ For Chinese output, missing data should be explicit and brief:
 数据缺口：
 - 赛事 rating：未加载
 - Veto：赛前不可见
-- 警匪分边：HLTV 当前页面未提供或 collector 暂未采集
+- 警匪胜率：HLTV team map stats 页面未加载或 collector 暂未采集
 - 精确 as_of 快照：不可用，本次只能标记为重建数据
 
 不能推断：
