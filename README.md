@@ -1,5 +1,7 @@
 # hltv-cs2-data Skill
 
+[中文说明](README.zh-CN.md)
+
 `hltv-cs2-data` is a skill for collecting and structuring CS2 data from HLTV into model-ready data packs.
 
 The skill is intentionally strategy-neutral. It provides factual HLTV-derived data, organizes useful decision inputs, and keeps any model judgment separate from the data layer. It does not include a built-in betting model, private correction rules, EV logic, or stake sizing.
