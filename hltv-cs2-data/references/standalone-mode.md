@@ -1,4 +1,4 @@
-# Direct HLTV Mode
+# Lightweight / Direct HLTV Mode
 
 Direct HLTV mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, or central API.
 
@@ -7,6 +7,8 @@ Direct HLTV mode lets someone use `hltv-cs2-data` immediately after installing t
 Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from public HLTV pages.
 
 This is the default mode. It must be useful, but honest about missing data.
+
+If API credentials are configured, API mode should be tried first. Direct HLTV mode is still the public lightweight fallback.
 
 ## Accepted Inputs
 

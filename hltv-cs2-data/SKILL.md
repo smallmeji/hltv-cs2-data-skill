@@ -30,8 +30,8 @@ The skill must be usable by someone who only installs the skill and has no acces
 
 ## Operating Modes
 
-- **Direct HLTV mode**: default for shared skill users. Accept match URLs or team names, read HLTV pages directly, output Markdown + JSON with missing-field warnings. No private database required.
-- **API mode**: optional enhanced mode. If a central API/warehouse is configured, it can fill richer fields and exact snapshots.
+- **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages directly, output Markdown + JSON with missing-field warnings. No private database required.
+- **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
 
 ## Workflow
@@ -54,9 +54,9 @@ The skill must be usable by someone who only installs the skill and has no acces
    - Backtest rules: `references/backtest-mode.md`.
    - Query examples: `references/query-workflow.md`.
 3. Gather data from the best available source:
-   - Default to direct HLTV pages.
-   - Use API/warehouse only when explicitly configured or requested.
-   - If neither is available, output a partial pack with missing-source warnings.
+   - If API base URL and key are configured, call API mode first.
+   - If API is unavailable or unconfigured, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
+   - If neither can retrieve enough data, output a partial pack with missing-source warnings.
 4. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
 5. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
 6. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.

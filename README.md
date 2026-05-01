@@ -31,7 +31,45 @@ This repository does not provide:
 - A local database or private data dependency.
 - Guaranteed complete historical snapshots in direct HLTV mode.
 
-The default mode works from public HLTV pages available in the current session. A future warehouse/API can provide richer and more reproducible snapshots, but it is optional.
+The default lightweight mode works from public HLTV pages available in the current session. A maintained API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
+
+## Usage Modes
+
+`hltv-cs2-data` supports two operating modes.
+
+### 1. Lightweight / Direct HLTV Mode
+
+Use this mode when you only want the skill instructions and public HLTV pages.
+
+- No API key is required.
+- No user-owned database is required.
+- The model gathers available data from HLTV pages in the current session.
+- Historical backtests are marked as `reconstructed` unless an exact snapshot is available.
+- Missing fields must be reported explicitly instead of being guessed.
+
+This is the easiest mode for users who want to install the skill and start asking for match or team data immediately.
+
+### 2. Pro / API Mode
+
+Use this mode when a maintained HLTV data API is available.
+
+Configure:
+
+```text
+HLTV_CS2_API_BASE_URL=https://your-api.example.com
+HLTV_CS2_API_KEY=your_api_key
+```
+
+In API mode, the skill should query the data API first. The API is expected to return standardized Markdown + JSON data packs from a maintained collector and database.
+
+Benefits:
+
+- Better historical reproducibility.
+- Faster team and match lookup.
+- Centralized lineup, veto, score, rating, and map-pool snapshots.
+- Cleaner backtest support through `as_of` cutoffs.
+
+If the API is unavailable, the skill can fall back to direct HLTV mode only when the user allows fallback or the task is not time-sensitive.
 
 ## Installation / Use
 

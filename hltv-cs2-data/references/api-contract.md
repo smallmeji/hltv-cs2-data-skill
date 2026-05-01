@@ -2,11 +2,14 @@
 
 This is the product API shape for `hltv-cs2-data`. The skill may use this contract even before a backend exists.
 
+API mode is the Pro path. It is used when `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY` are configured. Lightweight users can still use Direct HLTV mode without these values.
+
 ## General Rules
 
 - All API responses return JSON.
 - Data-pack endpoints may also include `markdown`.
 - All responses include `metadata`.
+- All non-health requests require `X-API-Key`.
 - All timestamps are ISO 8601 UTC.
 - Public API terms should hide internal table names.
 - Missing data is explicit, not silently omitted when material.
