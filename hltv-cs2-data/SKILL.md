@@ -98,7 +98,8 @@ Use tables for dense comparative data. Avoid long prose unless explaining a data
 
 For match URL data packs, visible starters require rating lookup attempts:
 
-- Try event rating from the HLTV event stats page when the event ID is known or discoverable.
+- Resolve `eventId` from the match page/event link whenever possible.
+- Fetch event rating from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
 - Try annual rating for the current calendar year or requested `as_of_date` year.
 - If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
 - If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.

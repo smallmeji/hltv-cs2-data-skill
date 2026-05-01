@@ -43,7 +43,7 @@ Use only public HLTV pages available in the session:
 - Match page: match ID, teams, event, schedule, format, status, lineup if visible, veto if visible, scores if visible.
 - Match page map stats: visible recent core win rates and sample counts.
 - Team stats pages: map stats and recent map rows when accessible.
-- Player/event stats pages: for match data packs, always attempt event rating and annual rating for visible starters when the event ID or player pages are reachable.
+- Player/event stats pages: for match data packs, resolve `eventId` from the match page/event link, then fetch event ratings from `https://www.hltv.org/stats/players?event=<eventId>` for visible starters. Also attempt annual rating from player stats.
 - Results/matches pages: results or upcoming schedules when needed.
 
 Do not use private display websites as a source.

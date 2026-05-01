@@ -36,7 +36,8 @@ Workflow:
 3. Resolve event, teams, format, schedule.
 4. Fetch lineups from the match page when visible.
 5. Always attempt to fetch player ratings for visible starters:
-   - Event rating from the event stats page, e.g. `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known or discoverable.
+   - Extract or resolve `eventId` from the match page/event link whenever possible.
+   - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
    - Annual rating from HLTV player stats for the current calendar year or the requested `as_of_date` year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
@@ -57,10 +58,11 @@ event=8250 player ratings
 Workflow:
 
 1. Fetch event player ratings snapshot.
-2. Match players to lineups when a match is provided.
-3. Mark missing players explicitly.
-4. If a lineup player is missing from the event page, attempt annual rating fallback before marking the player fully missing.
-5. Do not average or interpret rating unless the user asks for a descriptive aggregate.
+2. Use the canonical HLTV URL format `https://www.hltv.org/stats/players?event=<eventId>`.
+3. Match players to lineups when a match is provided.
+4. Mark missing players explicitly.
+5. If a lineup player is missing from the event page, attempt annual rating fallback before marking the player fully missing.
+6. Do not average or interpret rating unless the user asks for a descriptive aggregate.
 
 ## Backtest Query
 
