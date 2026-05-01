@@ -51,6 +51,7 @@ The skill must be usable by someone who only installs the skill and has no acces
    - Product positioning: `references/product-brief.md`.
    - Standalone use: `references/standalone-mode.md`.
    - Data availability by access mode: `references/data-availability.md`.
+   - Inference gate: `references/inference-gate.md`.
    - Data pack schema: `references/data-pack-contract.md`.
    - Decision input schema: `references/decision-inputs.md`.
    - API contract: `references/api-contract.md`.
@@ -66,6 +67,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 6. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
 7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
 8. When a page or field cannot be read, use the data availability matrix to label whether the failure belongs to lightweight direct mode, in-app/browser session mode, internal collector mode, or API/warehouse mode.
+9. Before any numeric model inference, apply `references/inference-gate.md`. If the core data threshold is not met, do not output specific win-rate percentages; output only factual data, missing fields, and a qualitative low-confidence direction if explicitly requested.
 
 ## Output Rules
 
@@ -116,7 +118,26 @@ For match URL data packs, visible starters require rating lookup attempts:
 
 If the user requested judgment, append:
 
-- `model_inference`: clearly labeled model-derived interpretation, separated from facts.
+- `model_inference`: clearly labeled model-derived interpretation, separated from facts, only after applying the inference gate.
+
+## Model Inference Gate
+
+Numeric probabilities are allowed only when the collected data is strong enough for the requested judgment.
+
+For match-level or map-level probability requests, do **not** output exact percentages if either condition is true:
+
+- Current-year map summary is missing for either team.
+- Two or more high-impact fields are missing or blocked, including current-year map summary, annual player ratings, event player ratings when event ID is known, confirmed/expected lineup, or relevant veto/map-order context.
+
+When the gate blocks numeric inference:
+
+- Say clearly that the factual data pack is incomplete.
+- List the exact missing fields and source URLs that failed.
+- Use warning code `core_data_insufficient_for_numeric_inference`.
+- If the user asked who is favored, allow only a qualitative statement such as `方向性偏 G2，但不能给可靠百分比`.
+- Recommend API/warehouse data for full coverage.
+
+Lightweight direct mode under Cloudflare failure is usually `partial` or `blocked` completeness. It must not produce confident numeric ranges such as `65-72%` from rankings, search snippets, or market prices alone.
 
 ## Query Examples
 
@@ -149,6 +170,7 @@ Allowed:
 - Identify data quality issues.
 - Produce Markdown and JSON.
 - Provide model inference only when explicitly requested, and only after a separate factual HLTV data pack.
+- Apply the inference gate before giving numeric probabilities.
 
 Not allowed:
 
@@ -159,6 +181,7 @@ Not allowed:
 - Recommend bets.
 - Compute Kelly, EV, or max buy price.
 - Fill missing data by intuition.
+- Give specific win-rate percentages when the core data gate is not satisfied.
 
 ## Backtest Discipline
 

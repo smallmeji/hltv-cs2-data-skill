@@ -18,7 +18,7 @@ Workflow:
 4. Fetch player ratings and lineup if a match is specified and the source is reachable.
 5. Return Markdown + JSON factual data pack.
 6. Build `Decision Inputs` from available facts.
-7. If the user explicitly asks for judgment, append a separate `Model Inference` section after the data pack.
+7. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
 8. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Match URL Query
@@ -48,6 +48,7 @@ Workflow:
 10. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
 11. Include veto/scores only if available and visible for the requested mode.
 12. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+13. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
 
 ## Event Ratings Query
 
@@ -122,6 +123,8 @@ Workflow:
 1. Produce the HLTV factual data pack first.
 2. Build `Decision Inputs` from facts such as map pool, H2H, player form, roster state, match context, and data quality.
 3. Keep all facts and decision inputs out of inference fields.
-4. Add `Model Inference` only after the data pack.
-5. State clearly that inference is model-derived and not HLTV data.
-6. Do not include betting EV, Kelly, stake, or private correction logic unless the user explicitly invokes a separate strategy or betting framework.
+4. Apply `references/inference-gate.md`.
+5. Add numeric `Model Inference` only when the gate passes.
+6. If the gate fails, output a short note such as `核心地图/rating 数据不足，不能给可靠具体胜率百分比`; qualitative direction is allowed only if explicitly requested and must be marked low confidence.
+7. State clearly that inference is model-derived and not HLTV data.
+8. Do not include betting EV, Kelly, stake, or private correction logic unless the user explicitly invokes a separate strategy or betting framework.

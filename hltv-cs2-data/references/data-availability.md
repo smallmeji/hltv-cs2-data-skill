@@ -27,6 +27,8 @@ This reference defines which data can be expected from each access mode. It prev
 | CT/T side win rates | No; API / warehouse enhanced mode only |
 | Historical backtest snapshots | No; API / warehouse enhanced mode only |
 
+Lightweight direct data can be useful but incomplete. If current-year map summary or player ratings cannot be loaded, the data pack may still be emitted, but exact numeric model inference must be blocked by `references/inference-gate.md`.
+
 ### Detailed Matrix
 
 | Data Type | Lightweight Direct | In-App / Browser Session | Internal Collector | API / Warehouse |
@@ -52,6 +54,7 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 - `fetch_failed_cf_challenge`: a direct HTTP request or page reader was blocked by Cloudflare/access challenge.
 - `stats_page_unavailable_in_direct_mode`: the URL is known, but the direct mode cannot retrieve the table.
 - `pro_api_required_for_full_coverage`: the field requires hosted collector/API data for reliable coverage.
+- `core_data_insufficient_for_numeric_inference`: the data pack is too incomplete for specific win-rate percentages.
 
 ## Important Distinctions
 
@@ -60,6 +63,7 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 - A known URL must not be reported as "data does not exist" unless HLTV itself clearly says no data exists.
 - Match-page recent-core map stats must not be used as a replacement for current-year team map summary stats unless clearly labeled as fallback context.
 - Lightweight direct mode must not ask public users to run a local browser, CDP, Playwright, or scraper.
+- Market prices, rankings, news snippets, and search summaries are not substitutes for missing current-year map/rating data when producing numeric probabilities.
 
 ## Recommended Fallback Order
 

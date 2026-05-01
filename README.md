@@ -21,6 +21,8 @@ Typical use cases:
 
 The skill can support prediction workflows, but it does not make predictions by default. If the user explicitly asks the model to judge win rates or probabilities, the skill instructs the model to place that output under a separate `Model Inference` section.
 
+Numeric `Model Inference` is gated by data completeness. If direct HLTV access is blocked by Cloudflare, or if current-year map summaries / player ratings cannot be loaded, the skill should return the factual partial pack and missing-field warnings, but it should not output exact win-rate percentages.
+
 User-facing Markdown follows the user's language. For Chinese prompts, the skill should output Chinese headings, labels, warnings, and concise tables, while keeping JSON field names stable in English.
 
 ## What It Is Not
@@ -46,6 +48,8 @@ The skill is useful in two tiers:
 | API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
 
 Lightweight mode is enough for one-off public HLTV lookups. API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
+
+In lightweight mode, the host model's web reader may fail on HLTV stats pages. This is expected. The skill marks those fields as missing and uses warning code `core_data_insufficient_for_numeric_inference` when the missing fields are too important for numeric probability output.
 
 ## Usage Modes
 
@@ -140,6 +144,7 @@ Expected behavior:
 - Gather available map, lineup, player rating, veto, score, and recent result data.
 - Mark missing data explicitly.
 - Output a factual data pack and JSON block.
+- If current-year map summaries or player ratings are blocked/missing, do not output exact win-rate percentages; show the missing fields and recommend API/warehouse mode for full coverage.
 
 ### Team Comparison
 

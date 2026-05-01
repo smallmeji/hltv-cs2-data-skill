@@ -8,6 +8,8 @@ Given a natural-language request, a match URL, or two team names, produce the be
 
 This is the default mode. It must be useful, but honest about missing data. If the host model cannot access a deep HLTV stats page, mark that field as unavailable instead of asking the user to run a local browser.
 
+Direct mode is often enough for match basics and simple context. It is not enough for confident numeric probabilities when HLTV blocks the yearly stats pages. In that case, output the partial data pack and missing fields, but do not produce exact win-rate percentages.
+
 If API credentials are configured, API mode should be tried first. Direct HLTV mode is still the public lightweight fallback.
 
 Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
@@ -68,6 +70,7 @@ If no central API/warehouse is configured, include:
 
 Add missing-field warnings for unavailable data:
 
+- `core_data_insufficient_for_numeric_inference`: critical map/rating/lineup fields are missing, so exact win-rate percentages must not be produced.
 - `annual_rating_not_loaded`: annual player stats page was unreachable or the player could not be resolved.
 - `event_rating_not_loaded`: event stats page was unreachable, event ID could not be resolved, or the player is not listed for the event.
 - `fetch_failed_cache_miss`: the host model/page reader could not return a readable snapshot for a known URL.
@@ -88,9 +91,9 @@ Direct HLTV output must still follow the data pack contract:
 - JSON summary or full JSON when requested.
 - `Decision Inputs` summarizing factual factors for downstream models.
 - Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
-- If explicitly requested, append a separate `Model Inference` section after the factual data pack.
+- If explicitly requested, append a separate `Model Inference` section after the factual data pack only after applying `references/inference-gate.md`.
 
-If the user asks who is favored or who has higher win rate, first return the data pack. If the user wants this model to judge, append a clearly labeled `Model Inference` section.
+If the user asks who is favored or who has higher win rate, first return the data pack. If the user wants this model to judge, append a clearly labeled `Model Inference` section only when the core data gate allows it. If the gate fails, provide a qualitative low-confidence direction at most and state that exact percentages are blocked.
 
 ## Limits
 
@@ -104,3 +107,12 @@ Direct HLTV mode cannot guarantee:
 - Round-level data.
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.
+
+## Lightweight Inference Gate
+
+Use this quick rule in standalone mode:
+
+- If both teams have current-year map summary and at least one usable player-rating source, numeric inference may be allowed with caveats.
+- If either team's current-year map summary is missing, do not output map or match win-rate percentages.
+- If two or more high-impact fields are missing, do not output exact percentages.
+- If the result relies on search snippets, rankings, or market prices only, mark `completeness_level=partial` or `blocked` and stop before numeric inference.
