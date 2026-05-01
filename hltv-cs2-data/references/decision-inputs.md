@@ -101,7 +101,7 @@ Include:
 - Team CT-side win rate by map.
 - Team T-side win rate by map.
 - CT/T round sample counts when available.
-- Source date window, e.g. 2026 yearly window.
+- Source date window, defaulting to the current calendar year, e.g. 2026-01-01 to 2026-12-31.
 - Match-specific CT/T score splits only when available.
 - Side-stat missing marker when HLTV page/API does not expose it.
 

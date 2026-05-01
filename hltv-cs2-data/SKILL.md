@@ -20,6 +20,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 ## Source Policy
 
 - Default source: direct HLTV pages and public HLTV stats pages.
+- Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
 - Optional enhanced source: HLTV-derived central data warehouse or API, only when explicitly configured or requested.
 - Original upstream source: HLTV pages only.
 - Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
@@ -102,6 +103,7 @@ For match URL data packs, visible starters require rating lookup attempts:
 - Resolve `eventId` from the match page/event link whenever possible.
 - Fetch event rating from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
 - Try annual rating for the current calendar year or requested `as_of_date` year.
+- For team map stats and map side stats, use the current calendar-year window by default, e.g. `startDate=2026-01-01&endDate=2026-12-31`.
 - If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
 - If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.
 

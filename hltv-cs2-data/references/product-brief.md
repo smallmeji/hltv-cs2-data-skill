@@ -96,6 +96,8 @@ Phase 1 must support:
 - Warnings.
 - Backtest cutoff discipline.
 
+Default data window is the current calendar year. For the current season, use 2026-only data (`2026-01-01` to `2026-12-31`) unless the user explicitly requests another window.
+
 ## Phase 2 Data Scope
 
 Phase 2 can add:

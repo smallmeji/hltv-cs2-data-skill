@@ -34,7 +34,8 @@ The user should not need to provide API query parameters.
 1. If input contains an HLTV match URL, extract `hltvMatchId` and parse team names from the URL/page.
 2. If input contains two team names, resolve them by HLTV search, ranking page, or team pages.
 3. If a map is mentioned, restrict or highlight that map.
-4. If `as_of_date` is mentioned, enter backtest discipline, but mark exact snapshots unavailable unless an API/warehouse exists.
+4. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
+5. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
 
 ## Direct HLTV Data Sources
 
@@ -42,7 +43,7 @@ Use only public HLTV pages available in the session:
 
 - Match page: match ID, teams, event, schedule, format, status, lineup if visible, veto if visible, scores if visible.
 - Match page map stats: visible recent core win rates and sample counts.
-- Team stats pages: map stats, recent map rows, and per-map CT/T side win rates when accessible. For example: `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=YYYY-01-01&endDate=YYYY-12-31`.
+- Team stats pages: map stats, recent map rows, and per-map CT/T side win rates for the default year window when accessible. For example: `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
 - Player/event stats pages: for match data packs, resolve `eventId` from the match page/event link, then fetch event ratings from `https://www.hltv.org/stats/players?event=<eventId>` for visible starters. Also attempt annual rating from player stats.
 - Results/matches pages: results or upcoming schedules when needed.
 

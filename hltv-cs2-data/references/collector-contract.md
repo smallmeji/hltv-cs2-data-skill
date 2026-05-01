@@ -112,7 +112,7 @@ Only use fallback ratings when the response marks the source and reason.
 
 For each relevant team/date window, parse:
 
-- Team map summary URL, for example `https://www.hltv.org/stats/teams/maps/6667/faze?startDate=2026-01-01&endDate=2026-12-31`.
+- Team map summary URL for the current calendar-year window by default, for example `https://www.hltv.org/stats/teams/maps/6667/faze?startDate=2026-01-01&endDate=2026-12-31`.
 - Detailed map pages linked from the summary when required.
 - Per-map CT-side win rate.
 - Per-map T-side win rate.

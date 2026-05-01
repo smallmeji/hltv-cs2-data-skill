@@ -33,6 +33,7 @@ Default Chinese Markdown structure:
 
 1. `数据状态`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
+   - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
    - Start with a short sentence such as: `这是事实数据包，不包含预测、投注建议、EV 或仓位。`
 2. `比赛信息`
    - Match ID, event, tier, LAN/online, BO format, schedule, status.
@@ -50,7 +51,7 @@ Default Chinese Markdown structure:
    - Recent match rows and direct matchup rows when available.
    - If unavailable, say `未加载` or `HLTV 当前页面未提供`.
 7. `警匪胜率`
-   - CT-side and T-side win rates by team and map from HLTV team map stats pages, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=YYYY-01-01&endDate=YYYY-12-31` and detailed map pages.
+   - CT-side and T-side win rates by team and map from HLTV team map stats pages, using the current calendar-year window by default, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31` and detailed map pages.
    - If unavailable, say `未加载` and explain whether the source page did not expose it or the collector does not support it yet.
 8. `Veto / 比分`
    - Veto steps, map order, score state, result state.
@@ -106,6 +107,11 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "query_type": "match_data_pack",
     "requested_at": "2026-05-01T12:00:00Z",
     "data_cutoff": "2026-05-01T11:55:00Z",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "current_calendar_year"
+    },
     "as_of_date": null,
     "source_policy": "hltv_central_warehouse",
     "missing_fields": [],

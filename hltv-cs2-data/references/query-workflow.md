@@ -38,12 +38,12 @@ Workflow:
 5. Always attempt to fetch player ratings for visible starters:
    - Extract or resolve `eventId` from the match page/event link whenever possible.
    - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
-   - Annual rating from HLTV player stats for the current calendar year or the requested `as_of_date` year.
+   - Annual rating from HLTV player stats for the current calendar year, e.g. 2026. If `as_of_date` is provided, use that date's calendar year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
 6. Fetch map pool and map history if visible/reachable.
 7. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
-8. Fetch CT/T side win rates by map from HLTV team map stats pages, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=YYYY-01-01&endDate=YYYY-12-31`; if unavailable, mark `map_side_stats` as `未加载`.
+8. Fetch map stats and CT/T side win rates by map from HLTV team map stats pages using the current calendar-year window, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`; if unavailable, mark `map_side_stats` as `未加载`.
 9. Include veto/scores only if available and visible for the requested mode.
 10. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 
