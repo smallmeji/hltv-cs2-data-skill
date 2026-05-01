@@ -36,6 +36,17 @@ This repository does not provide:
 
 The default lightweight mode works from public HLTV pages available in the current session. A maintained API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
 
+## Product Tiers
+
+The skill is useful in two tiers:
+
+| Tier | Best For | What To Expect |
+|:--|:--|:--|
+| Lightweight mode | One-off public HLTV lookups | Works immediately after installation. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
+| API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
+
+Lightweight mode is enough for one-off public HLTV lookups. API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
+
 ## Usage Modes
 
 `hltv-cs2-data` supports two operating modes.
