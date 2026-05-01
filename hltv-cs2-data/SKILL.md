@@ -93,6 +93,13 @@ For Chinese user-facing output, prefer this compact Markdown order:
 
 Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
 
+For match URL data packs, visible starters require rating lookup attempts:
+
+- Try event rating from the HLTV event stats page when the event ID is known or discoverable.
+- Try annual rating for the current calendar year or requested `as_of_date` year.
+- If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
+- If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.
+
 If the user requested judgment, append:
 
 - `model_inference`: clearly labeled model-derived interpretation, separated from facts.

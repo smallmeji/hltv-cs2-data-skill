@@ -41,6 +41,7 @@ Default Chinese Markdown structure:
 4. `选手数据`
    - Annual rating and event rating when available.
    - Mark missing values as `缺失`, not as guessed values.
+   - For match URL queries with visible lineups, annual rating and event rating are required fetch attempts. If either cannot be retrieved, show a per-player `rating_status` and add a warning.
 5. `地图池`
    - Per-map comparison table.
    - Include sample size next to every win-rate field.

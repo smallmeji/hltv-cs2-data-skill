@@ -43,7 +43,7 @@ Use only public HLTV pages available in the session:
 - Match page: match ID, teams, event, schedule, format, status, lineup if visible, veto if visible, scores if visible.
 - Match page map stats: visible recent core win rates and sample counts.
 - Team stats pages: map stats and recent map rows when accessible.
-- Player/event stats pages: player ratings when the user provides an event link or the page is reachable.
+- Player/event stats pages: for match data packs, always attempt event rating and annual rating for visible starters when the event ID or player pages are reachable.
 - Results/matches pages: results or upcoming schedules when needed.
 
 Do not use private display websites as a source.
@@ -61,8 +61,8 @@ If no central API/warehouse is configured, include:
 
 Add missing-field warnings for unavailable data:
 
-- `annual_rating_not_loaded`
-- `event_rating_not_loaded`
+- `annual_rating_not_loaded`: annual player stats page was unreachable or the player could not be resolved.
+- `event_rating_not_loaded`: event stats page was unreachable, event ID could not be resolved, or the player is not listed for the event.
 - `lineup_unavailable`
 - `veto_unavailable`
 - `head_to_head_not_loaded`
@@ -88,7 +88,7 @@ Direct HLTV mode cannot guarantee:
 - Complete historical snapshots.
 - Exact as-of backtests.
 - Full head-to-head data.
-- Complete annual/event rating coverage.
+- Complete annual/event rating coverage, but it must attempt those fields before marking them missing.
 - CT/T side score or round-level data.
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.

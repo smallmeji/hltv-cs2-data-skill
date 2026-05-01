@@ -34,10 +34,15 @@ Workflow:
 1. Extract `hltvMatchId`.
 2. Read the HLTV match page directly by default; use API/warehouse only if explicitly configured.
 3. Resolve event, teams, format, schedule.
-4. Fetch lineups and ratings if visible/reachable.
-5. Fetch map pool and map history if visible/reachable.
-6. Include veto/scores only if available and visible for the requested mode.
-7. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+4. Fetch lineups from the match page when visible.
+5. Always attempt to fetch player ratings for visible starters:
+   - Event rating from the event stats page, e.g. `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known or discoverable.
+   - Annual rating from HLTV player stats for the current calendar year or the requested `as_of_date` year.
+   - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
+   - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
+6. Fetch map pool and map history if visible/reachable.
+7. Include veto/scores only if available and visible for the requested mode.
+8. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 
 ## Event Ratings Query
 
@@ -52,7 +57,8 @@ Workflow:
 1. Fetch event player ratings snapshot.
 2. Match players to lineups when a match is provided.
 3. Mark missing players explicitly.
-4. Do not average or interpret rating unless the user asks for a descriptive aggregate.
+4. If a lineup player is missing from the event page, attempt annual rating fallback before marking the player fully missing.
+5. Do not average or interpret rating unless the user asks for a descriptive aggregate.
 
 ## Backtest Query
 
