@@ -34,18 +34,20 @@ Workflow:
 1. Extract `hltvMatchId`.
 2. Read the HLTV match page directly by default; use API/warehouse only if explicitly configured.
 3. Resolve event, teams, format, schedule.
-4. Fetch lineups from the match page when visible.
-5. Always attempt to fetch player ratings for visible starters:
+4. Resolve both canonical team IDs and slugs from match-page team links or team pages. Do not stop at match-page summary data.
+5. Fetch lineups from the match page when visible.
+6. Always attempt to fetch player ratings for visible starters:
    - Extract or resolve `eventId` from the match page/event link whenever possible.
    - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
-   - Annual rating from HLTV player stats for the current calendar year, e.g. 2026. If `as_of_date` is provided, use that date's calendar year.
+   - Annual rating from HLTV team player stats for the current calendar year, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. If `as_of_date` is provided, use that date's calendar year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
-6. Fetch map pool and map history if visible/reachable.
-7. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
-8. Fetch map stats and CT/T side win rates by map from HLTV team map stats pages using the current calendar-year window, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`; if unavailable, mark `map_side_stats` as `未加载`.
-9. Include veto/scores only if available and visible for the requested mode.
-10. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+7. Fetch yearly team map stats from HLTV team stats pages using the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. This is the primary source for the `地图池` section.
+8. In lightweight mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载`. CT/T side win rates require visiting each map detail page and should be collected asynchronously in Pro/API mode.
+9. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
+10. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
+11. Include veto/scores only if available and visible for the requested mode.
+12. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 
 ## Event Ratings Query
 

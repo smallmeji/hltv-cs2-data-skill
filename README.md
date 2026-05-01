@@ -46,7 +46,8 @@ Use this mode when you only want the skill instructions and public HLTV pages.
 
 - No API key is required.
 - No user-owned database is required.
-- The model gathers available data from HLTV pages in the current session.
+- No local browser, CDP session, Playwright session, or local scraper is required from the user.
+- The model gathers available data from HLTV pages through the host model's normal web/page-reading/search capability.
 - Historical backtests are marked as `reconstructed` unless an exact snapshot is available.
 - Missing fields must be reported explicitly instead of being guessed.
 
@@ -169,6 +170,76 @@ Expected behavior:
 - Exclude final scores and post-match records if the requested time is pre-match.
 - Mark exact historical snapshots as unavailable or reconstructed when a warehouse/API is not configured.
 
+## Worked Example: Lightweight Match Data Pack
+
+This is the common path for a user who only installs the skill and does not have an API key.
+
+### Step 1: Ask with a match URL
+
+```text
+Use hltv-cs2-data for this match:
+https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
+
+Output Markdown and JSON.
+Return factual data only, no win-rate prediction.
+If a field cannot be retrieved, include the source URL and warning code.
+```
+
+### Step 2: What the skill should attempt
+
+Lightweight mode should try these sources in order:
+
+1. Match page: match ID, teams, event, format, schedule, status, visible lineup, veto, scores.
+2. Team identity: HLTV team IDs, slugs, visible rank and roster context.
+3. Event ID: parse from the match page event link when available.
+4. Event player ratings: try `https://www.hltv.org/stats/players?event=<eventId>`.
+5. Annual team player stats: try `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+6. Annual team map summary: try `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+7. If a deep stats page fails, keep the canonical URL and mark the exact field as `missing`.
+
+The default date window is the current calendar year. For 2026 matches, use `2026-01-01` to `2026-12-31` unless the user asks for another window.
+
+### Step 3: Recommended Markdown sections
+
+| Section | Contents |
+|:--|:--|
+| Data Status | Source mode, retrieved time, completeness, high-impact missing fields |
+| Match Info | Match ID, event, schedule, format, status |
+| Teams and Lineups | HLTV IDs, visible starters, coaches, stand-ins, lineup warnings |
+| Player Data | Annual ratings, event ratings, missing rating flags |
+| Map Pool | Current-year map summary, samples, W/D/L, win rate, pick %, ban % |
+| Recent / H2H | Recent matches and direct matchup rows when available |
+| Veto / Scores | Veto, map order, map scores when visible |
+| Decision Inputs | Factual model-ready inputs only |
+| Data Gaps | Missing fields, source URLs, warning codes |
+| JSON | Stable English keys for downstream systems |
+
+### Step 4: If the user asks for judgment
+
+If the user asks "which team has the higher win rate?", the output should become:
+
+1. Factual HLTV data pack first.
+2. `decision_inputs` second.
+3. A clearly labeled `Model Inference` section last.
+
+Any probability or winner judgment belongs in `Model Inference`. It is model-derived interpretation, not HLTV source data.
+
+### Step 5: How to read cache miss
+
+`cache miss` does not mean HLTV has no data, and it does not mean the URL is wrong. It means the lightweight page reader did not return a readable snapshot.
+
+Recommended field-level warning:
+
+```json
+{
+  "field": "event_player_ratings",
+  "source_url": "https://www.hltv.org/stats/players?event=8250",
+  "status": "missing",
+  "warning": "fetch_failed_cache_miss",
+  "meaning": "The URL is known, but lightweight direct mode could not retrieve a readable table snapshot."
+}
+```
+
 ## Output Layers
 
 The skill separates output into three layers.
@@ -277,18 +348,56 @@ It must not be mixed into factual fields.
 
 Direct HLTV mode is the default.
 
-It is designed for users who only install the skill and do not have a private API, local database, or scraper. The model reads the public HLTV pages available in the current session and returns the best available data pack.
+It is designed for users who only install the skill and do not have a private API, local database, scraper, local browser, CDP session, or Playwright session. The model reads the public HLTV pages available through its normal web/page-reading/search capability and returns the best available data pack.
 
 Direct mode is useful, but it has limits:
 
 - Some pages may be blocked or unavailable.
-- Event player ratings may need a separate HLTV stats URL.
+- Event ratings, annual player stats, and annual team map summary pages may fail with `cache miss` or Cloudflare challenge. This does not mean the HLTV URL is wrong or the data does not exist.
 - Lineups may not be visible before match time.
 - Veto may not exist until closer to match start.
 - Historical `as_of` backtests are approximate unless a timestamped warehouse exists.
+- CT/T map side win rates require visiting each map detail page and should be provided by API / warehouse or internal collector mode.
 - Side-specific CT/T scores and round-level data are Phase 2 fields.
 
 When data is missing, the skill should label it as missing rather than infer it.
+
+## Data Availability
+
+### Lightweight Quick Matrix
+
+| Data | Lightweight Direct Provides |
+|:--|:--|
+| Match information | Yes |
+| Team IDs / lineup | Yes |
+| Event ID | Yes |
+| Event rating | Attempt; mark missing if retrieval fails |
+| Annual player rating | Attempt; mark missing if retrieval fails |
+| Current-year map summary | Yes when reachable; otherwise mark fallback context |
+| W/D/L, win rate, pick %, ban % | Yes from current-year map summary when reachable |
+| CT/T side win rates | No; API / warehouse enhanced mode only |
+| Historical backtest snapshots | No; API / warehouse enhanced mode only |
+
+### Mode-by-Mode Matrix
+
+| Data | Lightweight Direct | In-app / Browser Session | Internal Collector | API / Warehouse |
+|:--|:--:|:--:|:--:|:--:|
+| Match basics | Usually yes | Yes | Yes | Yes |
+| Lineup / veto / score | When visible | Yes | Yes | Yes |
+| Team page roster / rank / period rating | Usually yes | Yes | Yes | Yes |
+| Match-page recent-core map data | Usually yes | Yes | Yes | Yes |
+| Current-year team map summary | Attempt, may fail | Usually yes | Yes | Yes |
+| Current-year team player stats | Attempt, may fail | Usually yes | Yes | Yes |
+| Event ratings | Attempt, may fail | Usually yes | Yes | Yes |
+| CT/T map side win rates | No by default | Possible but slow | Yes | Yes |
+| Exact as-of snapshots | No guarantee | No guarantee | Yes | Yes |
+
+Use these warnings when lightweight direct mode cannot retrieve a known stats URL:
+
+- `fetch_failed_cache_miss`
+- `fetch_failed_cf_challenge`
+- `stats_page_unavailable_in_direct_mode`
+- `pro_api_required_for_full_coverage`
 
 ## API / Warehouse Mode
 
@@ -314,6 +423,7 @@ The skill uses progressive disclosure. `SKILL.md` stays compact and loads refere
 
 - `references/product-brief.md`: product positioning and scope.
 - `references/standalone-mode.md`: direct HLTV usage.
+- `references/data-availability.md`: what each access mode can and cannot provide.
 - `references/data-pack-contract.md`: Markdown and JSON output contract.
 - `references/decision-inputs.md`: model-ready factual feature schema.
 - `references/query-workflow.md`: common query recipes.

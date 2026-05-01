@@ -10,7 +10,7 @@ The skill supplies data from HLTV. The user-owned model supplies judgment and st
 
 The skill must be usable in two practical forms:
 
-- Direct HLTV skill: works immediately from public HLTV pages after installation.
+- Direct HLTV skill: works immediately from public HLTV pages after installation through the host model's normal web/page-reading/search capability.
 - Optional product API mode: uses a central warehouse/API for complete and repeatable data packs.
 
 ## What This Product Does
@@ -27,6 +27,7 @@ Given a match, team pair, event, map, or historical cutoff, return a multidimens
 - Scores and historical results when available.
 - Data quality warnings and freshness.
 - Decision input groups for map pool, head-to-head, player form, roster state, match context, and data quality.
+- Data availability labels showing whether a field is available from lightweight direct access, in-app/browser sessions, internal collector runs, or hosted API/warehouse data.
 
 The same data pack can be used by different users with different strategies.
 
@@ -76,7 +77,7 @@ Optional enhanced product API:
 HLTV -> collector -> central warehouse/API -> hltv-cs2-data skill -> user-owned model
 ```
 
-End users should not run local scrapers or local databases.
+End users should not run local scrapers, local databases, local browsers, CDP sessions, or Playwright sessions.
 
 The display website is not a data source. It may show data, but the source of truth for shared skill use is HLTV itself. A central warehouse/API can later cache and enrich HLTV-derived data.
 

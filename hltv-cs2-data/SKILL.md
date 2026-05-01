@@ -24,15 +24,17 @@ The skill must be usable by someone who only installs the skill and has no acces
 - Optional enhanced source: HLTV-derived central data warehouse or API, only when explicitly configured or requested.
 - Original upstream source: HLTV pages only.
 - Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
-- Do not require end users to run a local database or scraper.
+- Do not require end users to run a local database, scraper, local browser, CDP session, or Playwright session.
+- Public lightweight mode should rely only on the host model's normal public web/page-reading/search capabilities and mark inaccessible deep stats fields as missing.
 - Retrieve only data visible from HLTV pages during the session and label unavailable deeper fields as missing.
 - A central collector/API may improve completeness and backtesting later, but it is not required for normal skill use.
 - If Cloudflare or access controls block collection, fail safely and report freshness/missing data. Do not fabricate data or bypass protections.
 
 ## Operating Modes
 
-- **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages directly, output Markdown + JSON with missing-field warnings. No private database required.
+- **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
+- **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
 
 ## Workflow
@@ -48,6 +50,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 2. Load only the needed reference:
    - Product positioning: `references/product-brief.md`.
    - Standalone use: `references/standalone-mode.md`.
+   - Data availability by access mode: `references/data-availability.md`.
    - Data pack schema: `references/data-pack-contract.md`.
    - Decision input schema: `references/decision-inputs.md`.
    - API contract: `references/api-contract.md`.
@@ -62,6 +65,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 5. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
 6. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
 7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
+8. When a page or field cannot be read, use the data availability matrix to label whether the failure belongs to lightweight direct mode, in-app/browser session mode, internal collector mode, or API/warehouse mode.
 
 ## Output Rules
 
@@ -103,7 +107,10 @@ For match URL data packs, visible starters require rating lookup attempts:
 - Resolve `eventId` from the match page/event link whenever possible.
 - Fetch event rating from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
 - Try annual rating for the current calendar year or requested `as_of_date` year.
-- For team map stats and map side stats, use the current calendar-year window by default, e.g. `startDate=2026-01-01&endDate=2026-12-31`.
+- After resolving team IDs from the match page or team links, always visit each team's HLTV stats pages for the current calendar-year window before finalizing `maps`, `map_side_stats`, or `players`. Match-page map stats are only a recent-core fallback, not the primary map-pool source.
+- For team map summary stats, use the current calendar-year window by default, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+- Lightweight mode stops at the team map summary page. Per-map CT/T side win rates require visiting each map detail page and belong to Pro/API or collector mode.
+- For annual team player ratings, use current-year HLTV team player stats when available, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
 - If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
 - If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.
 

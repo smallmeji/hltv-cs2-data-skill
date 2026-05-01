@@ -1,14 +1,16 @@
 # Lightweight / Direct HLTV Mode
 
-Direct HLTV mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, or central API.
+Direct HLTV mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, central API, local browser, CDP session, or Playwright session.
 
 ## Goal
 
-Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from public HLTV pages.
+Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from public HLTV pages using only the host model's normal web/page-reading/search capabilities.
 
-This is the default mode. It must be useful, but honest about missing data.
+This is the default mode. It must be useful, but honest about missing data. If the host model cannot access a deep HLTV stats page, mark that field as unavailable instead of asking the user to run a local browser.
 
 If API credentials are configured, API mode should be tried first. Direct HLTV mode is still the public lightweight fallback.
+
+Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
 
 ## Accepted Inputs
 
@@ -42,12 +44,16 @@ The user should not need to provide API query parameters.
 Use only public HLTV pages available in the session:
 
 - Match page: match ID, teams, event, schedule, format, status, lineup if visible, veto if visible, scores if visible.
-- Match page map stats: visible recent core win rates and sample counts.
-- Team stats pages: map stats, recent map rows, and per-map CT/T side win rates for the default year window when accessible. For example: `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-- Player/event stats pages: for match data packs, resolve `eventId` from the match page/event link, then fetch event ratings from `https://www.hltv.org/stats/players?event=<eventId>` for visible starters. Also attempt annual rating from player stats.
+- Team pages: resolve canonical team IDs, slugs, current roster, and team links when the match page does not expose enough structure.
+- Team map summary stats pages: primary source for map W/D/L, win rate, pick %, and ban % for the default year window. For example: `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+- Team player stats pages: primary source for annual player ratings filtered by team and current calendar-year window, for example `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+- Event player stats pages: event rating source when `eventId` is known, for example `https://www.hltv.org/stats/players?event=8250`.
+- Match page map stats: visible recent core win rates and sample counts only as a fallback or supplemental context. Do not treat these as the official `maps` section when the yearly team stats pages are reachable.
 - Results/matches pages: results or upcoming schedules when needed.
 
 Do not use private display websites as a source.
+
+For precise coverage expectations, follow `references/data-availability.md`.
 
 ## Required Direct-Mode Warnings
 
@@ -64,6 +70,10 @@ Add missing-field warnings for unavailable data:
 
 - `annual_rating_not_loaded`: annual player stats page was unreachable or the player could not be resolved.
 - `event_rating_not_loaded`: event stats page was unreachable, event ID could not be resolved, or the player is not listed for the event.
+- `fetch_failed_cache_miss`: the host model/page reader could not return a readable snapshot for a known URL.
+- `fetch_failed_cf_challenge`: the URL was blocked by Cloudflare/access challenge.
+- `stats_page_unavailable_in_direct_mode`: a known deep stats page was not retrievable in lightweight mode.
+- `pro_api_required_for_full_coverage`: hosted collector/API data is required for reliable coverage.
 - `lineup_unavailable`
 - `veto_unavailable`
 - `head_to_head_not_loaded`
@@ -90,7 +100,7 @@ Direct HLTV mode cannot guarantee:
 - Exact as-of backtests.
 - Full head-to-head data.
 - Complete annual/event rating coverage, but it must attempt those fields before marking them missing.
-- CT/T side win-rate coverage when team map stats pages or detailed map pages are not reachable.
+- CT/T side win-rate coverage; lightweight mode does not visit every map detail page. Use Pro/API or collector mode for `map_side_stats`.
 - Round-level data.
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.

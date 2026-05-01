@@ -111,3 +111,16 @@ The API should not expose:
 - Internal scraper browser mode.
 - Private betting framework fields.
 - Private correction numbers, private prediction logs, or hidden strategy-framework fields.
+
+## API Coverage Boundary
+
+API / warehouse mode is responsible for fields that lightweight direct mode cannot reliably fetch:
+
+- Current-year team map summary stats.
+- Current-year team player stats.
+- Event player ratings.
+- Per-map CT/T side win rates after map-detail crawling.
+- Exact historical as-of snapshots.
+- Repeated data freshness and source tracking.
+
+See `references/data-availability.md` for the full mode-by-mode matrix.
