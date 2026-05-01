@@ -75,6 +75,7 @@ Every data pack should include:
 - `head_to_head`: direct team-vs-team history when available.
 - `recent_matches`: recent map and match rows used for downstream modeling.
 - `match_detail`: format, event, date, veto, map order, scores when available.
+- `side_scores`: CT/T side score splits when visible or available through API/warehouse.
 - `decision_inputs`: model-ready factual factors such as map pool, head-to-head, player form, roster state, match context, and data quality.
 - `warnings`: small sample, stale data, roster changes, missing event data, low confidence parsing.
 - `not_included`: explicit note that model inference fields are not part of the HLTV fact data pack.
@@ -86,10 +87,12 @@ For Chinese user-facing output, prefer this compact Markdown order:
 3. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
 4. `选手数据`: annual/event ratings and missing rating flags.
 5. `地图池`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
-6. `Veto / 比分`: veto, map order, scores, result when visible.
-7. `给模型的决策输入`: factual factors grouped by map pool, player form, roster state, match context, and data quality.
-8. `数据缺口`: what is missing and what must not be inferred.
-9. `JSON`: stable English-key JSON for downstream use.
+6. `近期记录 / H2H`: recent records and direct matchup map rows when available.
+7. `警匪分边`: CT/T score splits by map when visible or available through API/warehouse.
+8. `Veto / 比分`: veto, map order, scores, result when visible.
+9. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
+10. `数据缺口`: what is missing and what must not be inferred.
+11. `JSON`: stable English-key JSON for downstream use.
 
 Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
 

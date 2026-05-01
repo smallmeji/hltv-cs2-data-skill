@@ -67,7 +67,7 @@ Add missing-field warnings for unavailable data:
 - `veto_unavailable`
 - `head_to_head_not_loaded`
 - `exact_backtest_snapshot_unavailable`
-- `side_scores_phase_2`
+- `side_scores_not_loaded`
 
 ## Output Behavior
 
@@ -89,6 +89,7 @@ Direct HLTV mode cannot guarantee:
 - Exact as-of backtests.
 - Full head-to-head data.
 - Complete annual/event rating coverage, but it must attempt those fields before marking them missing.
-- CT/T side score or round-level data.
+- CT/T side score coverage when the current HLTV page does not expose it.
+- Round-level data.
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.

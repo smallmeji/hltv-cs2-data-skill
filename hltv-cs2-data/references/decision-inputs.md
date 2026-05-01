@@ -12,6 +12,7 @@ Use these groups when available:
 - `head_to_head`: direct team-vs-team records, map-level head-to-head records, score history.
 - `player_form`: annual rating, event rating, recent rating rows, missing player ratings.
 - `roster_state`: starters, coach/stand-in flags, new players, roster changes, missing lineup.
+- `side_profile`: CT/T side score splits, starting-side context, and side-specific score patterns when available.
 - `match_context`: event, tier, LAN/online, format, stage, schedule, travel/rest if available.
 - `data_quality`: sample size issues, stale data, missing fields, direct HLTV vs API mode, reconstructed fields.
 
@@ -69,6 +70,7 @@ Include:
 - Direct match results.
 - Direct map results.
 - Scoreline history.
+- Map-specific head-to-head rows when available.
 - H2H unavailable marker when not found.
 
 ### player_form
@@ -92,6 +94,17 @@ Include:
 - New player.
 - Recent roster change if visible.
 
+### side_profile
+
+Include:
+
+- CT score and T score by map.
+- Starting side when available.
+- First-half and second-half score splits when available.
+- Side score missing marker when HLTV page/API does not expose it.
+
+Use side-score fields only as factual context. Do not infer tactical strength unless the user explicitly asks for model inference.
+
 ### match_context
 
 Include:
@@ -113,6 +126,7 @@ Include:
 - `missing_event_rating`.
 - `missing_lineup`.
 - `veto_unavailable`.
+- `side_scores_unavailable`.
 - `exact_backtest_snapshot_unavailable`.
 
 ## Inference Boundary

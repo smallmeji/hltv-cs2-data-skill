@@ -49,16 +49,19 @@ Default Chinese Markdown structure:
 6. `近期记录 / H2H`
    - Recent match rows and direct matchup rows when available.
    - If unavailable, say `未加载` or `HLTV 当前页面未提供`.
-7. `Veto / 比分`
+7. `警匪分边`
+   - CT/T side score splits by map when visible or available through API/warehouse.
+   - If unavailable, say `未加载` and explain whether the source page did not expose it or the collector does not support it yet.
+8. `Veto / 比分`
    - Veto steps, map order, score state, result state.
-8. `给模型的决策输入`
-   - Factual inputs grouped into `地图池`, `选手状态`, `阵容状态`, `比赛环境`, `数据质量`.
+9. `给模型的决策输入`
+   - Factual inputs grouped into `地图池`, `对位数据`, `选手状态`, `阵容状态`, `警匪分边`, `比赛环境`, `数据质量`.
    - Do not put predicted win rates or recommendations here.
-9. `数据缺口`
+10. `数据缺口`
    - Explicitly list missing data and what cannot be inferred.
-10. `JSON`
+11. `JSON`
    - Factual data and decision inputs with stable English keys.
-11. Optional `模型推理`
+12. Optional `模型推理`
    - Only when the user asks for judgment.
 
 Readability rules:
@@ -78,6 +81,7 @@ Phase 1 data packs must support these field groups when available:
 - `players`: annual ratings, event ratings, missing rating status.
 - `lineups`: starters, coaches, stand-ins, roster-change warnings.
 - `head_to_head`: direct matchup records and map rows.
+- `side_scores`: CT/T score splits by map when visible or available from API/warehouse.
 - `veto`: veto steps, map order, decider.
 - `scores`: map scores, match score, result status.
 - `decision_inputs`: factual model-ready factors grouped for downstream strategy.
@@ -87,7 +91,6 @@ Phase 1 data packs must support these field groups when available:
 
 Phase 2 can add these fields after collector and warehouse support exists:
 
-- `side_scores`: CT/T score split by map.
 - `half_scores`: first-half and second-half scores.
 - `starting_side`: starting CT/T side by team and map.
 - `rounds`: round-level details if HLTV exposes reliable data.
@@ -195,11 +198,25 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "status": "not_started",
     "maps": []
   },
+  "side_scores": [
+    {
+      "match_map_id": null,
+      "map_order": 1,
+      "map": "Mirage",
+      "team_hltv_id": 6667,
+      "team_name": "FaZe",
+      "ct_score": null,
+      "t_score": null,
+      "starting_side": null,
+      "source": "missing"
+    }
+  ],
   "decision_inputs": {
     "map_pool": [],
     "head_to_head": [],
     "player_form": [],
     "roster_state": [],
+    "side_profile": [],
     "match_context": [],
     "data_quality": []
   },

@@ -26,6 +26,7 @@ Collect these source types:
 - `event_player_ratings`: event-specific player ratings.
 - `match_detail`: match page facts.
 - `match_result`: completed score and per-map result.
+- `side_scores`: CT/T side score splits by map when HLTV exposes them reliably.
 - `veto`: veto steps and map order.
 - `lineup`: confirmed or expected players.
 
@@ -57,6 +58,7 @@ Minimum product tables or API entities:
 - `ranking_snapshots`: rank, date, source.
 - `matches`: match ID, URL, teams, event, format, scheduled time, status.
 - `match_maps`: map order, map name, score, winner, final/ongoing status.
+- `match_side_scores`: CT/T side score splits by match map and team.
 - `match_scores`: match score, per-map score, result status.
 - `veto_steps`: step number, actor team, action, map, source.
 - `lineups`: match ID, team ID, player ID/name, coach flag, stand-in flag, source.
@@ -81,6 +83,7 @@ For each HLTV match URL, parse:
 - Veto steps when visible.
 - Map order.
 - Per-map scores when visible.
+- CT/T side score splits when visible.
 - Confirmed lineups when visible.
 - Coach/stand-in indicators when visible.
 
@@ -123,15 +126,15 @@ Phase 1 required:
 - Veto.
 - Lineup.
 - Scores and results.
+- Side score schema and API field; collector should fill it when visible, otherwise mark it missing.
 - Head-to-head records.
 - Raw snapshots.
 - Central data-pack API shape.
 
 Phase 2:
 
-- CT/T side scores.
 - Half scores.
 - Opening side.
 - Pistol/advanced round details if HLTV exposes them reliably.
 
-Do not block Phase 1 on CT/T data.
+Do not block Phase 1 lightweight usage on CT/T data, but the product API contract should reserve and expose `side_scores` from the start.
