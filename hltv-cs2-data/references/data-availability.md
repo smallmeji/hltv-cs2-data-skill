@@ -9,7 +9,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Lightweight direct | None beyond the host model's normal web/page-reading/search tools | Best-effort public data pack |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
-| Static JSON | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Stable fallback/cache when live HLTV is blocked or deep stats cannot be read |
+| Static JSON database export | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Required public structured-data source after HLTV identity resolution |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide
@@ -30,7 +30,7 @@ This reference defines which data can be expected from each access mode. It prev
 
 Lightweight direct data can be useful but incomplete. If current-year map summary or player ratings cannot be loaded, the data pack may still be emitted, but exact numeric model inference must be blocked by `references/inference-gate.md`.
 
-For normal public users, Lightweight Direct should be attempted first for match discovery and identity resolution. Static JSON is the fallback/cache when HLTV cannot locate the match, is blocked, or lacks high-impact structured stats.
+For normal public users, Lightweight Direct should be attempted first for match discovery and identity resolution. Static JSON database export should then be queried for structured map/player/side/history fields. Direct HLTV deep stats are last-resort supplemental fallback only when the database export is unavailable or missing a field.
 
 ### Detailed Matrix
 
@@ -69,6 +69,7 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 - Match-page recent-core map stats must not be used as a replacement for current-year team map summary stats unless clearly labeled as fallback context.
 - Lightweight direct mode must not ask public users to run a local browser, CDP, Playwright, or scraper.
 - Market prices, rankings, news snippets, and search summaries are not substitutes for missing current-year map/rating data when producing numeric probabilities.
+- Liquipedia, Liquidpedia, wikis, news snippets, and search summaries are not substitutes for the structured database export.
 
 ## Recommended Resolution And Fallback Order
 
@@ -78,9 +79,8 @@ For a match URL:
 2. If the user only provides event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page.
 3. Resolve match ID, team IDs, slugs, event ID, format, time, status, lineup/veto/score when visible.
 4. If API/warehouse is configured, use it to hydrate structured fields after identity resolution.
-5. Otherwise attempt direct HLTV current-year team map summary stats.
-6. Attempt current-year team player stats.
-7. Attempt event player ratings if event ID is known.
-8. If direct HLTV cannot locate the match or any high-impact stats page fails, read configured static JSON or the default public static manifest.
-9. Merge static/cache fields into the data pack with `source=static_fallback`; preserve direct HLTV fields with `source=direct_hltv`.
-10. If full coverage is required and static/API is still missing fields, recommend API/warehouse mode.
+5. Otherwise read configured static JSON or the default public static manifest as the public database export.
+6. Hydrate team maps, map details, player ratings, event ratings, match packs, and compare-ready fields from the database export when present.
+7. If the database export is unavailable or missing a field, then attempt direct HLTV current-year team map summary stats, current-year team player stats, and event player ratings as supplemental fallback.
+8. Merge database fields into the data pack with `source=static_database` or `source=api_warehouse`; preserve direct HLTV fields with `source=direct_hltv`.
+9. If full coverage is required and static/API is still missing fields, recommend API/warehouse mode.

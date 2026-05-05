@@ -36,13 +36,13 @@ This repository does not provide:
 - A local database or private data dependency.
 - Guaranteed complete historical snapshots in direct HLTV mode.
 
-For normal public use, the skill first uses HLTV pages to locate and verify the match, teams, and event. If HLTV is blocked by Cloudflare/cache miss, or if deep stats pages cannot be read, it falls back to the default public static JSON manifest:
+For normal public use, the skill first uses HLTV pages to locate and verify the match, teams, and event. After IDs are known, it must query the structured data layer. If no API is configured, the default structured source is the public static JSON database export:
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-If the match page is found on HLTV, the static source is used as a cache/fallback for structured fields such as map details, CT/T, player ratings, and exported match packs. If the match page cannot be found/read on HLTV, the skill may also use the static manifest to reverse-search exported match/team records. API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
+If the match page is found on HLTV, the database export is used to load structured fields such as map details, CT/T, player ratings, and exported match packs. If the match page cannot be found/read on HLTV, the skill may also use the manifest to reverse-search exported match/team records. API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
 
 ## Product Tiers
 
@@ -51,7 +51,7 @@ The skill is useful in three tiers:
 | Tier | Best For | What To Expect |
 |:--|:--|:--|
 | Lightweight mode | Match discovery and one-off public HLTV lookups | Default first step. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
-| Static JSON fallback | Shared data packs for Claude/GPT/user models | Public fallback/cache path. Avoids live HLTV/Cloudflare failures and gives stable team, match, event, map-detail, and compare packs when exported. |
+| Static JSON database export | Shared data packs for Claude/GPT/user models | Required public structured-data path when no API is configured. Gives stable team, match, event, map-detail, and compare packs when exported. |
 | API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
 
 Lightweight mode is enough for match discovery and one-off public HLTV lookups. Static JSON or API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
@@ -62,7 +62,7 @@ In lightweight mode, the host model's web reader may fail on HLTV stats pages. T
 
 `hltv-cs2-data` supports three operating modes.
 
-### 1. Direct HLTV First, Static JSON Fallback
+### 1. Direct HLTV First, Then Database Export
 
 This is the default public mode. Users can ask natural questions without providing configuration:
 
@@ -70,7 +70,7 @@ This is the default public mode. Users can ask natural questions without providi
 Use hltv-cs2-data to compare FaZe and G2. Who has the higher win rate?
 ```
 
-The skill should first try to locate the match or teams on HLTV. For example, `PGL Aurora vs Heroic` should first search/read HLTV match, event, result, and upcoming pages to find the exact match page. If HLTV is blocked, cache-missed, or missing high-impact stats, then try the default manifest:
+The skill should first try to locate the match or teams on HLTV. For example, `PGL Aurora vs Heroic` should first search/read HLTV match, event, result, and upcoming pages to find the exact match page. After match/team IDs are known, it should query the database export:
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
@@ -102,7 +102,9 @@ To use another static source, configure:
 HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 ```
 
-In this mode, the skill should use live HLTV for match discovery and visible facts, then use static JSON as fallback/cache for missing structured fields.
+In this mode, the skill should use live HLTV for match discovery and visible facts, then use the static JSON database export for structured fields. Direct HLTV deep stats are only last-resort supplemental fallback when the database export is unavailable or missing a field.
+
+Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as substitute sources for map stats, player ratings, CT/T, veto, or result fields.
 
 If the user asks "who is favored", "who has the higher win rate", or similar, the skill still starts with factual data. When map-detail data exists, the Markdown output must include:
 
@@ -210,7 +212,7 @@ Focus on map pool, player form, roster changes, and head-to-head data.
 Expected behavior:
 
 - Resolve both teams to HLTV identities when possible.
-- Collect public HLTV-derived team and map data.
+- After team IDs are known, query the public static JSON database export or configured API for team/map/player data.
 - Organize factual factors into `decision_inputs`.
 - Avoid declaring a winner unless the user explicitly asks for model inference.
 
@@ -223,7 +225,7 @@ Return factual data first, then per-map detail, then Model Inference.
 
 Expected behavior:
 
-1. Resolve the teams and any relevant match from static JSON / API / direct HLTV fallback.
+1. Use HLTV first to locate the relevant match/team identities, then query API or the public static JSON database export for structured map/player/side data.
 2. Output `Map Pool Overview` with current-year overall/LAN samples, W-D-L, win rate, pick %, and ban %.
 3. Output `Per-Map Detail` for each realistic playable map:
    - sample confidence;
