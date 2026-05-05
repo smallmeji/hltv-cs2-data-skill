@@ -40,6 +40,21 @@ If a model only reads HLTV, Liquipedia/wiki pages, news snippets, search summari
 
 Map-pool sections must also use only the current active map pool present in the structured record. The current 2026 public export uses these seven maps: `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, and `Overpass`. Do not add `Vertigo`, `Cache`, `Train`, or other absent inactive maps to `Map Pool Overview`, `Per-Map Detail`, or `Special Veto Variables`.
 
+When the user asks who is stronger, who has higher win rate, or who is favored, output must follow this fixed order:
+
+1. `Data Source Execution Log`
+2. `Data Status / Data Gaps`
+3. `Match Info`
+4. `Teams and Player Ratings`
+5. `Map Pool Overview`
+6. `Per-Map Detail`
+7. `Special Veto Variables`
+8. `Decision Inputs`
+9. `JSON`
+10. `Model Inference`
+
+Veto predictions, exact win-rate percentages, and score guesses may appear only in `Model Inference`. The factual `Veto / Score` section may contain only observed veto, map order, scores, or `unavailable`. `Model Inference` must expose `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
+
 ## What It Is Not
 
 This repository does not provide:

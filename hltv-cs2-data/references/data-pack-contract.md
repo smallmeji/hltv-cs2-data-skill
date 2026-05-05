@@ -37,7 +37,7 @@ Default Chinese Markdown structure:
 1. `数据源执行记录`
    - HLTV 定位状态、HLTV URL、数据库 manifest/API 状态、读取的数据库路径、字段来源。
    - A compliant output must show at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
-2. `数据状态`
+2. `数据状态 / 数据缺口`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
    - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
    - Start with a short sentence such as: `这是事实数据包，不包含预测、投注建议、EV 或仓位。`
@@ -45,7 +45,7 @@ Default Chinese Markdown structure:
    - Match ID, event, tier, LAN/online, BO format, schedule, status.
 4. `队伍与阵容`
    - Team names, HLTV IDs, rank snapshots, starters, coach/stand-in flags.
-5. `选手数据`
+5. `队伍与选手 rating`
    - Annual rating and event rating when available.
    - Mark missing values as `缺失`, not as guessed values.
    - For match URL queries with visible lineups, annual rating and event rating are required fetch attempts. If either cannot be retrieved, show a per-player `rating_status` and add a warning.
@@ -60,7 +60,8 @@ Default Chinese Markdown structure:
    - CT-side and T-side win rates by team and map from HLTV team map stats pages, using the current calendar-year window by default, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31` and detailed map pages.
    - If unavailable, say `未加载` and explain whether the source page did not expose it or the collector does not support it yet.
 9. `Veto / 比分`
-   - Veto steps, map order, score state, result state.
+   - Observed veto steps, map order, score state, result state, or `赛前不可见`.
+   - Do not include Veto predictions in this factual section.
 10. `给模型的决策输入`
    - Factual inputs grouped into `地图池`, `对位数据`, `选手状态`, `阵容状态`, `警匪胜率`, `比赛环境`, `数据质量`.
    - Do not put predicted win rates or recommendations here.
@@ -70,6 +71,9 @@ Default Chinese Markdown structure:
    - Factual data and decision inputs with stable English keys.
 13. Optional `模型推理`
    - Only when the user asks for judgment.
+   - Must start with `以下为模型推理，不是 HLTV 事实数据。`
+   - Must include `completeness_level`, `inference_permission`, and `missing_high_impact_fields`.
+   - Veto prediction, winner lean, match percentage, and map percentage are allowed only here.
 
 Readability rules:
 
@@ -344,6 +348,10 @@ If requested, model-derived fields may appear only under `model_inference`, for 
 "model_inference": {
   "requested": true,
   "disclaimer": "This section is model-derived inference, not HLTV fact data.",
+  "completeness_level": "usable",
+  "inference_permission": "numeric_allowed",
+  "missing_high_impact_fields": [],
+  "veto_hypothesis": [],
   "map_win_probabilities": [],
   "match_win_probability": null,
   "winner_lean": null,

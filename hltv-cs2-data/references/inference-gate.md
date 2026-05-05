@@ -28,6 +28,27 @@ For a match or team-vs-team probability request, treat these as high-impact fiel
 - Veto/map-order context when the user asks for map-level or BO3/BO5 probability.
 - Recent direct H2H or recent map rows, when requested by the user.
 
+## Required Inference Metadata
+
+Every `Model Inference` section must expose these fields before any conclusion:
+
+```json
+{
+  "completeness_level": "complete | usable | partial | blocked",
+  "inference_permission": "numeric_allowed | qualitative_only | blocked",
+  "missing_high_impact_fields": [],
+  "disclaimer": "This section is model-derived inference, not HLTV fact data."
+}
+```
+
+Chinese Markdown must say:
+
+```text
+以下为模型推理，不是 HLTV 事实数据。
+```
+
+If `inference_permission` is not `numeric_allowed`, do not output exact match or map percentages.
+
 ## Blocking Rules
 
 Block exact numeric inference if any of these is true:
@@ -95,6 +116,7 @@ If the gate passes and the user explicitly asked for judgment:
 - State that the inference is model-derived and not HLTV fact data.
 - Include `completeness_level`, key missing caveats, and whether veto is pre-match unknown.
 - Keep factual fields separate from inference fields.
+- Put Veto prediction only inside `Model Inference` as `veto_hypothesis`; factual `Veto / 比分` may contain only observed veto, map order, scores, or `unavailable`.
 
 ## API / Warehouse Override
 

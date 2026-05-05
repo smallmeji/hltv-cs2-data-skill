@@ -67,6 +67,34 @@ Rules:
 - If an inactive historical map appears in a direct HLTV fallback page, label it as `inactive_historical_map` and exclude it from current BO3/BO5 map-pool and veto analysis.
 - `特殊 Veto 变量` means unusual behavior inside the current active pool only. A map not present in the structured record must not be invented as a veto variable.
 
+## Judgment Output Contract
+
+When the user asks who is stronger, who has higher win rate, who is favored, or requests probabilities, the output must use a fixed fact-first structure. Do not produce a free-form "pre-match deep analysis report".
+
+Mandatory Chinese section order for judgment requests:
+
+1. `数据源执行记录`
+2. `数据状态 / 数据缺口`
+3. `比赛信息`
+4. `队伍与选手 rating`
+5. `地图池总览`
+6. `逐图详细分析`
+7. `特殊 Veto 变量`
+8. `给模型的决策输入`
+9. `JSON`
+10. `模型推理`
+
+Rules:
+
+- `数据源执行记录` is mandatory and must list manifest/API status and exact record paths.
+- `队伍与选手 rating` must show available annual ratings and event ratings. If event ratings, lineup, or confirmed starters are missing, show `缺失` and add warnings instead of omitting the section.
+- `Veto / 比分` is factual only: visible veto steps, map order, scores, or `赛前不可见`. Veto prediction must not appear there.
+- Any Veto prediction, winner lean, map-win probability, match-win percentage, or score guess belongs only under `模型推理`.
+- `模型推理` must start with `以下为模型推理，不是 HLTV 事实数据。`
+- `模型推理` must include `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
+- If the inference gate blocks numeric probabilities, do not output exact percentages. A qualitative direction is allowed only when the user explicitly asks for judgment.
+- `JSON` is mandatory for product/data outputs and must include `source_execution_log`, `metadata.completeness_level`, `warnings`, `decision_inputs`, and `model_inference` when inference is requested.
+
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: default standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
@@ -186,6 +214,7 @@ For match URL data packs, visible starters require rating lookup attempts:
 If the user requested judgment, append:
 
 - `model_inference`: clearly labeled model-derived interpretation, separated from facts, only after applying the inference gate.
+- `veto_hypothesis`: optional model-derived Veto prediction, only inside `model_inference`; never under factual `Veto / 比分`.
 
 ## Model Inference Gate
 

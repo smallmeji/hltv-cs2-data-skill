@@ -86,6 +86,31 @@ Active map-pool rule:
 - Do not add `Vertigo`, `Cache`, `Train`, or any other inactive/absent map to `地图池总览`, `逐图详细分析`, or `特殊 Veto 变量`.
 - `特殊 Veto 变量` is only for active maps that are in the structured record but have unusual sample / ban / no-data behavior.
 
+Judgment output contract:
+
+For prompts like `谁胜率高`, `who is favored`, `estimate win rate`, or `判断谁更强`, the output must use this order:
+
+1. `数据源执行记录`
+2. `数据状态 / 数据缺口`
+3. `比赛信息`
+4. `队伍与选手 rating`
+5. `地图池总览`
+6. `逐图详细分析`
+7. `特殊 Veto 变量`
+8. `给模型的决策输入`
+9. `JSON`
+10. `模型推理`
+
+Do not skip sections. If a section's source is missing, output the section with `缺失` / `未加载` and warning codes.
+
+`模型推理` rules:
+
+- Begin with `以下为模型推理，不是 HLTV 事实数据。`
+- Include `completeness_level`, `inference_permission`, and `missing_high_impact_fields`.
+- Place Veto prediction only here, as `veto_hypothesis`.
+- Place match/map probabilities only here, and only if `references/inference-gate.md` allows numeric inference.
+- If numeric inference is blocked, do not output ranges like `60-65%`; output qualitative direction only if requested.
+
 ## Event Ratings Query
 
 User input:
