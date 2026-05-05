@@ -11,7 +11,7 @@ metadata:
 
 `hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
 
-It prepares factual data packs from the default public static JSON source first, then uses configured API or direct HLTV pages as fallback, and organizes model-ready `Decision Inputs`. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
+It uses public HLTV pages first to locate and verify the match, teams, event, schedule, lineup, veto, and score context. After the match/team IDs are known, it uses configured warehouse/API data or the default public static JSON source to hydrate structured map, player, side, and history fields when direct HLTV stats pages are blocked or incomplete. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
 
 Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
 
@@ -20,7 +20,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 ## Source Policy
 
 - Default public static base URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data`. Default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-- Default source order for normal users: configured static/API source -> default public static source -> direct HLTV fallback.
+- Default resolution order for normal users: direct HLTV match/event/team pages first for match discovery and identity resolution -> configured warehouse/API if available for structured stats -> default public static source if direct HLTV or API/warehouse is blocked, cache-missed, 403/Cloudflare-challenged, missing the match, or missing high-impact stats.
 - Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
 - Preferred enhanced source: HLTV-derived static JSON data packs or central data warehouse/API, when configured or provided.
 - Original upstream source: HLTV pages only.
@@ -30,12 +30,13 @@ The skill must be usable by someone who only installs the skill and has no acces
 - Retrieve only data visible from HLTV pages during the session and label unavailable deeper fields as missing.
 - A central collector/API may improve completeness and backtesting later, but it is not required for normal skill use.
 - If Cloudflare or access controls block collection, fail safely and report freshness/missing data. Do not fabricate data or bypass protections.
+- Treat the default public static JSON source as a hosted HLTV-derived cache/fallback, not as the original source of truth. When both direct HLTV and static/cache data are available, preserve field-level source labels.
 
 ## Operating Modes
 
-- **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
-- **Static JSON mode**: default distribution mode for external users and hosted data packs. Unless the user provides another source, read `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` first, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, or `/matches/<matchId>/data-pack.json`, before attempting live HLTV access.
-- **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
+- **Lightweight / Direct HLTV mode**: default standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
+- **Static JSON fallback mode**: public fallback mode for external users and hosted data packs. When direct HLTV cannot locate the match, is blocked, or lacks structured deep stats, read `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, or `/matches/<matchId>/data-pack.json`.
+- **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. After resolving match/team identity from HLTV or user-provided IDs, call the API for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
 
@@ -60,11 +61,12 @@ The skill must be usable by someone who only installs the skill and has no acces
    - HLTV collector requirements: `references/collector-contract.md`.
    - Backtest rules: `references/backtest-mode.md`.
    - Query examples: `references/query-workflow.md`.
-3. Gather data from the best available source:
-   - If API base URL and key are configured, call API mode first.
-   - If `HLTV_CS2_STATIC_BASE_URL`, a static `manifest.json`, or a user-provided static data-pack URL is available, read that static JSON source next.
-   - If no explicit static source is provided, use the default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-   - If static/API data is unavailable or missing the requested record, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
+3. Resolve the match and teams before hydrating deep data:
+   - If the user provides an HLTV match URL, open/read that HLTV match page first and extract `hltvMatchId`, teams, event, format, schedule, status, lineup/veto/score if visible, and `eventId` when possible.
+   - If the user gives a natural-language query such as `PGL 上 Aurora 和 Heroic 谁胜率高`, search/read HLTV match/event/result/upcoming pages first to find the relevant match page. Do not start from static JSON unless HLTV cannot locate the match.
+   - After a match page or canonical team IDs are resolved, hydrate structured stats from the configured warehouse/API when available; otherwise try direct HLTV current-year stats pages.
+   - If the match page cannot be found/read, or if direct HLTV/API stats return `403`, Cloudflare/challenge, cache miss, inaccessible deep stats, or miss high-impact fields, add `direct_hltv_failed_or_incomplete` and use the default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+   - If static fallback is reachable, merge or replace missing fields from `/matches/<matchId>/data-pack.json`, `/teams/<hltvTeamId>/*.json`, and `/events/<eventId>/player-ratings.json` as available. Mark field-level source as `static_fallback`.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
 4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.
 5. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.

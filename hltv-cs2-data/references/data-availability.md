@@ -9,7 +9,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Lightweight direct | None beyond the host model's normal web/page-reading/search tools | Best-effort public data pack |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
-| Static JSON | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Stable public distribution without live HLTV reads |
+| Static JSON | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Stable fallback/cache when live HLTV is blocked or deep stats cannot be read |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide
@@ -30,7 +30,7 @@ This reference defines which data can be expected from each access mode. It prev
 
 Lightweight direct data can be useful but incomplete. If current-year map summary or player ratings cannot be loaded, the data pack may still be emitted, but exact numeric model inference must be blocked by `references/inference-gate.md`.
 
-For normal public users, Static JSON should be attempted before Lightweight Direct. Lightweight Direct is the fallback when the default static source is unreachable or lacks the requested match/team.
+For normal public users, Lightweight Direct should be attempted first for match discovery and identity resolution. Static JSON is the fallback/cache when HLTV cannot locate the match, is blocked, or lacks high-impact structured stats.
 
 ### Detailed Matrix
 
@@ -70,17 +70,17 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 - Lightweight direct mode must not ask public users to run a local browser, CDP, Playwright, or scraper.
 - Market prices, rankings, news snippets, and search summaries are not substitutes for missing current-year map/rating data when producing numeric probabilities.
 
-## Recommended Fallback Order
+## Recommended Resolution And Fallback Order
 
 For a match URL:
 
-1. If API is configured, read it first.
-2. Read configured static JSON when provided; otherwise read the default public static JSON source.
-3. Read match page facts only when no static/API pack exists.
-4. Resolve team IDs, slugs, and event ID.
-5. Attempt team page roster/rank/period rating.
-6. Attempt current-year team map summary stats.
-7. Attempt current-year team player stats.
-8. Attempt event player ratings if event ID is known.
-9. If any deep stats page fails, output the known canonical URL and a warning code.
-10. If full coverage is required, recommend static JSON/API/warehouse mode.
+1. Read the HLTV match page first when a match URL is provided.
+2. If the user only provides event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page.
+3. Resolve match ID, team IDs, slugs, event ID, format, time, status, lineup/veto/score when visible.
+4. If API/warehouse is configured, use it to hydrate structured fields after identity resolution.
+5. Otherwise attempt direct HLTV current-year team map summary stats.
+6. Attempt current-year team player stats.
+7. Attempt event player ratings if event ID is known.
+8. If direct HLTV cannot locate the match or any high-impact stats page fails, read configured static JSON or the default public static manifest.
+9. Merge static/cache fields into the data pack with `source=static_fallback`; preserve direct HLTV fields with `source=direct_hltv`.
+10. If full coverage is required and static/API is still missing fields, recommend API/warehouse mode.

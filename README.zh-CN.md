@@ -34,13 +34,13 @@
 - 本地数据库或私人数据依赖。
 - 在纯 HLTV 页面模式下保证完整历史快照。
 
-普通公开用户默认不需要配置数据源。skill 会先读取默认公开静态 JSON manifest：
+普通公开用户默认不需要配置数据源。skill 会先用 HLTV 页面定位和确认比赛、队伍、赛事。若 HLTV 被 Cloudflare / cache miss 拦住，或者深层 stats 页面读不到，再回退到默认公开静态 JSON manifest：
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-如果默认静态源不可访问，或没有导出用户请求的队伍 / 比赛，才回退到当前会话里可访问的公开 HLTV 页面。API / 数据仓可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
+如果 HLTV 找到了比赛页，静态源用于补全地图详情、CT/T、选手 rating、导出的 match pack 等结构化字段。如果 HLTV 找不到或读不到比赛页，才用静态 manifest 反查已导出的比赛 / 队伍记录。API / 数据仓可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
 
 ## 产品分层
 
@@ -48,11 +48,11 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 | 层级 | 适合场景 | 预期能力 |
 |:--|:--|:--|
-| 静态 JSON 版 | 给 Claude/GPT/用户模型共享数据包 | 默认公开路径。模型直接读我们导出的 JSON，不需要实时访问 HLTV，能避开 CF 和页面读取失败。 |
-| 轻量版 | 单场、临时、公开 HLTV 查询 | 当静态/API 数据缺失时使用。适合读取比赛基础信息、阵容、H2H、比赛页可见地图概览，以及尽力读取 stats 页面。深层 stats 页失败时必须标缺。 |
+| 轻量版 | 比赛定位、单场临时公开 HLTV 查询 | 默认第一步。适合读取比赛基础信息、阵容、H2H、比赛页可见地图概览，以及尽力读取 stats 页面。深层 stats 页失败时必须标缺。 |
+| 静态 JSON 兜底版 | 给 Claude/GPT/用户模型共享数据包 | 公开 fallback/cache 路径。HLTV 被 CF 或页面读取失败时，模型读我们导出的 JSON，补全队伍、比赛、赛事、地图详情和 compare pack。 |
 | API 版 | 可重复分析、批量使用、正式产品 | 推荐用于完整年度数据、CT/T 警匪胜率、精确历史回测、阵容/veto/赛果快照、批量查询和稳定 freshness。 |
 
-轻量版足够应对一次性的公开 HLTV 数据查询。静态 JSON 或 API 版更适合需要重复分析、CT/T 数据、历史回测和正式产品化使用的场景。
+轻量版足够应对比赛定位和一次性的公开 HLTV 数据查询。静态 JSON 或 API 版更适合需要重复分析、CT/T 数据、历史回测和正式产品化使用的场景。
 
 轻量版依赖调用模型自己的网页读取能力。Claude、ChatGPT 或其他模型如果读不到 HLTV 深层 stats 页面，这是正常限制。此时 skill 应标记 `core_data_insufficient_for_numeric_inference`，并禁止输出具体胜率百分比。
 
@@ -60,7 +60,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 `hltv-cs2-data` 支持三种运行方式。
 
-### 1. 静态 JSON 模式
+### 1. 先 HLTV，后静态 JSON 兜底
 
 这是默认公开模式。别人安装 skill 后，可以直接自然语言提问，不需要每次写数据地址。
 
@@ -70,7 +70,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
 ```
 
-默认先读取 manifest：
+skill 应先去 HLTV 定位比赛页或队伍页。例如 `PGL 上 Aurora 和 Heroic 谁胜率高`，要先搜索 / 读取 HLTV 的 match、event、results、upcoming 页面，找到确切比赛页。若 HLTV 被 CF、cache miss、读不到比赛页或缺少关键 stats，再读取默认 manifest：
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
@@ -102,7 +102,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 ```
 
-在这个模式下，skill 应先读静态 JSON，再考虑 live HLTV 页面。
+在这个模式下，skill 应用 live HLTV 做比赛定位和可见事实确认，再用静态 JSON 作为缺失结构化字段的兜底数据源。
 
 如果用户直接问“谁胜率高 / 谁更强 / 哪边更占优”，skill 仍然先输出事实数据包。只要静态数据里有地图详情，输出必须包含：
 

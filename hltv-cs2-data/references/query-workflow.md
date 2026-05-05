@@ -18,14 +18,17 @@ or:
 
 Workflow:
 
-1. If API is configured, use it first. Otherwise resolve aliases from the configured or default public static JSON source first.
-2. Fetch current or `as_of_date` team snapshots if available.
-3. Fetch map stats for the requested tier/filter if available.
-4. Fetch player ratings and lineup if a match is specified and the source is reachable.
-5. Return Markdown + JSON factual data pack.
-6. Build `Decision Inputs` from available facts.
-7. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
-8. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+1. If the prompt includes an event context, such as `PGL 上 Aurora 和 Heroic`, search/read HLTV event, upcoming, result, and match pages first to locate the exact match page.
+2. If no exact match page is implied, resolve both teams from HLTV team pages first.
+3. After match/team IDs are known, hydrate structured stats from configured API/warehouse if available.
+4. If no API/warehouse is configured or it misses fields, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages.
+5. If HLTV is blocked/incomplete or the match page cannot be found, use the default public static manifest to resolve teams/matches and fill missing structured fields.
+6. Fetch map stats for the requested tier/filter if available.
+7. Fetch player ratings and lineup if a match is specified and the source is reachable.
+8. Return Markdown + JSON factual data pack.
+9. Build `Decision Inputs` from available facts.
+10. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
+11. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Match URL Query
 
@@ -38,9 +41,9 @@ https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1
 Workflow:
 
 1. Extract `hltvMatchId`.
-2. Read API data-pack first when configured. Otherwise try the configured or default public static JSON file `/matches/<hltvMatchId>/data-pack.json`.
-3. If the static match pack is missing, read the HLTV match page directly as fallback and add `direct_hltv_fallback`.
-4. Resolve event, teams, format, schedule.
+2. Read the HLTV match page first. Resolve event, teams, format, schedule, status, lineup/veto/score when visible, and `eventId` when possible.
+3. Read API data-pack when configured to hydrate structured fields.
+4. If no API is configured, or if API/direct HLTV lacks high-impact fields, try the configured or default public static JSON file `/matches/<hltvMatchId>/data-pack.json` and mark merged fields as `static_fallback`.
 5. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
 6. Fetch lineups from the match page or static/API pack when visible/available.
 7. Always attempt to fetch player ratings for visible starters:
@@ -49,8 +52,8 @@ Workflow:
    - Annual rating from HLTV team player stats for the current calendar year, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. If `as_of_date` is provided, use that date's calendar year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
-8. Fetch yearly team map stats from static/API first. If unavailable, use HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. This is the primary source for the `地图池` section.
-9. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载`.
+8. Fetch yearly team map stats from HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. If direct HLTV fails, hydrate the same fields from static/API.
+9. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载` unless the map detail page was explicitly loaded.
 10. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
 11. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
 12. Include veto/scores only if available and visible for the requested mode.

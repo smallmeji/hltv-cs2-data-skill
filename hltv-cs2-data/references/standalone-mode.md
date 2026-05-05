@@ -1,12 +1,12 @@
 # Standalone Public Mode
 
-Standalone public mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, local browser, CDP session, or Playwright session. It uses the default public static JSON source first, then falls back to direct HLTV page reading only when a record is missing.
+Standalone public mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, local browser, CDP session, or Playwright session. It uses public HLTV pages first for match discovery and identity resolution, then uses the default public static JSON source as fallback/cache when HLTV is blocked or lacks structured deep stats.
 
 ## Goal
 
-Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from the default public static JSON source. If the static source does not contain the requested record, use public HLTV pages through the host model's normal web/page-reading/search capabilities as a fallback.
+Given a natural-language request, a match URL, or two team names, first locate the relevant HLTV match/team/event page when possible. Then produce the best available strategy-neutral HLTV data pack by combining direct HLTV facts with configured API/warehouse data or the default public static JSON fallback.
 
-This is the default public mode. It must be useful, but honest about missing data. If the default static source is stale/missing and the host model cannot access a deep HLTV stats page, mark that field as unavailable instead of asking the user to run a local browser.
+This is the default public mode. It must be useful, but honest about missing data. If HLTV is blocked by Cloudflare/cache miss, or the default static source is stale/missing, mark that field as unavailable instead of asking the user to run a local browser.
 
 ## Default Public Static Source
 
@@ -41,15 +41,15 @@ Expected files include:
 /events/<eventId>/player-ratings.json
 ```
 
-If this source cannot be read, add `default_static_source_unavailable` and continue with direct HLTV fallback.
+If this source cannot be read, add `default_static_source_unavailable` and continue with direct HLTV partial data only.
 
-Static JSON mode is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV fallback is often enough for match basics and simple context, but not enough for confident numeric probabilities when HLTV blocks yearly stats pages. In that case, output the partial data pack and missing fields, but do not produce exact win-rate percentages.
+Static JSON mode is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV is the first match-discovery source and is often enough for match basics and simple context, but not enough for confident numeric probabilities when HLTV blocks yearly stats pages. In that case, use static fallback when available; otherwise output the partial data pack and missing fields, but do not produce exact win-rate percentages.
 
-If API credentials are configured, API mode can be tried first. Otherwise use the default public static JSON source first. Direct HLTV mode is the public lightweight fallback.
+If API credentials are configured, API mode can be used after HLTV match/team identity is resolved. Otherwise use direct HLTV first for match discovery and the default public static JSON source as fallback/cache for missing structured fields.
 
 Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
 
-If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source instead of the default public static source. Static JSON is preferred for Claude/GPT-style users because it avoids Cloudflare failures on HLTV stats pages.
+If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source instead of the default public static source when fallback/cache hydration is needed. Static JSON is preferred for deep stats hydration in Claude/GPT-style environments because it avoids Cloudflare failures on HLTV stats pages.
 
 ## Accepted Inputs
 
@@ -76,12 +76,14 @@ The user should not need to provide API query parameters.
 
 ## Query Resolution Order
 
-1. Resolve the default or user-provided static manifest first.
-2. If input contains an HLTV match URL, extract `hltvMatchId` and attempt `/matches/<matchId>/data-pack.json`.
-3. If input contains two team names, resolve aliases from `/teams/index.json` or `/teams/top.json` before trying live HLTV search.
-4. If a map is mentioned, restrict or highlight that map.
-5. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
-6. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
+1. If input contains an HLTV match URL, read that HLTV page first and extract `hltvMatchId`, team IDs/slugs, event, format, time, status, lineup/veto/score if visible, and `eventId` when possible.
+2. If input is natural language with event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page. Example: `PGL 上 Aurora 和 Heroic 谁胜率高` should first find the PGL Aurora vs Heroic match on HLTV.
+3. Once the match page or canonical team IDs are known, hydrate structured stats from configured API/warehouse if available.
+4. If no API/warehouse is configured, attempt direct HLTV current-year stats pages for map summary, annual player rating, and event rating.
+5. If direct HLTV is blocked/incomplete or the match page cannot be located, read the default or user-provided static manifest and resolve `/matches/<matchId>/data-pack.json`, `/teams/index.json`, `/teams/<id>/*.json`, and `/events/<eventId>/player-ratings.json`.
+6. If a map is mentioned, restrict or highlight that map.
+7. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
+8. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
 
 ## Direct HLTV Data Sources
 
