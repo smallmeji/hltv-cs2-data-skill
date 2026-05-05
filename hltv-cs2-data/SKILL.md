@@ -11,7 +11,7 @@ metadata:
 
 `hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
 
-It prepares factual data packs directly from HLTV pages by default, then organizes model-ready `Decision Inputs`. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
+It prepares factual data packs from the default public static JSON source first, then uses configured API or direct HLTV pages as fallback, and organizes model-ready `Decision Inputs`. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
 
 Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
 
@@ -19,7 +19,8 @@ The skill must be usable by someone who only installs the skill and has no acces
 
 ## Source Policy
 
-- Default source: direct HLTV pages and public HLTV stats pages.
+- Default public static source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`.
+- Default source order for normal users: configured static/API source -> default public static source -> direct HLTV fallback.
 - Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
 - Preferred enhanced source: HLTV-derived static JSON data packs or central data warehouse/API, when configured or provided.
 - Original upstream source: HLTV pages only.
@@ -33,7 +34,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
-- **Static JSON mode**: distribution mode for external users and hosted data packs. Read standardized JSON files such as `/latest/manifest.json`, `/latest/teams/<hltvTeamId>/summary.json`, or `/latest/matches/<matchId>/data-pack.json` before attempting live HLTV access.
+- **Static JSON mode**: default distribution mode for external users and hosted data packs. Unless the user provides another source, read standardized JSON files from `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`, such as `/manifest.json`, `/teams/<hltvTeamId>/summary.json`, or `/matches/<matchId>/data-pack.json`, before attempting live HLTV access.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
@@ -60,9 +61,10 @@ The skill must be usable by someone who only installs the skill and has no acces
    - Backtest rules: `references/backtest-mode.md`.
    - Query examples: `references/query-workflow.md`.
 3. Gather data from the best available source:
-   - If `HLTV_CS2_STATIC_BASE_URL`, a static `manifest.json`, or a user-provided static data-pack URL is available, read static JSON mode first.
    - If API base URL and key are configured, call API mode first.
-   - If API is unavailable or unconfigured, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
+   - If `HLTV_CS2_STATIC_BASE_URL`, a static `manifest.json`, or a user-provided static data-pack URL is available, read that static JSON source next.
+   - If no explicit static source is provided, use the default public static source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`.
+   - If static/API data is unavailable or missing the requested record, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
 4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.
 5. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
@@ -146,6 +148,15 @@ Lightweight direct mode under Cloudflare failure is usually `partial` or `blocke
 Use this skill for prompts like:
 
 ```text
+用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
+```
+
+```text
+用 hltv-cs2-data 查这场比赛的数据：
+https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
+```
+
+```text
 Use hltv-cs2-data to fetch a FaZe + FURIA data pack. Output Markdown and JSON.
 ```
 
@@ -161,6 +172,8 @@ Backtest match 2393335 as of 2026-04-30 22:30 Asia/Shanghai. Only return data vi
 If the user asks which team has the higher win rate, provide the relevant data pack first. If the user explicitly asks this model to judge after collecting data, append `Model Inference`.
 
 Default user-facing input can be simple natural language. Do not require users to know API parameters.
+
+For normal public users, do not ask for a Static Base URL unless the default public static source is unreachable or the user wants a different dataset.
 
 ## Boundaries
 

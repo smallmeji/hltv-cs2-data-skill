@@ -9,7 +9,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Lightweight direct | None beyond the host model's normal web/page-reading/search tools | Best-effort public data pack |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
-| Static JSON | Hosted or local exported JSON data packs | Stable public distribution without live HLTV reads |
+| Static JSON | Hosted or local exported JSON data packs. Default public source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` | Stable public distribution without live HLTV reads |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide
@@ -29,6 +29,8 @@ This reference defines which data can be expected from each access mode. It prev
 | Historical backtest snapshots | No; API / warehouse enhanced mode only |
 
 Lightweight direct data can be useful but incomplete. If current-year map summary or player ratings cannot be loaded, the data pack may still be emitted, but exact numeric model inference must be blocked by `references/inference-gate.md`.
+
+For normal public users, Static JSON should be attempted before Lightweight Direct. Lightweight Direct is the fallback when the default static source is unreachable or lacks the requested match/team.
 
 ### Detailed Matrix
 
@@ -51,6 +53,8 @@ Lightweight direct data can be useful but incomplete. If current-year map summar
 
 When lightweight direct mode cannot retrieve a deep stats page, use field-level warnings instead of treating the data as absent:
 
+- `default_static_source_unavailable`: the default public static JSON source could not be read.
+- `static_record_not_found`: the default or configured static source is reachable, but the requested team/match/event record was not exported.
 - `fetch_failed_cache_miss`: the host model/page reader did not return a readable page snapshot.
 - `fetch_failed_cf_challenge`: a direct HTTP request or page reader was blocked by Cloudflare/access challenge.
 - `stats_page_unavailable_in_direct_mode`: the URL is known, but the direct mode cannot retrieve the table.
@@ -70,12 +74,13 @@ When lightweight direct mode cannot retrieve a deep stats page, use field-level 
 
 For a match URL:
 
-1. If a static JSON manifest/API is configured, read it first.
-2. Read match page facts only when no static/API pack exists.
-3. Resolve team IDs, slugs, and event ID.
-4. Attempt team page roster/rank/period rating.
-5. Attempt current-year team map summary stats.
-6. Attempt current-year team player stats.
-7. Attempt event player ratings if event ID is known.
-8. If any deep stats page fails, output the known canonical URL and a warning code.
-9. If full coverage is required, recommend static JSON/API/warehouse mode.
+1. If API is configured, read it first.
+2. Read configured static JSON when provided; otherwise read the default public static JSON source.
+3. Read match page facts only when no static/API pack exists.
+4. Resolve team IDs, slugs, and event ID.
+5. Attempt team page roster/rank/period rating.
+6. Attempt current-year team map summary stats.
+7. Attempt current-year team player stats.
+8. Attempt event player ratings if event ID is known.
+9. If any deep stats page fails, output the known canonical URL and a warning code.
+10. If full coverage is required, recommend static JSON/API/warehouse mode.

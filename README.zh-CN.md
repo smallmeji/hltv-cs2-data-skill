@@ -34,7 +34,13 @@
 - 本地数据库或私人数据依赖。
 - 在纯 HLTV 页面模式下保证完整历史快照。
 
-默认轻量模式只读取当前会话里可访问的公开 HLTV 页面。如果配置了维护好的静态 JSON 数据包、数据 API / 数据仓，可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
+普通公开用户默认不需要配置数据源。skill 会先读取默认公开静态 JSON 数据源：
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+```
+
+如果默认静态源不可访问，或没有导出用户请求的队伍 / 比赛，才回退到当前会话里可访问的公开 HLTV 页面。API / 数据仓可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
 
 ## 产品分层
 
@@ -42,21 +48,57 @@
 
 | 层级 | 适合场景 | 预期能力 |
 |:--|:--|:--|
-| 轻量版 | 单场、临时、公开 HLTV 查询 | 安装后即可使用。适合读取比赛基础信息、阵容、H2H、比赛页可见地图概览，以及尽力读取 stats 页面。深层 stats 页失败时必须标缺。 |
-| 静态 JSON 版 | 给 Claude/GPT/用户模型共享数据包 | 推荐作为对外分发路径。模型直接读我们导出的 JSON，不需要实时访问 HLTV，能避开 CF 和页面读取失败。 |
+| 静态 JSON 版 | 给 Claude/GPT/用户模型共享数据包 | 默认公开路径。模型直接读我们导出的 JSON，不需要实时访问 HLTV，能避开 CF 和页面读取失败。 |
+| 轻量版 | 单场、临时、公开 HLTV 查询 | 当静态/API 数据缺失时使用。适合读取比赛基础信息、阵容、H2H、比赛页可见地图概览，以及尽力读取 stats 页面。深层 stats 页失败时必须标缺。 |
 | API 版 | 可重复分析、批量使用、正式产品 | 推荐用于完整年度数据、CT/T 警匪胜率、精确历史回测、阵容/veto/赛果快照、批量查询和稳定 freshness。 |
 
 轻量版足够应对一次性的公开 HLTV 数据查询。静态 JSON 或 API 版更适合需要重复分析、CT/T 数据、历史回测和正式产品化使用的场景。
 
 轻量版依赖调用模型自己的网页读取能力。Claude、ChatGPT 或其他模型如果读不到 HLTV 深层 stats 页面，这是正常限制。此时 skill 应标记 `core_data_insufficient_for_numeric_inference`，并禁止输出具体胜率百分比。
 
-## 两种使用形态
+## 使用形态
 
-`hltv-cs2-data` 支持两种运行方式。
+`hltv-cs2-data` 支持三种运行方式。
 
-### 1. 轻量版 / 直接 HLTV 模式
+### 1. 静态 JSON 模式
 
-适合只想安装 skill，然后直接让模型查看公开 HLTV 页面的人。
+这是默认公开模式。别人安装 skill 后，可以直接自然语言提问，不需要每次写数据地址。
+
+示例：
+
+```text
+用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
+```
+
+默认数据源：
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+```
+
+示例结构：
+
+```text
+/manifest.json
+/teams/index.json
+/teams/6667/summary.json
+/teams/6667/maps-overall.json
+/teams/6667/map-details-overall.json
+/matches/2393346/data-pack.json
+/events/8250/player-ratings.json
+```
+
+如果用户想使用自己的静态数据源，可以配置：
+
+```text
+HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
+```
+
+在这个模式下，skill 应先读静态 JSON，再考虑 live HLTV 页面。
+
+### 2. 轻量版 / 直接 HLTV 模式
+
+适合默认静态源缺数据，或者用户只想让模型查看公开 HLTV 页面的时候。
 
 - 不需要 API key。
 - 不需要用户自己维护数据库。
@@ -64,30 +106,6 @@
 - 模型只用自身环境可用的网页读取 / 搜索能力收集 HLTV 数据。
 - 历史回测如果没有精确快照，必须标记为 `reconstructed`。
 - 缺失字段必须明确写出来，不能猜。
-
-这是最容易上手的方式：别人拿到这个 skill 后，可以直接用比赛链接或队伍名发起查询。
-
-### 2. 静态 JSON 模式
-
-适合已经有维护好的静态数据导出。
-
-示例结构：
-
-```text
-/latest/manifest.json
-/latest/teams/6667/summary.json
-/latest/matches/2393346/data-pack.json
-/latest/events/8250/player-ratings.json
-/latest/compare/g2-vs-faze.json
-```
-
-配置：
-
-```text
-HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
-```
-
-在这个模式下，skill 应先读静态 JSON，再考虑 live HLTV 页面。
 
 ### 3. Pro / API 模式
 

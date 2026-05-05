@@ -1,20 +1,47 @@
-# Lightweight / Direct HLTV Mode
+# Standalone Public Mode
 
-Direct HLTV mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, central API, local browser, CDP session, or Playwright session.
+Standalone public mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, local browser, CDP session, or Playwright session. It uses the default public static JSON source first, then falls back to direct HLTV page reading only when a record is missing.
 
 ## Goal
 
-Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from public HLTV pages using only the host model's normal web/page-reading/search capabilities.
+Given a natural-language request, a match URL, or two team names, produce the best available strategy-neutral HLTV data pack from the default public static JSON source. If the static source does not contain the requested record, use public HLTV pages through the host model's normal web/page-reading/search capabilities as a fallback.
 
-This is the default mode. It must be useful, but honest about missing data. If the host model cannot access a deep HLTV stats page, mark that field as unavailable instead of asking the user to run a local browser.
+This is the default public mode. It must be useful, but honest about missing data. If the default static source is stale/missing and the host model cannot access a deep HLTV stats page, mark that field as unavailable instead of asking the user to run a local browser.
 
-Direct mode is often enough for match basics and simple context. It is not enough for confident numeric probabilities when HLTV blocks the yearly stats pages. In that case, output the partial data pack and missing fields, but do not produce exact win-rate percentages.
+## Default Public Static Source
 
-If static JSON data packs or API credentials are configured, those should be tried first. Direct HLTV mode is the public lightweight fallback.
+Use this base URL unless the user provides another static source or API source:
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+```
+
+Expected files include:
+
+```text
+/manifest.json
+/teams/index.json
+/teams/top.json
+/teams/<hltvTeamId>/summary.json
+/teams/<hltvTeamId>/maps-overall.json
+/teams/<hltvTeamId>/maps-lan.json
+/teams/<hltvTeamId>/map-details-overall.json
+/teams/<hltvTeamId>/map-details-lan.json
+/teams/<hltvTeamId>/players.json
+/calendar/upcoming.json
+/matches/<matchId>/data-pack.json
+/events/<eventId>/player-ratings.json
+```
+
+If this source cannot be read, add `default_static_source_unavailable` and continue with direct HLTV fallback.
+
+Static JSON mode is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV fallback is often enough for match basics and simple context, but not enough for confident numeric probabilities when HLTV blocks yearly stats pages. In that case, output the partial data pack and missing fields, but do not produce exact win-rate percentages.
+
+If API credentials are configured, API mode can be tried first. Otherwise use the default public static JSON source first. Direct HLTV mode is the public lightweight fallback.
 
 Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
 
-If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source before live HLTV pages. Static JSON is preferred for Claude/GPT-style users because it avoids Cloudflare failures on HLTV stats pages.
+If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source instead of the default public static source. Static JSON is preferred for Claude/GPT-style users because it avoids Cloudflare failures on HLTV stats pages.
 
 ## Accepted Inputs
 
@@ -33,15 +60,20 @@ Help me look at NAVI and G2 data.
 Compare NAVI and G2 on Mirage and Ancient, output JSON too.
 ```
 
+```text
+用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
+```
+
 The user should not need to provide API query parameters.
 
 ## Query Resolution Order
 
-1. If input contains an HLTV match URL, extract `hltvMatchId` and parse team names from the URL/page.
-2. If input contains two team names, resolve them by HLTV search, ranking page, or team pages.
-3. If a map is mentioned, restrict or highlight that map.
-4. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
-5. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
+1. Resolve the default or user-provided static manifest first.
+2. If input contains an HLTV match URL, extract `hltvMatchId` and attempt `/matches/<matchId>/data-pack.json`.
+3. If input contains two team names, resolve aliases from `/teams/index.json` or `/teams/top.json` before trying live HLTV search.
+4. If a map is mentioned, restrict or highlight that map.
+5. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
+6. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
 
 ## Direct HLTV Data Sources
 

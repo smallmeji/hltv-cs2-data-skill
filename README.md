@@ -36,16 +36,22 @@ This repository does not provide:
 - A local database or private data dependency.
 - Guaranteed complete historical snapshots in direct HLTV mode.
 
-The default lightweight mode works from public HLTV pages available in the current session. Maintained static JSON data packs or API/warehouse mode can provide richer and more reproducible snapshots when configured, but they are optional.
+For normal public use, the skill first reads the default public static JSON source:
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+```
+
+If that source is unreachable or does not contain the requested record, the skill falls back to public HLTV pages available in the current session. API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
 
 ## Product Tiers
 
-The skill is useful in two tiers:
+The skill is useful in three tiers:
 
 | Tier | Best For | What To Expect |
 |:--|:--|:--|
-| Lightweight mode | One-off public HLTV lookups | Works immediately after installation. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
-| Static JSON mode | Shared data packs for Claude/GPT/user models | Preferred distribution path when hosted JSON exists. Avoids live HLTV/Cloudflare failures and gives stable team, match, event, and compare packs. |
+| Static JSON mode | Shared data packs for Claude/GPT/user models | Default public path. Avoids live HLTV/Cloudflare failures and gives stable team, match, event, and compare packs. |
+| Lightweight mode | One-off public HLTV lookups | Fallback when static/API data is missing. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
 | API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
 
 Lightweight mode is enough for one-off public HLTV lookups. Static JSON or API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
@@ -54,9 +60,43 @@ In lightweight mode, the host model's web reader may fail on HLTV stats pages. T
 
 ## Usage Modes
 
-`hltv-cs2-data` supports two operating modes.
+`hltv-cs2-data` supports three operating modes.
 
-### 1. Lightweight / Direct HLTV Mode
+### 1. Static JSON Mode
+
+This is the default public mode. Users can ask natural questions without providing configuration:
+
+```text
+Use hltv-cs2-data to compare FaZe and G2. Who has the higher win rate?
+```
+
+The skill should try the default source first:
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+```
+
+Example layout:
+
+```text
+/manifest.json
+/teams/index.json
+/teams/6667/summary.json
+/teams/6667/maps-overall.json
+/teams/6667/map-details-overall.json
+/matches/2393346/data-pack.json
+/events/8250/player-ratings.json
+```
+
+To use another static source, configure:
+
+```text
+HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
+```
+
+In this mode, the skill should read static JSON before trying live HLTV pages.
+
+### 2. Lightweight / Direct HLTV Mode
 
 Use this mode when you only want the skill instructions and public HLTV pages.
 
@@ -66,30 +106,6 @@ Use this mode when you only want the skill instructions and public HLTV pages.
 - The model gathers available data from HLTV pages through the host model's normal web/page-reading/search capability.
 - Historical backtests are marked as `reconstructed` unless an exact snapshot is available.
 - Missing fields must be reported explicitly instead of being guessed.
-
-This is the easiest mode for users who want to install the skill and start asking for match or team data immediately.
-
-### 2. Static JSON Mode
-
-Use this mode when a maintained static data export is available.
-
-Example layout:
-
-```text
-/latest/manifest.json
-/latest/teams/6667/summary.json
-/latest/matches/2393346/data-pack.json
-/latest/events/8250/player-ratings.json
-/latest/compare/g2-vs-faze.json
-```
-
-Configure:
-
-```text
-HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
-```
-
-In this mode, the skill should read static JSON before trying live HLTV pages.
 
 ### 3. Pro / API Mode
 

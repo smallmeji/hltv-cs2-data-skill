@@ -10,9 +10,15 @@ User input:
 faze + 黑豹
 ```
 
+or:
+
+```text
+用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
+```
+
 Workflow:
 
-1. If static JSON/API is configured, resolve aliases from that source first; otherwise resolve aliases using HLTV pages/search.
+1. If API is configured, use it first. Otherwise resolve aliases from the configured or default public static JSON source first.
 2. Fetch current or `as_of_date` team snapshots if available.
 3. Fetch map stats for the requested tier/filter if available.
 4. Fetch player ratings and lineup if a match is specified and the source is reachable.
@@ -32,23 +38,24 @@ https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1
 Workflow:
 
 1. Extract `hltvMatchId`.
-2. Read static JSON/API data-pack first when available; otherwise read the HLTV match page directly.
-3. Resolve event, teams, format, schedule.
-4. Resolve both canonical team IDs and slugs from match-page team links or team pages. Do not stop at match-page summary data.
-5. Fetch lineups from the match page when visible.
-6. Always attempt to fetch player ratings for visible starters:
+2. Read API data-pack first when configured. Otherwise try the configured or default public static JSON file `/matches/<hltvMatchId>/data-pack.json`.
+3. If the static match pack is missing, read the HLTV match page directly as fallback and add `direct_hltv_fallback`.
+4. Resolve event, teams, format, schedule.
+5. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
+6. Fetch lineups from the match page or static/API pack when visible/available.
+7. Always attempt to fetch player ratings for visible starters:
    - Extract or resolve `eventId` from the match page/event link whenever possible.
    - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
    - Annual rating from HLTV team player stats for the current calendar year, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. If `as_of_date` is provided, use that date's calendar year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
-7. Fetch yearly team map stats from HLTV team stats pages using the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. This is the primary source for the `地图池` section.
-8. In lightweight mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载`. CT/T side win rates require visiting each map detail page and should be collected asynchronously in Pro/API mode.
-9. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
-10. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
-11. Include veto/scores only if available and visible for the requested mode.
-12. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
-13. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
+8. Fetch yearly team map stats from static/API first. If unavailable, use HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. This is the primary source for the `地图池` section.
+9. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载`.
+10. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
+11. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
+12. Include veto/scores only if available and visible for the requested mode.
+13. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+14. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
 
 ## Event Ratings Query
 
