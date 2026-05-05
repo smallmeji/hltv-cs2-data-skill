@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:30:44.537Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 5995,
+  "players": [
+    {
+      "hltv_team_id": 5995,
+      "player_name": "HeavyGod",
+      "rating_type": "annual",
+      "rating2": "1.150",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:53.000Z"
+    },
+    {
+      "hltv_team_id": 5995,
+      "player_name": "MATYS",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:53.000Z"
+    },
+    {
+      "hltv_team_id": 5995,
+      "player_name": "NertZ",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:53.000Z"
+    },
+    {
+      "hltv_team_id": 5995,
+      "player_name": "SunPayus",
+      "rating_type": "annual",
+      "rating2": "1.060",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:53.000Z"
+    },
+    {
+      "hltv_team_id": 5995,
+      "player_name": "huNter-",
+      "rating_type": "annual",
+      "rating2": "1.010",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:53.000Z"
+    }
+  ]
+}

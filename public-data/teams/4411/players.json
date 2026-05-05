@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:31:08.261Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 4411,
+  "players": [
+    {
+      "hltv_team_id": 4411,
+      "player_name": "xKacpersky",
+      "rating_type": "annual",
+      "rating2": "1.170",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:13.000Z"
+    },
+    {
+      "hltv_team_id": 4411,
+      "player_name": "stavn",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:13.000Z"
+    },
+    {
+      "hltv_team_id": 4411,
+      "player_name": "cairne",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:13.000Z"
+    },
+    {
+      "hltv_team_id": 4411,
+      "player_name": "sjuush",
+      "rating_type": "annual",
+      "rating2": "0.990",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:13.000Z"
+    },
+    {
+      "hltv_team_id": 4411,
+      "player_name": "Snappi",
+      "rating_type": "annual",
+      "rating2": "0.880",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:13.000Z"
+    }
+  ]
+}

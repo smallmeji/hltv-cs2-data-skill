@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:31:15.518Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 12426,
+  "players": [
+    {
+      "hltv_team_id": 12426,
+      "player_name": "try",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:44.000Z"
+    },
+    {
+      "hltv_team_id": 12426,
+      "player_name": "Kvem",
+      "rating_type": "annual",
+      "rating2": "1.040",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:44.000Z"
+    },
+    {
+      "hltv_team_id": 12426,
+      "player_name": "JT",
+      "rating_type": "annual",
+      "rating2": "0.970",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:44.000Z"
+    },
+    {
+      "hltv_team_id": 12426,
+      "player_name": "sdy",
+      "rating_type": "annual",
+      "rating2": "0.950",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:44.000Z"
+    },
+    {
+      "hltv_team_id": 12426,
+      "player_name": "nicx",
+      "rating_type": "annual",
+      "rating2": "0.920",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:44.000Z"
+    }
+  ]
+}

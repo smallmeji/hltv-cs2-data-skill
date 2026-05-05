@@ -19,7 +19,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 
 ## Source Policy
 
-- Default public static source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`.
+- Default public static base URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data`. Default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
 - Default source order for normal users: configured static/API source -> default public static source -> direct HLTV fallback.
 - Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
 - Preferred enhanced source: HLTV-derived static JSON data packs or central data warehouse/API, when configured or provided.
@@ -34,7 +34,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
-- **Static JSON mode**: default distribution mode for external users and hosted data packs. Unless the user provides another source, read standardized JSON files from `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`, such as `/manifest.json`, `/teams/<hltvTeamId>/summary.json`, or `/matches/<matchId>/data-pack.json`, before attempting live HLTV access.
+- **Static JSON mode**: default distribution mode for external users and hosted data packs. Unless the user provides another source, read `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` first, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, or `/matches/<matchId>/data-pack.json`, before attempting live HLTV access.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. Call the API first for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
@@ -63,7 +63,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 3. Gather data from the best available source:
    - If API base URL and key are configured, call API mode first.
    - If `HLTV_CS2_STATIC_BASE_URL`, a static `manifest.json`, or a user-provided static data-pack URL is available, read that static JSON source next.
-   - If no explicit static source is provided, use the default public static source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`.
+   - If no explicit static source is provided, use the default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
    - If static/API data is unavailable or missing the requested record, use lightweight Direct HLTV mode and add `direct_hltv_fallback`.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
 4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.

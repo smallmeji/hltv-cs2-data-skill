@@ -9,7 +9,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Lightweight direct | None beyond the host model's normal web/page-reading/search tools | Best-effort public data pack |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
-| Static JSON | Hosted or local exported JSON data packs. Default public source: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` | Stable public distribution without live HLTV reads |
+| Static JSON | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Stable public distribution without live HLTV reads |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide

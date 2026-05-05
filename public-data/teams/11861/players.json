@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:30:33.286Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 11861,
+  "players": [
+    {
+      "hltv_team_id": 11861,
+      "player_name": "XANTARES",
+      "rating_type": "annual",
+      "rating2": "1.120",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:57.000Z"
+    },
+    {
+      "hltv_team_id": 11861,
+      "player_name": "Wicadia",
+      "rating_type": "annual",
+      "rating2": "1.120",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:57.000Z"
+    },
+    {
+      "hltv_team_id": 11861,
+      "player_name": "woxic",
+      "rating_type": "annual",
+      "rating2": "1.060",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:57.000Z"
+    },
+    {
+      "hltv_team_id": 11861,
+      "player_name": "soulfly",
+      "rating_type": "annual",
+      "rating2": "1.000",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:57.000Z"
+    },
+    {
+      "hltv_team_id": 11861,
+      "player_name": "MAJ3R",
+      "rating_type": "annual",
+      "rating2": "0.920",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:57.000Z"
+    }
+  ]
+}

@@ -36,10 +36,10 @@ This repository does not provide:
 - A local database or private data dependency.
 - Guaranteed complete historical snapshots in direct HLTV mode.
 
-For normal public use, the skill first reads the default public static JSON source:
+For normal public use, the skill first reads the default public static JSON manifest:
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
 If that source is unreachable or does not contain the requested record, the skill falls back to public HLTV pages available in the current session. API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
@@ -70,11 +70,19 @@ This is the default public mode. Users can ask natural questions without providi
 Use hltv-cs2-data to compare FaZe and G2. Who has the higher win rate?
 ```
 
-The skill should try the default source first:
+The skill should try the default manifest first:
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
+
+The base path prefix is:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
+```
+
+Do not fetch the base directory as JSON; append `/manifest.json` first.
 
 Example layout:
 

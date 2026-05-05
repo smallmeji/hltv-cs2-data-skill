@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:31:06.879Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 11737,
+  "players": [
+    {
+      "hltv_team_id": 11737,
+      "player_name": "maxster",
+      "rating_type": "annual",
+      "rating2": "1.100",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:18.000Z"
+    },
+    {
+      "hltv_team_id": 11737,
+      "player_name": "Ro1f",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:18.000Z"
+    },
+    {
+      "hltv_team_id": 11737,
+      "player_name": "bobeksde",
+      "rating_type": "annual",
+      "rating2": "1.020",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:18.000Z"
+    },
+    {
+      "hltv_team_id": 11737,
+      "player_name": "dex",
+      "rating_type": "annual",
+      "rating2": "0.960",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:18.000Z"
+    },
+    {
+      "hltv_team_id": 11737,
+      "player_name": "JW",
+      "rating_type": "annual",
+      "rating2": "0.930",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:18.000Z"
+    }
+  ]
+}

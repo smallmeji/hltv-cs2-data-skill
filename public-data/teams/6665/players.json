@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-05T07:30:40.374Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 6665,
+  "players": [
+    {
+      "hltv_team_id": 6665,
+      "player_name": "Staehr",
+      "rating_type": "annual",
+      "rating2": "1.150",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:27.000Z"
+    },
+    {
+      "hltv_team_id": 6665,
+      "player_name": "phzy",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:27.000Z"
+    },
+    {
+      "hltv_team_id": 6665,
+      "player_name": "jabbi",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:27.000Z"
+    },
+    {
+      "hltv_team_id": 6665,
+      "player_name": "ryu",
+      "rating_type": "annual",
+      "rating2": "1.020",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:27.000Z"
+    },
+    {
+      "hltv_team_id": 6665,
+      "player_name": "HooXi",
+      "rating_type": "annual",
+      "rating2": "0.850",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:27.000Z"
+    }
+  ]
+}

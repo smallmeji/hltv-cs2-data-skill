@@ -13,8 +13,16 @@ This is the default public mode. It must be useful, but honest about missing dat
 Use this base URL unless the user provides another static source or API source:
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 ```
+
+The first fetch must be the manifest URL, not the directory URL:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+```
+
+The base URL is a path prefix, not a JSON document. Some runtimes will return 404 if they fetch the base directly. Do not treat that as data absence before trying `/manifest.json`.
 
 Expected files include:
 

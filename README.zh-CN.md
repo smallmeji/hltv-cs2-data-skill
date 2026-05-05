@@ -34,10 +34,10 @@
 - 本地数据库或私人数据依赖。
 - 在纯 HLTV 页面模式下保证完整历史快照。
 
-普通公开用户默认不需要配置数据源。skill 会先读取默认公开静态 JSON 数据源：
+普通公开用户默认不需要配置数据源。skill 会先读取默认公开静态 JSON manifest：
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
 如果默认静态源不可访问，或没有导出用户请求的队伍 / 比赛，才回退到当前会话里可访问的公开 HLTV 页面。API / 数据仓可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
@@ -70,11 +70,19 @@ https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
 用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
 ```
 
-默认数据源：
+默认先读取 manifest：
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
+
+基础路径前缀是：
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
+```
+
+不要把基础目录当 JSON 读取；必须先追加 `/manifest.json`。基础目录只是路径前缀，不是 JSON 文件；某些运行环境直接读取基础目录会返回 404，这不代表数据不存在。
 
 示例结构：
 
