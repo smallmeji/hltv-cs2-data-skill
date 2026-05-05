@@ -98,15 +98,36 @@ For Chinese user-facing output, prefer this compact Markdown order:
 2. `比赛信息`: match ID, event, format, time, status.
 3. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
 4. `选手数据`: annual/event ratings and missing rating flags.
-5. `地图池`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
-6. `近期记录 / H2H`: recent records and direct matchup map rows when available.
-7. `警匪胜率`: each team's CT-side and T-side win rate by map when available from HLTV team map stats pages.
-8. `Veto / 比分`: veto, map order, scores, result when visible.
-9. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
-10. `数据缺口`: what is missing and what must not be inferred.
-11. `JSON`: stable English-key JSON for downstream use.
+5. `地图池总览`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
+6. `逐图详细分析`: when map detail data exists and the user asks for stronger/weaker/win-rate judgment, analyze each playable map separately using sample size, overall/LAN win rate, CT/T, pistol, first-kill/first-death, rounds won, pick/ban, and data quality.
+7. `特殊 Veto 变量`: maps that one team rarely plays, permanently bans, has no current-year data on, or has extreme low sample. Do not mix these maps into the normal map average.
+8. `近期记录 / H2H`: recent records and direct matchup map rows when available.
+9. `警匪胜率`: each team's CT-side and T-side win rate by map when available from HLTV team map stats pages.
+10. `Veto / 比分`: veto, map order, scores, result when visible.
+11. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
+12. `数据缺口`: what is missing and what must not be inferred.
+13. `JSON`: stable English-key JSON for downstream use.
 
 Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
+
+## Per-Map Detail Analysis Requirement
+
+When the user asks `who is favored`, `who has higher win rate`, `which team is stronger`, or any similar judgment request, and map detail data is available, the Markdown output must include a per-map detail section before `Model Inference`.
+
+For each playable map, include:
+
+- `样本可信度`: overall and LAN sample sizes, small-sample warning when relevant.
+- `结果表现`: W-L, raw win rate, rounds won / total rounds when available.
+- `CT/T 结构`: CT-side and T-side win rates.
+- `手枪局`: pistol round win rate.
+- `首杀后 / 首死后`: round win rate after first kill and after first death.
+- `Pick/Ban 倾向`: pick percentage and ban percentage.
+- `数据对位`: which team has the factual edge on that map, or whether the map is too close / too incomplete.
+- `Veto 影响`: whether the map is likely a real playable map, a likely ban, or a high-sensitivity decider variable.
+
+If both teams effectively do not play a map, one team has no current-year data, or one team has an extreme ban rate / tiny sample, move that map into `特殊 Veto 变量` instead of treating it as a normal map edge. Example: in a BO3 where both sides each remove one map, the normal detailed analysis may focus on roughly five or six realistic maps, while high-ban/no-data maps are documented separately.
+
+This requirement is still strategy-neutral: it organizes factual map-level evidence. Any final winner direction or percentage belongs only in `Model Inference`.
 
 For match URL data packs, visible starters require rating lookup attempts:
 

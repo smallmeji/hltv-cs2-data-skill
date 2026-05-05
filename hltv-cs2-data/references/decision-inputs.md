@@ -63,6 +63,19 @@ Include per-map factors such as:
 - Recent results on the map.
 - Map is unplayed or low sample.
 
+When the user asks for a stronger/weaker or win-rate judgment and map detail data exists, `map_pool` should be organized per playable map rather than only as one summary table. For each map, include:
+
+- overall and LAN sample size;
+- W-L and raw win rate;
+- rounds won / total rounds when collected;
+- CT-side and T-side win rates;
+- pistol round win rate;
+- round win rate after first kill and after first death;
+- pick percentage and ban percentage;
+- data-quality note such as `small_sample`, `no_current_year_data`, `extreme_ban_rate`, or `likely_veto_variable`.
+
+Maps with no current-year data for one side, extreme ban rate, or tiny sample should be flagged as `veto_variable` / `low_confidence_map` and kept separate from normal map-edge comparison. Do not average them together with regular played maps without a warning.
+
 ### head_to_head
 
 Include:

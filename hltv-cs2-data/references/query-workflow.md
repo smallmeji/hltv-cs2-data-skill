@@ -54,8 +54,16 @@ Workflow:
 10. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
 11. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
 12. Include veto/scores only if available and visible for the requested mode.
-13. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+13. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
 14. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
+
+For stronger/weaker or win-rate judgment requests, replace the single `地图池` section with:
+
+1. `地图池总览`: one compact table across all maps.
+2. `逐图详细分析`: one subsection per playable map. Use overall/LAN sample, W-L, raw win rate, CT/T, pistol, first-kill/first-death, rounds, pick/ban, and data-quality notes.
+3. `特殊 Veto 变量`: maps with one side missing current-year data, extreme ban rate, or tiny sample. These should not be treated as normal map edges.
+
+This is required when static/API map-detail fields are available. In direct HLTV mode, if map-detail fields are unavailable, state that the per-map detail section is limited to summary fields.
 
 ## Event Ratings Query
 
@@ -129,9 +137,10 @@ Workflow:
 
 1. Produce the HLTV factual data pack first.
 2. Build `Decision Inputs` from facts such as map pool, H2H, player form, roster state, match context, and data quality.
-3. Keep all facts and decision inputs out of inference fields.
-4. Apply `references/inference-gate.md`.
-5. Add numeric `Model Inference` only when the gate passes.
-6. If the gate fails, output a short note such as `核心地图/rating 数据不足，不能给可靠具体胜率百分比`; qualitative direction is allowed only if explicitly requested and must be marked low confidence.
-7. State clearly that inference is model-derived and not HLTV data.
-8. Do not include betting EV, Kelly, stake, or private correction logic unless the user explicitly invokes a separate strategy or betting framework.
+3. If map-detail data is available, include `逐图详细分析` and `特殊 Veto 变量` before inference.
+4. Keep all facts and decision inputs out of inference fields.
+5. Apply `references/inference-gate.md`.
+6. Add numeric `Model Inference` only when the gate passes.
+7. If the gate fails, output a short note such as `核心地图/rating 数据不足，不能给可靠具体胜率百分比`; qualitative direction is allowed only if explicitly requested and must be marked low confidence.
+8. State clearly that inference is model-derived and not HLTV data.
+9. Do not include betting EV, Kelly, stake, or private correction logic unless the user explicitly invokes a separate strategy or betting framework.
