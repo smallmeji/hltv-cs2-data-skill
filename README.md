@@ -96,6 +96,13 @@ HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 
 In this mode, the skill should read static JSON before trying live HLTV pages.
 
+If the user asks "who is favored", "who has the higher win rate", or similar, the skill still starts with factual data. When map-detail data exists, the Markdown output must include:
+
+- `Map Pool Overview`: seven-map summary with samples, W-D-L, win rate, pick %, and ban %.
+- `Per-Map Detail`: one section per playable map, including overall/LAN sample, CT/T split, pistol win rate, first-kill / first-death conversion, rounds, and pick/ban tendency.
+- `Special Veto Variables`: maps with no current-year data, extreme ban rate, tiny sample, or one side effectively not playing the map.
+- `Model Inference`: only when the user explicitly asks for judgment, clearly labeled as model-derived interpretation.
+
 ### 2. Lightweight / Direct HLTV Mode
 
 Use this mode when you only want the skill instructions and public HLTV pages.
@@ -199,6 +206,30 @@ Expected behavior:
 - Organize factual factors into `decision_inputs`.
 - Avoid declaring a winner unless the user explicitly asks for model inference.
 
+### Team Comparison + Winner Lean
+
+```text
+Use hltv-cs2-data to compare PGL Aurora and Heroic. Who has the higher win rate?
+Return factual data first, then per-map detail, then Model Inference.
+```
+
+Expected behavior:
+
+1. Resolve the teams and any relevant match from static JSON / API / direct HLTV fallback.
+2. Output `Map Pool Overview` with current-year overall/LAN samples, W-D-L, win rate, pick %, and ban %.
+3. Output `Per-Map Detail` for each realistic playable map:
+   - sample confidence;
+   - overall and LAN results;
+   - CT-side and T-side win rates;
+   - pistol round win rate;
+   - first-kill and first-death round win rates;
+   - pick/ban tendency;
+   - factual map-edge note.
+4. Output `Special Veto Variables` for maps with no current-year data, extreme ban rate, or tiny samples.
+5. Add `Model Inference` only at the end.
+
+The skill is not a fixed prediction model. It organizes data; the final lean is the calling model's interpretation of that data.
+
 ### Data + Model Inference
 
 ```text
@@ -209,8 +240,9 @@ Expected behavior:
 
 1. Output the factual HLTV data pack first.
 2. Output `Decision Inputs`.
-3. Append a clearly labeled `Model Inference` section.
-4. State that inferred probabilities are model-derived, not HLTV facts.
+3. If map-detail data exists, output `Per-Map Detail` and `Special Veto Variables` before inference.
+4. Append a clearly labeled `Model Inference` section.
+5. State that inferred probabilities are model-derived, not HLTV facts.
 
 ### Backtest Context
 
@@ -262,7 +294,9 @@ The default date window is the current calendar year. For 2026 matches, use `202
 | Match Info | Match ID, event, schedule, format, status |
 | Teams and Lineups | HLTV IDs, visible starters, coaches, stand-ins, lineup warnings |
 | Player Data | Annual ratings, event ratings, missing rating flags |
-| Map Pool | Current-year map summary, samples, W/D/L, win rate, pick %, ban % |
+| Map Pool Overview | Current-year map summary, samples, W/D/L, win rate, pick %, ban % |
+| Per-Map Detail | Playable-map detail: overall/LAN, CT/T, pistol, first-kill, first-death, rounds, pick/ban, factual edge |
+| Special Veto Variables | Maps with no current-year data, extreme ban rate, tiny samples, or one side effectively not playing them |
 | Recent / H2H | Recent matches and direct matchup rows when available |
 | Veto / Scores | Veto, map order, map scores when visible |
 | Decision Inputs | Factual model-ready inputs only |
@@ -308,7 +342,8 @@ This is the factual layer. It may include:
 - `match`: event, format, schedule, LAN/online context, status.
 - `lineups`: starters, coaches, stand-ins, missing lineup warnings.
 - `players`: annual ratings, event ratings, missing rating flags.
-- `maps`: map pool data, sample sizes, raw win rate, weighted win rate if available.
+- `maps`: map pool data, sample sizes, raw win rate, weighted win rate if available, pick/ban.
+- `map_details`: per-map detail such as total rounds, rounds won, CT/T, pistol rounds, first-kill conversion, and first-death recovery.
 - `head_to_head`: direct matchup history when found.
 - `recent_matches`: recent match and map rows.
 - `veto`: veto steps and map order when visible.
@@ -430,7 +465,7 @@ When data is missing, the skill should label it as missing rather than infer it.
 | Annual player rating | Attempt; mark missing if retrieval fails |
 | Current-year map summary | Yes when reachable; otherwise mark fallback context |
 | W/D/L, win rate, pick %, ban % | Yes from current-year map summary when reachable |
-| CT/T side win rates | No; API / warehouse enhanced mode only |
+| CT/T side win rates | Static JSON / API can provide them; lightweight direct mode does not guarantee them |
 | Historical backtest snapshots | No; API / warehouse enhanced mode only |
 
 ### Mode-by-Mode Matrix

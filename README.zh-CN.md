@@ -96,6 +96,13 @@ HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 
 在这个模式下，skill 应先读静态 JSON，再考虑 live HLTV 页面。
 
+如果用户直接问“谁胜率高 / 谁更强 / 哪边更占优”，skill 仍然先输出事实数据包。只要静态数据里有地图详情，输出必须包含：
+
+- `地图池总览`：七张地图的样本、胜率、Pick%、Ban% 总表。
+- `逐图详细分析`：逐张可打地图拆解样本、LAN/overall、CT/T、手枪局、首杀后、首死后、回合数、Pick/Ban。
+- `特殊 Veto 变量`：一方不打、无 2026 数据、高 Ban%、极小样本的地图单独列出，不混入普通地图平均。
+- `Model Inference`：只有用户明确要求判断时才出现，并标注为模型推理，不是 HLTV 事实。
+
 ### 2. 轻量版 / 直接 HLTV 模式
 
 适合默认静态源缺数据，或者用户只想让模型查看公开 HLTV 页面的时候。
@@ -208,7 +215,33 @@ Focus on map pool, player form, roster changes, and head-to-head data.
 - 将事实因素整理进 `decision_inputs`。
 - 默认不直接宣布谁赢，除非用户明确要求模型推理。
 
-### 3. 数据 + 模型判断
+### 3. 比较两个队伍并判断谁更占优
+
+推荐提示词：
+
+```text
+用 hltv-cs2-data 帮我看一下 PGL Aurora 和 Heroic 谁胜率高。
+请先输出事实数据，再逐图分析，最后给 Model Inference。
+```
+
+预期行为：
+
+1. 先从静态 JSON / API / HLTV fallback 解析两队和相关比赛。
+2. 输出 `地图池总览`，展示七张图的年度 overall / LAN 样本、W-D-L、胜率、Pick%、Ban%。
+3. 输出 `逐图详细分析`，每张可打地图都要拆：
+   - 样本可信度。
+   - overall / LAN 表现。
+   - CT/T 胜率。
+   - 手枪局胜率。
+   - 首杀后 / 首死后回合胜率。
+   - Pick/Ban 倾向。
+   - 这张图的数据对位结论。
+4. 输出 `特殊 Veto 变量`，例如一方固定 ban、无 2026 数据、样本只有 1 张图的地图。
+5. 最后再给 `Model Inference`，说明谁更占优和原因。
+
+注意：这不是固定预测模型。skill 只是组织数据；最终判断是调用模型基于事实数据做出的推理。
+
+### 4. 数据 + 模型判断
 
 提示词示例：
 
@@ -220,10 +253,11 @@ Use hltv-cs2-data to collect G2 vs FaZe data, then estimate map and match win ra
 
 1. 先输出 HLTV 事实数据包。
 2. 再输出 `Decision Inputs`。
-3. 最后追加清晰标注的 `Model Inference`。
-4. 明确说明胜率和判断是模型推理，不是 HLTV 事实数据。
+3. 如果有地图详情数据，必须先输出 `逐图详细分析` 和 `特殊 Veto 变量`。
+4. 最后追加清晰标注的 `Model Inference`。
+5. 明确说明胜率和判断是模型推理，不是 HLTV 事实数据。
 
-### 4. 历史回测
+### 5. 历史回测
 
 提示词示例：
 
@@ -277,7 +311,9 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 | 比赛信息 | match ID、赛事、时间、BO 几、状态 |
 | 队伍与阵容 | 两队 HLTV ID、可见首发、教练、替补、阵容 warning |
 | 选手数据 | 年度 rating、赛事 rating、缺失 rating |
-| 地图池 | 2026 地图 summary、样本、W/D/L、胜率、Pick%、Ban% |
+| 地图池总览 | 2026 地图 summary、样本、W/D/L、胜率、Pick%、Ban% |
+| 逐图详细分析 | 每张可打地图的 overall/LAN、CT/T、手枪、首杀后、首死后、回合数、Pick/Ban、数据对位 |
+| 特殊 Veto 变量 | 一方不打、无年度数据、高 Ban%、极小样本的地图，单独列出 |
 | 近期记录 / H2H | 能读取到的近期比赛和直接交手 |
 | Veto / 比分 | 如果页面已显示，则输出 veto、地图顺序、比分 |
 | 给模型的决策输入 | 只放事实特征，不放胜率结论 |
@@ -323,7 +359,8 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 - `match`：赛事、赛制、时间、LAN/online、比赛状态。
 - `lineups`：首发、教练、替补、阵容缺失提示。
 - `players`：年度 rating、赛事 rating、rating 缺失状态。
-- `maps`：地图池数据、样本量、原始胜率、加权胜率。
+- `maps`：地图池数据、样本量、原始胜率、加权胜率、Pick/Ban。
+- `map_details`：逐图详情，例如总回合、赢回合、CT/T、手枪局、首杀后、首死后。
 - `head_to_head`：两队历史交手。
 - `recent_matches`：近期比赛和地图记录。
 - `veto`：veto 步骤和地图顺序。
@@ -443,7 +480,7 @@ Direct mode 的限制：
 | 年度选手 rating | 尝试，失败就标缺 |
 | 2026 地图 summary | ✅，优先读年度 team map summary；失败时可退回 match page core 数据并明确标注 |
 | W/D/L、Win rate、Pick%、Ban% | ✅，来自 2026 地图 summary |
-| CT/T 胜率 | ❌ 只在 API / 数据库增强版提供 |
+| CT/T 胜率 | 静态 JSON / API 可提供；直接 HLTV 轻量版默认不保证 |
 | 历史回测快照 | ❌ 只在 API / 数据库增强版提供 |
 
 轻量版失败时使用这些 warning：
