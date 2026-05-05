@@ -52,6 +52,21 @@ If this evidence is absent, the output is not compliant with this skill. In that
 - Do not output `地图池总览`, `逐图详细分析`, veto prediction, match winner percentages, map win percentages, or a full pre-match report.
 - Do not use Liquipedia, wiki pages, news snippets, search summaries, or market prices to replace the missing structured database query.
 
+## Active Map Pool Gate
+
+All map-pool sections must be restricted to the active maps present in the structured data record. For the current 2026 export, the expected active pool is:
+
+```text
+Ancient, Anubis, Dust2, Inferno, Mirage, Nuke, Overpass
+```
+
+Rules:
+
+- Build the active map list from the structured data pack when available, using unique map names from `maps`, `map_side_stats`, or an explicit `active_map_pool` field.
+- Do not introduce inactive or absent maps such as `Vertigo`, `Cache`, or `Train` into `地图池总览`, `逐图详细分析`, or `特殊 Veto 变量` unless the user explicitly asks for historical inactive-map records.
+- If an inactive historical map appears in a direct HLTV fallback page, label it as `inactive_historical_map` and exclude it from current BO3/BO5 map-pool and veto analysis.
+- `特殊 Veto 变量` means unusual behavior inside the current active pool only. A map not present in the structured record must not be invented as a veto variable.
+
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: default standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.

@@ -79,6 +79,13 @@ For stronger/weaker or win-rate judgment requests, replace the single `地图池
 
 This is required when static/API map-detail fields are available. In direct HLTV mode, if map-detail fields are unavailable, state that the per-map detail section is limited to summary fields.
 
+Active map-pool rule:
+
+- Derive the active map list from the structured record. If no explicit `active_map_pool` field exists, use the unique map names found in `maps` and `map_side_stats`.
+- For the current 2026 public export, the expected active maps are `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, and `Overpass`.
+- Do not add `Vertigo`, `Cache`, `Train`, or any other inactive/absent map to `地图池总览`, `逐图详细分析`, or `特殊 Veto 变量`.
+- `特殊 Veto 变量` is only for active maps that are in the structured record but have unusual sample / ban / no-data behavior.
+
 ## Event Ratings Query
 
 User input:

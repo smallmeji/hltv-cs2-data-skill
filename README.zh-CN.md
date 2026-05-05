@@ -36,6 +36,8 @@
 
 如果模型只读取 HLTV、Liquipedia/wiki、新闻片段、搜索摘要或盘口页面，就不算正确使用本 skill。此时必须标记为部分数据，加入 warning `structured_database_not_queried`，并且不能输出完整数据包、逐图详细分析、Veto 预测或具体胜率百分比。
 
+地图池也必须只使用结构化数据里的当前 active map pool。当前 2026 公开导出的七张图是：`Ancient`、`Anubis`、`Dust2`、`Inferno`、`Mirage`、`Nuke`、`Overpass`。不要把 `Vertigo`、`Cache`、`Train` 等不在结构化记录里的地图写进 `地图池总览`、`逐图详细分析` 或 `特殊 Veto 变量`。
+
 ## 不做什么
 
 这个仓库不提供：

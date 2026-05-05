@@ -38,6 +38,8 @@ The log must show:
 
 If a model only reads HLTV, Liquipedia/wiki pages, news snippets, search summaries, or market pages, it has not complied with this skill. In that case it must mark the output as partial, add warning `structured_database_not_queried`, and must not output a full data pack, per-map detail analysis, veto prediction, or exact win-rate percentages.
 
+Map-pool sections must also use only the current active map pool present in the structured record. The current 2026 public export uses these seven maps: `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, and `Overpass`. Do not add `Vertigo`, `Cache`, `Train`, or other absent inactive maps to `Map Pool Overview`, `Per-Map Detail`, or `Special Veto Variables`.
+
 ## What It Is Not
 
 This repository does not provide:

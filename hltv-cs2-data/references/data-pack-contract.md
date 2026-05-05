@@ -84,6 +84,7 @@ Phase 1 data packs must support these field groups when available:
 
 - `teams`: identity, aliases, HLTV IDs, ranking snapshots.
 - `match`: match ID, event, tier, LAN/online, format, schedule, status.
+- `active_map_pool`: active map names used by the structured record. If omitted, consumers must derive it from unique map names in `maps` and `map_side_stats`.
 - `maps`: pick/ban, raw win rate, weighted win rate, sample size, tier/data filters, recent map rows.
 - `map_side_stats`: CT-side and T-side win rates by team/map from HLTV team map stats pages.
 - `players`: annual ratings, event ratings, missing rating status.
@@ -160,6 +161,15 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "team_a_hltv_id": 6667,
     "team_b_hltv_id": 8297
   },
+  "active_map_pool": [
+    "Ancient",
+    "Anubis",
+    "Dust2",
+    "Inferno",
+    "Mirage",
+    "Nuke",
+    "Overpass"
+  ],
   "teams": [
     {
       "side": "A",
@@ -308,6 +318,7 @@ If any field is reconstructed rather than directly observed, add a warning and m
 
 Use explicit warnings for:
 
+- Inactive or absent maps appearing in direct fallback data.
 - Fewer than 5 map samples in the requested filter.
 - Missing lineup.
 - Missing player rating.
@@ -320,6 +331,8 @@ Use explicit warnings for:
 ## Fact vs Inference Boundary
 
 The data contract may include descriptive rates such as raw map win rate, weighted win rate, and sample count. These are historical data fields, not predictions.
+
+Map-pool sections must use only the active map pool exposed by the structured record or derived from the record. Do not invent inactive maps such as `Vertigo`, `Cache`, or `Train` as current veto variables. If an inactive map is shown for historical context, mark it `inactive_historical_map` and keep it outside current map-pool averages and veto analysis.
 
 Do not add model-derived fields inside factual objects such as `teams`, `match`, `maps`, `players`, `lineups`, `veto`, `scores`, or `metadata`.
 
