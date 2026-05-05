@@ -25,6 +25,19 @@ Numeric `Model Inference` is gated by data completeness. If direct HLTV access i
 
 User-facing Markdown follows the user's language. For Chinese prompts, the skill should output Chinese headings, labels, warnings, and concise tables, while keeping JSON field names stable in English.
 
+## Critical Compliance Rule
+
+A correct output must include a `Data Source Execution Log` / `数据源执行记录` near the top.
+
+The log must show:
+
+- The HLTV match/team/event page used for identity resolution.
+- The public database manifest or API base that was queried.
+- At least one exact structured record path, for example `matches/2394116/data-pack.json`, `teams/11861/map-details-overall.json`, or `events/8250/player-ratings.json`.
+- Field-level source labels such as `direct_hltv`, `static_database`, `api_warehouse`, `direct_hltv_fallback`, or `missing`.
+
+If a model only reads HLTV, Liquipedia/wiki pages, news snippets, search summaries, or market pages, it has not complied with this skill. In that case it must mark the output as partial, add warning `structured_database_not_queried`, and must not output a full data pack, per-map detail analysis, veto prediction, or exact win-rate percentages.
+
 ## What It Is Not
 
 This repository does not provide:
@@ -197,6 +210,8 @@ Output Markdown and JSON.
 Expected behavior:
 
 - Resolve match ID, teams, event, format, schedule, and status.
+- Read the public static database manifest or configured API after resolving identity.
+- Show `Data Source Execution Log` with exact record paths read.
 - Gather available map, lineup, player rating, veto, score, and recent result data.
 - Mark missing data explicitly.
 - Output a factual data pack and JSON block.
@@ -213,6 +228,7 @@ Expected behavior:
 
 - Resolve both teams to HLTV identities when possible.
 - After team IDs are known, query the public static JSON database export or configured API for team/map/player data.
+- Show the manifest/API status and exact database record paths used.
 - Organize factual factors into `decision_inputs`.
 - Avoid declaring a winner unless the user explicitly asks for model inference.
 

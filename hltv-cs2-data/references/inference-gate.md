@@ -15,6 +15,8 @@ Use one of these labels in `metadata.completeness_level`.
 | `partial` | Match basics and team IDs exist, but map summaries or player ratings are incomplete. | No exact percentages |
 | `blocked` | HLTV pages are blocked, cache-missed, or only search snippets are available. | No exact percentages |
 
+`complete` and `usable` require a successful structured data source check: API/warehouse response or public static JSON manifest plus at least one exact record path. Direct HLTV/search-only output cannot be marked `complete` or `usable` for numeric inference.
+
 ## High-Impact Fields
 
 For a match or team-vs-team probability request, treat these as high-impact fields:
@@ -30,11 +32,12 @@ For a match or team-vs-team probability request, treat these as high-impact fiel
 
 Block exact numeric inference if any of these is true:
 
-1. Current-year map summary is missing for either team.
-2. Player rating coverage is missing for both annual and event views.
-3. Two or more high-impact fields are missing, blocked by Cloudflare, or available only from search snippets.
-4. The only usable inputs are ranking, news snippets, market prices, or broad narrative context.
-5. The source mode is lightweight direct and marked `blocked`.
+1. The model did not successfully query a structured database/API/static JSON source after resolving HLTV identity.
+2. Current-year map summary is missing for either team.
+3. Player rating coverage is missing for both annual and event views.
+4. Two or more high-impact fields are missing, blocked by Cloudflare, or available only from search snippets.
+5. The only usable inputs are ranking, news snippets, market prices, or broad narrative context.
+6. The source mode is lightweight direct and marked `blocked`.
 
 If blocked, add warning:
 
@@ -43,6 +46,16 @@ If blocked, add warning:
   "code": "core_data_insufficient_for_numeric_inference",
   "severity": "high",
   "message": "Core map/rating/lineup data is incomplete; exact win-rate percentages are disabled for this data pack."
+}
+```
+
+If the structured source was not queried, also add:
+
+```json
+{
+  "code": "structured_database_not_queried",
+  "severity": "high",
+  "message": "The model resolved public HLTV/search facts but did not read the API/warehouse/static JSON database record required by hltv-cs2-data."
 }
 ```
 
@@ -61,6 +74,7 @@ Not allowed:
 - Map-level win probabilities.
 - Implied betting or strategy recommendations.
 - Filling missing fields from market prices or intuition.
+- Veto prediction or full pre-match report when the structured database was not queried.
 
 Chinese phrasing:
 
@@ -68,6 +82,9 @@ Chinese phrasing:
 本次数据完整度不足，不能给可靠的具体胜率百分比。
 原因：双方年度地图池 / 选手 rating / event rating 中有关键字段未加载。
 可以给方向性观察，但不能把它当成完整数据模型结论。
+
+如果没有读取 API / 静态 JSON 数据库记录，还必须说明：
+本次没有成功读取 hltv-cs2-data 的结构化数据库记录，因此只能输出部分 HLTV 事实，不能输出完整逐图分析或具体胜率。
 ```
 
 ## What To Output When Allowed

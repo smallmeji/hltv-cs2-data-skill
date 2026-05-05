@@ -45,6 +45,20 @@ If this source cannot be read, add `structured_database_unavailable` and continu
 
 The public static JSON database export is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV is the first match-discovery source and is often enough for match basics and simple context, but the database export is the required structured source for map/player/side/history fields when available.
 
+## Required Source Execution Log
+
+Every standalone output must show whether the structured source was actually used. Put this near the top of Markdown, especially for Chinese output:
+
+```text
+数据源执行记录：
+- HLTV 定位：成功 / 失败，URL: ...
+- 静态数据库 manifest：成功 / 失败，URL: https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+- 已读取数据库记录：matches/2394116/data-pack.json, teams/11861/map-details-overall.json, ...
+- 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
+```
+
+If the manifest or at least one exact static/API database record was not read, add `structured_database_not_queried`. In that state the model must not output a complete data pack, per-map detail analysis, veto prediction, or numeric win-rate percentages. It may output only partial HLTV facts and missing-data notes.
+
 If API credentials are configured, API mode can be used after HLTV match/team identity is resolved. Otherwise use direct HLTV first for match discovery and the default public static JSON database export for structured fields.
 
 Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
@@ -80,10 +94,12 @@ The user should not need to provide API query parameters.
 2. If input is natural language with event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page. Example: `PGL 上 Aurora 和 Heroic 谁胜率高` should first find the PGL Aurora vs Heroic match on HLTV.
 3. Once the match page or canonical team IDs are known, hydrate structured stats from configured API/warehouse if available.
 4. If no API/warehouse is configured, read the default or user-provided public database manifest and resolve `/matches/<matchId>/data-pack.json`, `/teams/index.json`, `/teams/<id>/*.json`, and `/events/<eventId>/player-ratings.json`.
-5. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year stats pages as supplemental fallback for that field.
-6. If a map is mentioned, restrict or highlight that map.
-7. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
-8. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
+5. Record the manifest status and exact database paths read in `source_execution_log`.
+6. If the structured database was not queried successfully, fail closed: output partial facts only and add `structured_database_not_queried`.
+7. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year stats pages as supplemental fallback for that field.
+8. If a map is mentioned, restrict or highlight that map.
+9. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
+10. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
 
 ## Direct HLTV Data Sources
 
@@ -116,6 +132,7 @@ If no central API/warehouse is configured, include:
 
 Add missing-field warnings for unavailable data:
 
+- `structured_database_not_queried`: the model did not read an API/warehouse/static JSON database record after resolving HLTV identity.
 - `core_data_insufficient_for_numeric_inference`: critical map/rating/lineup fields are missing, so exact win-rate percentages must not be produced.
 - `annual_rating_not_loaded`: annual player stats page was unreachable or the player could not be resolved.
 - `event_rating_not_loaded`: event stats page was unreachable, event ID could not be resolved, or the player is not listed for the event.
@@ -134,12 +151,15 @@ Add missing-field warnings for unavailable data:
 Direct HLTV output must still follow the data pack contract:
 
 - Markdown summary first.
+- `数据源执行记录` / `source_execution_log` before analysis.
 - JSON summary or full JSON when requested.
 - `Decision Inputs` summarizing factual factors for downstream models.
 - Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
 - If explicitly requested, append a separate `Model Inference` section after the factual data pack only after applying `references/inference-gate.md`.
 
 If the user asks who is favored or who has higher win rate, first return the data pack. If the user wants this model to judge, append a clearly labeled `Model Inference` section only when the core data gate allows it. If the gate fails, provide a qualitative low-confidence direction at most and state that exact percentages are blocked.
+
+Do not call an output a full `hltv-cs2-data` data pack if the database/API/static source was not queried. Use `partial HLTV facts` instead.
 
 ## Limits
 

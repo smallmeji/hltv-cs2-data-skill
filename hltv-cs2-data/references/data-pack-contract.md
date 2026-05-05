@@ -6,24 +6,27 @@ This contract defines the stable output shape for `hltv-cs2-data`. It keeps HLTV
 
 Use this order:
 
-1. Query metadata.
-2. Resolved teams.
-3. Match context.
-4. Lineups and roster notes.
-5. Player ratings.
-6. Map pool summary.
-7. Recent map history.
-8. Head-to-head history.
-9. Veto and match detail.
-10. Score/result history.
-11. Decision Inputs.
-12. Data warnings.
-13. JSON block for factual data and decision inputs.
-14. Optional Model Inference section, only if explicitly requested by the user.
+1. Source execution log.
+2. Query metadata.
+3. Resolved teams.
+4. Match context.
+5. Lineups and roster notes.
+6. Player ratings.
+7. Map pool summary.
+8. Recent map history.
+9. Head-to-head history.
+10. Veto and match detail.
+11. Score/result history.
+12. Decision Inputs.
+13. Data warnings.
+14. JSON block for factual data and decision inputs.
+15. Optional Model Inference section, only if explicitly requested by the user.
 
 Do not add prediction, probability, EV, strategy, or betting fields inside the factual HLTV data pack.
 
 If the user explicitly asks for judgment, add a separate `Model Inference` section after the factual pack. The section must state that it is model-derived and not HLTV fact data.
+
+A complete data pack must include proof that the model queried the structured data layer. If no API/warehouse/static JSON record was read after HLTV identity resolution, the output must be marked as partial and must include warning `structured_database_not_queried`.
 
 ## Language and Readability
 
@@ -31,38 +34,41 @@ User-facing Markdown should follow the user's language. If the user writes in Ch
 
 Default Chinese Markdown structure:
 
-1. `数据状态`
+1. `数据源执行记录`
+   - HLTV 定位状态、HLTV URL、数据库 manifest/API 状态、读取的数据库路径、字段来源。
+   - A compliant output must show at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
+2. `数据状态`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
    - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
    - Start with a short sentence such as: `这是事实数据包，不包含预测、投注建议、EV 或仓位。`
-2. `比赛信息`
+3. `比赛信息`
    - Match ID, event, tier, LAN/online, BO format, schedule, status.
-3. `队伍与阵容`
+4. `队伍与阵容`
    - Team names, HLTV IDs, rank snapshots, starters, coach/stand-in flags.
-4. `选手数据`
+5. `选手数据`
    - Annual rating and event rating when available.
    - Mark missing values as `缺失`, not as guessed values.
    - For match URL queries with visible lineups, annual rating and event rating are required fetch attempts. If either cannot be retrieved, show a per-player `rating_status` and add a warning.
-5. `地图池`
+6. `地图池`
    - Per-map comparison table.
    - Include sample size next to every win-rate field.
    - Show both raw win rate and weighted win rate when available.
-6. `近期记录 / H2H`
+7. `近期记录 / H2H`
    - Recent match rows and direct matchup rows when available.
    - If unavailable, say `未加载` or `HLTV 当前页面未提供`.
-7. `警匪胜率`
+8. `警匪胜率`
    - CT-side and T-side win rates by team and map from HLTV team map stats pages, using the current calendar-year window by default, e.g. `/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31` and detailed map pages.
    - If unavailable, say `未加载` and explain whether the source page did not expose it or the collector does not support it yet.
-8. `Veto / 比分`
+9. `Veto / 比分`
    - Veto steps, map order, score state, result state.
-9. `给模型的决策输入`
+10. `给模型的决策输入`
    - Factual inputs grouped into `地图池`, `对位数据`, `选手状态`, `阵容状态`, `警匪胜率`, `比赛环境`, `数据质量`.
    - Do not put predicted win rates or recommendations here.
-10. `数据缺口`
+11. `数据缺口`
    - Explicitly list missing data and what cannot be inferred.
-11. `JSON`
+12. `JSON`
    - Factual data and decision inputs with stable English keys.
-12. Optional `模型推理`
+13. Optional `模型推理`
    - Only when the user asks for judgment.
 
 Readability rules:
@@ -116,6 +122,31 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "source_policy": "hltv_central_warehouse",
     "missing_fields": [],
     "warnings": []
+  },
+  "source_execution_log": {
+    "hltv_match_page": {
+      "url": "https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1",
+      "status": "success",
+      "source": "direct_hltv"
+    },
+    "structured_source": {
+      "mode": "static_database",
+      "manifest_url": "https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json",
+      "manifest_status": "success",
+      "record_paths": [
+        "matches/2393335/data-pack.json",
+        "teams/6667/map-details-overall.json",
+        "teams/8297/map-details-overall.json",
+        "events/8250/player-ratings.json"
+      ]
+    },
+    "field_sources": {
+      "match": "direct_hltv+static_database",
+      "maps": "static_database",
+      "map_side_stats": "static_database",
+      "players": "static_database",
+      "veto": "missing"
+    }
   },
   "match": {
     "hltv_match_id": 2393335,
@@ -260,6 +291,7 @@ Each response must expose:
 - `requested_at`.
 - `data_cutoff`.
 - `source_policy`.
+- `source_execution_log`.
 - `missing_fields`.
 - `warnings`.
 

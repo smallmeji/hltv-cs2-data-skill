@@ -21,14 +21,17 @@ Workflow:
 1. If the prompt includes an event context, such as `PGL 上 Aurora 和 Heroic`, search/read HLTV event, upcoming, result, and match pages first to locate the exact match page.
 2. If no exact match page is implied, resolve both teams from HLTV team pages first.
 3. After match/team IDs are known, hydrate structured stats from configured API/warehouse if available.
-4. If no API/warehouse is configured, read the default public static JSON database export. Use `/teams/index.json`, `/teams/<id>/*.json`, `/matches/<matchId>/data-pack.json`, and `/events/<eventId>/player-ratings.json` to fill structured fields.
-5. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
-6. Fetch map stats for the requested tier/filter if available.
-7. Fetch player ratings and lineup if a match is specified and the source is reachable.
-8. Return Markdown + JSON factual data pack.
-9. Build `Decision Inputs` from available facts.
-10. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
-11. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+4. If no API/warehouse is configured, read the default public static JSON database export. The first required URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+5. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
+6. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
+7. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
+8. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
+9. Fetch map stats for the requested tier/filter if available.
+10. Fetch player ratings and lineup if a match is specified and the source is reachable.
+11. Return Markdown + JSON factual data pack.
+12. Build `Decision Inputs` from available facts.
+13. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
+14. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Match URL Query
 
@@ -44,21 +47,29 @@ Workflow:
 2. Read the HLTV match page first. Resolve event, teams, format, schedule, status, lineup/veto/score when visible, and `eventId` when possible.
 3. Read API data-pack when configured to hydrate structured fields.
 4. If no API is configured, read the configured or default public static JSON database export. Start with `/matches/<hltvMatchId>/data-pack.json`; if missing, use team/event JSON files by resolved IDs. Mark merged fields as `static_database`.
-5. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
-6. Fetch lineups from the match page or static/API pack when visible/available.
-7. Always attempt to fetch player ratings for visible starters:
+5. The static database export must start with `/manifest.json`, then exact record paths. Do not treat a 404 from the base directory as data absence.
+6. Add `source_execution_log` with:
+   - `hltv_match_page_status`
+   - `database_manifest_url`
+   - `database_manifest_status`
+   - `database_record_paths`
+   - `field_sources`
+7. If `database_manifest_status` is not `success` and no API record was read, output only a partial HLTV pack with `structured_database_not_queried`. Do not produce `地图池总览`, `逐图详细分析`, veto prediction, numeric match probability, or a complete report.
+8. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
+9. Fetch lineups from the match page or static/API pack when visible/available.
+10. Always attempt to fetch player ratings for visible starters:
    - Extract or resolve `eventId` from the match page/event link whenever possible.
    - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.
    - Annual rating from HLTV team player stats for the current calendar year, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`. If `as_of_date` is provided, use that date's calendar year.
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
-8. Fetch yearly team map stats from API/static database first. If unavailable or missing, then attempt HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-9. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight fallback mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载` unless the map detail page was explicitly loaded.
-10. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
-11. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
-12. Include veto/scores only if available and visible for the requested mode.
-13. For Chinese prompts, output the compact Chinese structure: `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
-14. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
+11. Fetch yearly team map stats from API/static database first. If unavailable or missing, then attempt HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
+12. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight fallback mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载` unless the map detail page was explicitly loaded.
+13. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
+14. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
+15. Include veto/scores only if available and visible for the requested mode.
+16. For Chinese prompts, output the compact Chinese structure: `数据源执行记录`, `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+17. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
 
 For stronger/weaker or win-rate judgment requests, replace the single `地图池` section with:
 
@@ -106,7 +117,7 @@ Workflow:
 If the data warehouse/API is not available:
 
 ```text
-当前无法生成完整 hltv-cs2-data 数据包，因为缺少中央数据源/API。
+当前无法生成完整 hltv-cs2-data 数据包，因为没有成功读取结构化数据库/API/静态 JSON 记录。
 可输出的数据：...
 缺失的数据：...
 不能推断的内容：...
@@ -124,10 +135,12 @@ For Chinese output, missing data should be explicit and brief:
 - Veto：赛前不可见
 - 警匪胜率：HLTV team map stats 页面未加载或 collector 暂未采集
 - 精确 as_of 快照：不可用，本次只能标记为重建数据
+- 结构化数据库记录：未读取时必须标 `structured_database_not_queried`
 
 不能推断：
 - 不能把缺失 rating 补成估计值
 - 不能把历史胜率当成预测胜率
+- 不能在没有数据库读取记录时输出完整逐图分析、Veto 预测或具体胜率
 ```
 
 ## Model Inference Request

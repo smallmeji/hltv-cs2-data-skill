@@ -23,6 +23,19 @@
 
 用户可读部分默认跟随用户语言。中文提问时，输出应使用中文标题、中文表格标签和中文 warnings；JSON 字段名继续保持英文，方便程序和其他模型稳定读取。
 
+## 关键合规规则
+
+正确输出必须在靠前位置包含 `数据源执行记录`。
+
+这段记录必须写清：
+
+- 用哪个 HLTV match / team / event 页面完成身份定位。
+- 查询了哪个公开数据库 manifest 或 API base。
+- 至少读取了一个准确的结构化数据路径，例如 `matches/2394116/data-pack.json`、`teams/11861/map-details-overall.json`、`events/8250/player-ratings.json`。
+- 字段来源，例如 `direct_hltv`、`static_database`、`api_warehouse`、`direct_hltv_fallback`、`missing`。
+
+如果模型只读取 HLTV、Liquipedia/wiki、新闻片段、搜索摘要或盘口页面，就不算正确使用本 skill。此时必须标记为部分数据，加入 warning `structured_database_not_queried`，并且不能输出完整数据包、逐图详细分析、Veto 预测或具体胜率百分比。
+
 ## 不做什么
 
 这个仓库不提供：
@@ -204,6 +217,8 @@ Output Markdown and JSON.
 
 - 识别 HLTV match ID。
 - 解析两队、赛事、赛制、时间、状态。
+- 在解析身份后读取公开静态数据库 manifest 或配置好的 API。
+- 输出 `数据源执行记录`，列明读取过的准确数据库路径。
 - 尽量收集地图池、阵容、选手 rating、veto、比分、近期比赛数据。
 - 对缺失数据明确标注。
 - 输出事实数据包和 JSON。
@@ -222,6 +237,7 @@ Focus on map pool, player form, roster changes, and head-to-head data.
 
 - 解析两个队伍的 HLTV 身份。
 - 拿到 team ID 后，查询公开静态 JSON 数据库导出或配置好的 API，读取队伍、地图、选手数据。
+- 输出 manifest/API 状态和实际读取的数据库记录路径。
 - 将事实因素整理进 `decision_inputs`。
 - 默认不直接宣布谁赢，除非用户明确要求模型推理。
 

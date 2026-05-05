@@ -33,6 +33,25 @@ The skill must be usable by someone who only installs the skill and has no acces
 - If Cloudflare or access controls block collection, fail safely and report freshness/missing data. Do not fabricate data or bypass protections.
 - Treat the default public static JSON source as the hosted HLTV-derived public database export for structured stats, not merely optional background context. When both direct HLTV and database/cache data are available, preserve field-level source labels.
 
+## Mandatory Structured Data Gate
+
+For any complete match data pack, team comparison, per-map detail analysis, or numeric `Model Inference`, the model must prove it queried a structured data source after resolving HLTV identity.
+
+Required evidence in the output:
+
+- `database_manifest_url` or API base URL.
+- `database_manifest_status`: `success`, `failed`, or `not_configured`.
+- At least one exact `database_record_path`, such as `matches/2394116/data-pack.json`, `teams/11861/map-details-overall.json`, or `events/8250/player-ratings.json`.
+- Field-level source labels such as `direct_hltv`, `static_database`, `api_warehouse`, `direct_hltv_fallback`, or `missing`.
+
+If this evidence is absent, the output is not compliant with this skill. In that case:
+
+- Do not call the result a complete `hltv-cs2-data` data pack.
+- Add warning code `structured_database_not_queried`.
+- Output only partial HLTV facts and missing-source warnings.
+- Do not output `地图池总览`, `逐图详细分析`, veto prediction, match winner percentages, map win percentages, or a full pre-match report.
+- Do not use Liquipedia, wiki pages, news snippets, search summaries, or market prices to replace the missing structured database query.
+
 ## Operating Modes
 
 - **Lightweight / Direct HLTV mode**: default standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
@@ -68,6 +87,7 @@ The skill must be usable by someone who only installs the skill and has no acces
    - After a match page or canonical team IDs are resolved, hydrate structured stats from the configured warehouse/API when available.
    - If no API/warehouse is configured, the next required step is the default public static JSON database export: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`. Do not stop after HLTV page facts.
    - Read `/matches/<matchId>/data-pack.json`, `/teams/<hltvTeamId>/*.json`, and `/events/<eventId>/player-ratings.json` as available. Mark field-level source as `static_database`.
+   - Record these attempts in `数据源执行记录` / `source_execution_log`. If the manifest or static/API records were not read, stop before complete analysis and add `structured_database_not_queried`.
    - If the match page cannot be found/read on HLTV, use the public static database export to reverse-search exported matches/teams.
    - If the structured database/API/static source is unavailable or missing a field, add `structured_database_unavailable` or `static_record_not_found`, then direct HLTV deep stats may be attempted as supplemental fallback with field-level warning labels.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
@@ -83,6 +103,7 @@ The skill must be usable by someone who only installs the skill and has no acces
 Every data pack should include:
 
 - `metadata`: query, source, retrieved time, data cutoff, version, missing fields.
+- `source_execution_log`: HLTV lookup result, database/API manifest result, exact static/API record paths read, field-level source labels, and fallback status.
 - `teams`: resolved team identity, aliases, HLTV IDs, rank snapshots.
 - `match`: event, schedule, format, LAN/online context, status.
 - `lineups`: expected or confirmed players, stand-ins, coaches, missing ratings.
@@ -99,19 +120,20 @@ Every data pack should include:
 
 For Chinese user-facing output, prefer this compact Markdown order:
 
-1. `数据状态`: source, freshness, completeness, missing high-impact fields.
-2. `比赛信息`: match ID, event, format, time, status.
-3. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
-4. `选手数据`: annual/event ratings and missing rating flags.
-5. `地图池总览`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
-6. `逐图详细分析`: when map detail data exists and the user asks for stronger/weaker/win-rate judgment, analyze each playable map separately using sample size, overall/LAN win rate, CT/T, pistol, first-kill/first-death, rounds won, pick/ban, and data quality.
-7. `特殊 Veto 变量`: maps that one team rarely plays, permanently bans, has no current-year data on, or has extreme low sample. Do not mix these maps into the normal map average.
-8. `近期记录 / H2H`: recent records and direct matchup map rows when available.
-9. `警匪胜率`: each team's CT-side and T-side win rate by map when available from HLTV team map stats pages.
-10. `Veto / 比分`: veto, map order, scores, result when visible.
-11. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
-12. `数据缺口`: what is missing and what must not be inferred.
-13. `JSON`: stable English-key JSON for downstream use.
+1. `数据源执行记录`: HLTV 定位是否成功、manifest/API 是否成功、读取了哪些数据库路径、哪些字段来自 `static_database` / `api_warehouse` / `direct_hltv` / `missing`。
+2. `数据状态`: source, freshness, completeness, missing high-impact fields.
+3. `比赛信息`: match ID, event, format, time, status.
+4. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
+5. `选手数据`: annual/event ratings and missing rating flags.
+6. `地图池总览`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
+7. `逐图详细分析`: when map detail data exists and the user asks for stronger/weaker/win-rate judgment, analyze each playable map separately using sample size, overall/LAN win rate, CT/T, pistol, first-kill/first-death, rounds won, pick/ban, and data quality.
+8. `特殊 Veto 变量`: maps that one team rarely plays, permanently bans, has no current-year data on, or has extreme low sample. Do not mix these maps into the normal map average.
+9. `近期记录 / H2H`: recent records and direct matchup map rows when available.
+10. `警匪胜率`: each team's CT-side and T-side win rate by map when available from HLTV team map stats pages.
+11. `Veto / 比分`: veto, map order, scores, result when visible.
+12. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
+13. `数据缺口`: what is missing and what must not be inferred.
+14. `JSON`: stable English-key JSON for downstream use.
 
 Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
 
@@ -156,6 +178,7 @@ Numeric probabilities are allowed only when the collected data is strong enough 
 
 For match-level or map-level probability requests, do **not** output exact percentages if either condition is true:
 
+- The structured database/API/static export was not queried after HLTV identity resolution.
 - Current-year map summary is missing for either team.
 - Two or more high-impact fields are missing or blocked, including current-year map summary, annual player ratings, event player ratings when event ID is known, confirmed/expected lineup, or relevant veto/map-order context.
 
