@@ -1,6 +1,6 @@
 {
   "schema_version": "hltv-cs2-data.static.v1",
-  "generated_at": "2026-05-06T12:45:47.354Z",
+  "generated_at": "2026-05-06T12:51:47.079Z",
   "source_policy": "mysql_tidb_export",
   "date_window": {
     "start": "2026-01-01",
