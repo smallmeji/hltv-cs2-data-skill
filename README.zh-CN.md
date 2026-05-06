@@ -6,21 +6,39 @@
 
 它不输出胜率预测、赢家倾向、Veto 猜测、比分预测、投注建议、EV、Kelly 或仓位。
 
-## 当前数据源
+## 结构化数据源模型
 
-公开静态数据版本：
+本 skill 绑定的是**结构化数据能力契约**，不是某一个固定网站或固定 JSON 路径。
+
+可用数据源优先级：
+
+1. 已配置的 API / warehouse。
+2. 用户提供的静态 JSON 导出。
+3. 默认公开 raw GitHub 静态导出。
+
+任何数据源只要能提供等价能力，就可以替换默认源：
+
+- 队伍 / 比赛身份解析或索引。
+- match data pack。
+- team map summary。
+- team map details。
+- player ratings。
+- event ratings。
+- 数据缺口 / warnings。
+
+当前默认公开静态数据版本：
 
 ```text
 static-raw-2026-05-06
 ```
 
-默认 manifest：
+默认公开源 manifest：
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-这是唯一默认公开静态数据库入口。不要使用 GitHub Pages 地址、平台网站地址或 raw 目录地址作为数据源。
+这是当前仓库内置的默认公开入口。它不是唯一可用数据源；如果用户配置了 API 或提供了其他静态 JSON 源，应优先使用配置源。
 
 明确禁止作为结构化数据源：
 
@@ -76,12 +94,12 @@ Ancient, Anubis, Dust2, Inferno, Mirage, Nuke, Overpass
 比赛或队伍查询必须按这个顺序：
 
 1. 先用 HLTV 定位身份事实：match ID、team ID、event ID、可见阵容、赛制、时间、状态、已公开 Veto/比分/赛果。
-2. 读取静态数据库 manifest。
-3. 根据 ID 读取准确 JSON 记录。
+2. 读取所选结构化源的 capabilities / manifest。
+3. 根据 ID 读取准确记录或 endpoint。
 4. 地图池、选手 rating、CT/T、手枪局、首杀首死、Pick/Ban、H2H、近期记录、Veto、比分、赛果等字段必须来自结构化记录。
 5. 如果结构化记录没读到，只输出部分数据，并标记 `structured_database_not_queried`。
 
-常见记录路径：
+默认公开静态源的常见记录路径示例：
 
 ```text
 matches/index.json
@@ -94,11 +112,11 @@ matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
 
-如果用户只给自然语言比赛，例如 `PGL Aurora vs Heroic`，先读 `matches/index.json` 搜索赛事名和双方队名；匹配到唯一比赛后，读取该行的 `data_pack_path`。不要在找不到 HLTV 页面时直接降级成缺字段报告。
+如果用户只给自然语言比赛，例如 `PGL Aurora vs Heroic`，先用结构化源的 match search/index 搜索赛事名和双方队名；匹配到唯一比赛后，读取对应 match data pack。默认公开源中，这一步对应 `matches/index.json` 和该行的 `data_pack_path`。不要在找不到 HLTV 页面时直接降级成缺字段报告。
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
 
-默认公开 raw GitHub 数据源的最小合法路径：
+默认公开 raw GitHub 数据源的最小合法流程：
 
 ```text
 manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json

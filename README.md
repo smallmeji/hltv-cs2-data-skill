@@ -6,21 +6,39 @@
 
 It does not output predictions, win probabilities, Veto hypotheses, score guesses, betting advice, EV, Kelly, or stake sizing.
 
-## Current Data Source
+## Structured Source Model
 
-Public static export version:
+This skill is bound to a **structured data capability contract**, not to one fixed website or one fixed JSON path.
+
+Structured source priority:
+
+1. Configured API / warehouse.
+2. User-provided static JSON export.
+3. Default public raw GitHub static export.
+
+Any source can replace the default source if it provides equivalent capabilities:
+
+- team / match identity resolution or index
+- match data pack
+- team map summary
+- team map details
+- player ratings
+- event ratings
+- data gaps / warnings
+
+Current default public static export version:
 
 ```text
 static-raw-2026-05-06
 ```
 
-Default manifest URL:
+Default public manifest URL:
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-This is the only default public static database entry point. Do not use a GitHub Pages URL, platform-site URL, or raw directory URL as the data source.
+This is the built-in public fallback for this repository. It is not the only possible source. If the user configures an API or provides another static JSON source, use the configured source first.
 
 Forbidden as structured data sources:
 
@@ -76,12 +94,12 @@ Do not add inactive maps such as Vertigo, Cache, or Train unless they exist in a
 For a match or team query:
 
 1. Use HLTV only to resolve visible identity facts: match ID, team ID, event ID, visible lineup, format, schedule, status, published veto, and result.
-2. Fetch the static database manifest.
-3. Fetch exact JSON records by ID.
+2. Fetch the selected structured source's capabilities / manifest.
+3. Fetch exact records or endpoints by ID.
 4. Use structured records for map pool, player ratings, CT/T, pistol, first-kill/first-death, Pick/Ban, H2H, recent rows, veto, score, and result fields.
 5. If structured records are unavailable, stop at a partial data report and show `structured_database_not_queried`.
 
-Expected record examples:
+Default public static source record examples:
 
 ```text
 matches/index.json
@@ -94,11 +112,11 @@ matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
 
-If the user gives a natural-language match request such as `PGL Aurora vs Heroic`, read `matches/index.json` and search event/team names first. When exactly one row matches, fetch that row's `data_pack_path`. Do not downgrade to a missing-field report just because direct HLTV page lookup failed.
+If the user gives a natural-language match request such as `PGL Aurora vs Heroic`, use the structured source's match search/index first. When exactly one row matches, fetch the corresponding match data pack. In the default public source, this means `matches/index.json` and that row's `data_pack_path`. Do not downgrade to a missing-field report just because direct HLTV page lookup failed.
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
 
-Minimum valid path for the default public raw GitHub source:
+Minimum valid flow for the default public raw GitHub source:
 
 ```text
 manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json

@@ -77,14 +77,14 @@ or:
 Workflow:
 
 1. If the prompt includes an event context, such as `PGL 上 Aurora 和 Heroic`, search/read HLTV event, upcoming, result, and match pages first to locate the exact match page.
-2. If no exact match page is implied, resolve both teams from HLTV team pages and/or the public database `teams/index.json`.
-3. After match/team IDs are known, immediately hydrate structured stats from configured API/warehouse if available.
-4. If no API/warehouse is configured, read the default public static JSON database export. The first required URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-5. If the prompt includes event context, read `/matches/index.json` and try to locate a single exact exported match. If found, treat the query as `match_data_pack` and read that row's `data_pack_path`.
-6. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
-7. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
-8. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
-9. If `matches/<matchId>/data-pack.json` contains a `markdown` field, use it as the canonical data skeleton. It is already rendered from the structured rows and should prevent field mapping mistakes. You may summarize or localize it, but do not drop rendered fields such as CT/T, pistol, first-kill, first-death, total rounds, Pick/Ban, or event-tier breakdown. If these fields appear in the data-pack/markdown, saying they are `未加载` is non-compliant.
+2. If no exact match page is implied, resolve both teams from HLTV team pages and/or the structured source's team resolver/index.
+3. After match/team IDs are known, immediately hydrate structured stats from the selected structured source. Source priority is configured API/warehouse, then user-provided static JSON, then default public raw GitHub export.
+4. If the selected source exposes capabilities or a manifest, read it first. For the default public source, the manifest URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+5. If the prompt includes event context, use the source's match search/index and try to locate a single exact exported match. For the default public source this is `/matches/index.json`; if found, treat the query as `match_data_pack` and read the row's match data-pack reference, such as `data_pack_path`.
+6. Use the source capabilities/manifest/index to fetch exact records or endpoints. Prefer a match data pack when an exact match is known. Otherwise fetch equivalent team summary, overall map summary, LAN map summary, overall map details, LAN map details, player ratings, and event player ratings when available. The default public source names these records `/matches/<matchId>/data-pack.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json`.
+7. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV identity step, structured source mode, record categories read, and field-level source labels. Exact paths/endpoints stay internal unless debug/audit output is requested.
+8. If the source capabilities/manifest and at least one exact API/static/warehouse record were not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
+9. If the resolved match data pack contains a `markdown` field, use it as the canonical data skeleton. It is already rendered from the structured rows and should prevent field mapping mistakes. You may summarize or localize it, but do not drop rendered fields such as CT/T, pistol, first-kill, first-death, total rounds, Pick/Ban, or event-tier breakdown. If these fields appear in the data-pack/markdown, saying they are `未加载` is non-compliant.
 10. Before writing map tables, run the mandatory field audit:
    - `比赛数 = sample_maps`
    - `W-L = wins-losses` or `W-D-L = wins-draws-losses`
@@ -140,13 +140,14 @@ Workflow:
 
 1. Set `query_type=hypothetical_match` unless a real HLTV match is found quickly from the named event/date.
 2. Resolve both teams through HLTV team pages and/or `teams/index.json`.
-3. Fetch the public database manifest and both teams' exact records:
-   - `/teams/<id>/summary.json`
-   - `/teams/<id>/maps-overall.json`
-   - `/teams/<id>/maps-lan.json`
-   - `/teams/<id>/map-details-overall.json`
-   - `/teams/<id>/map-details-lan.json`
-   - `/teams/<id>/players.json`
+3. Fetch the selected structured source's capabilities/manifest and both teams' exact records/endpoints:
+   - team summary
+   - overall map summary
+   - LAN map summary
+   - overall map details
+   - LAN map details
+   - player ratings
+   - default public source examples: `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`
 4. Record user-provided context as assumptions, for example `tier=S`, `format=BO3`, `match_environment=LAN`, `event=PGL`, `date=unknown`.
 5. If a real event ID is explicitly known, attempt `/events/<eventId>/player-ratings.json`; otherwise mark event rating `not_applicable_without_event_id`.
 6. Output `数据源执行记录`, `假设条件`, `数据状态 / 数据缺口`, `队伍与选手 Rating 3.0`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, and `给模型的决策输入`.
@@ -171,13 +172,14 @@ Workflow:
 
 1. Set `query_type=single_team_profile`.
 2. Resolve the team through HLTV and/or `teams/index.json`.
-3. Fetch the public database manifest and the team's exact records:
-   - `/teams/<id>/summary.json`
-   - `/teams/<id>/maps-overall.json`
-   - `/teams/<id>/maps-lan.json`
-   - `/teams/<id>/map-details-overall.json`
-   - `/teams/<id>/map-details-lan.json`
-   - `/teams/<id>/players.json`
+3. Fetch the selected structured source's capabilities/manifest and the team's exact records/endpoints:
+   - team summary
+   - overall map summary
+   - LAN map summary
+   - overall map details
+   - LAN map details
+   - player ratings
+   - default public source examples: `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`
 4. Output `数据源执行记录`, `队伍信息`, `数据状态 / 数据缺口`, `选手 rating`, `地图池总览`, `逐图详细数据`, `近期地图记录` if exported, and `给模型的决策输入`.
 5. Mark opponent, event rating, Veto, score, and match status as `not_applicable` unless the user adds match/event context.
 6. Do not infer team strength beyond source-backed facts.
@@ -200,15 +202,11 @@ Workflow:
 
 1. Treat this as a full data-pack request. Do not ask the user for JSON paths, API paths, or a match URL unless multiple plausible matches remain after lookup.
 2. Find the exact HLTV match when an event context is present. Extract `hltvMatchId`, `eventId` if visible, team IDs/slugs, format, schedule, stage/status, and visible lineup/veto/score.
-3. Fetch the public database manifest.
-4. If HLTV search/page access did not produce a match ID, read `matches/index.json` and search `search_text`, event name, team names, and date/status. If one clear exported match exists, use that row's `hltv_match_id` and `data_pack_path`.
-5. If `matches/<hltvMatchId>/data-pack.json` or an index row `data_pack_path` exists, read it first.
-6. Read or attempt both teams' records:
-   - `teams/<id>/summary.json`
-   - `teams/<id>/map-details-overall.json`
-   - `teams/<id>/map-details-lan.json`
-   - `teams/<id>/players.json`
-7. If `eventId` is known, read or attempt `events/<eventId>/player-ratings.json`.
+3. Fetch the selected structured source's capabilities/manifest.
+4. If HLTV search/page access did not produce a match ID, use the source's match search/index and search `search_text`, event name, team names, and date/status. In the default public source this is `matches/index.json`. If one clear exported match exists, use that row's `hltv_match_id` and match data-pack reference such as `data_pack_path`.
+5. If a match data-pack record/endpoint exists, read it first. In the default public source this is `matches/<hltvMatchId>/data-pack.json` or the index row's `data_pack_path`.
+6. Read or attempt both teams' equivalent records/endpoints for summary, overall map details, LAN map details, and players. Default public source examples are `teams/<id>/summary.json`, `teams/<id>/map-details-overall.json`, `teams/<id>/map-details-lan.json`, and `teams/<id>/players.json`.
+7. If `eventId` is known, read or attempt event player ratings. In the default public source this is `events/<eventId>/player-ratings.json`.
 8. If the match data-pack has a `markdown` field, use that pre-rendered Markdown as the starting skeleton and keep all factual fields it already contains. Do not mark CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown as missing when the skeleton contains them.
 9. Output the compact Chinese structure:
    - `数据源执行记录`
@@ -236,15 +234,15 @@ Workflow:
 1. Extract `hltvMatchId`.
 2. Read the HLTV match page first. Resolve event, teams, format, schedule, status, lineup/veto/score when visible, and `eventId` when possible.
 3. Stop HLTV browsing after identity/visible facts are resolved. Read API data-pack when configured to hydrate structured fields.
-4. If no API is configured, read the configured or default public static JSON database export. Start with `/matches/<hltvMatchId>/data-pack.json`; if missing, use team/event JSON files by resolved IDs. Mark merged fields as `static_database`.
-5. The static database export must start with `/manifest.json`, then exact record paths. Do not treat a 404 from the base directory as data absence.
+4. If no API is configured, read the configured static JSON source or default public static JSON database export. Start with the source's match data-pack endpoint/record; for the default public source this is `/matches/<hltvMatchId>/data-pack.json`. If missing, use team/event records by resolved IDs. Mark merged fields as `static_database`.
+5. A static database export should start with a manifest/capabilities file, then exact records. For the default public source this is `/manifest.json`, then exact record paths. Do not treat a 404 from a base directory as data absence.
 6. Add `source_execution_log` with:
    - `hltv_match_page_status`
-   - `database_manifest_url`
-   - `database_manifest_status`
-   - `database_record_paths`
+   - `structured_source_mode`
+   - `structured_source_status`
+   - `record_categories_read`
    - `field_sources`
-7. If `database_manifest_status` is not `success` and no API record was read, output only a partial HLTV pack with `structured_database_not_queried`. Do not produce `地图池总览`, `逐图详细分析`, veto prediction, numeric match probability, or a complete report.
+7. If the structured source was not successfully read and no API/static/warehouse record was read, output only a partial HLTV pack with `structured_database_not_queried`. Do not produce `地图池总览`, `逐图详细分析`, veto prediction, numeric match probability, or a complete report.
 8. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
 9. Fetch lineups from the match page or static/API pack when visible/available. If lineup is unclear, public external context may be used for starters/stand-in/coaches/roster notes and labeled `external_context`.
 10. Always attempt to fetch player ratings from structured records first. If static/API ratings are missing, then use direct HLTV fallback for visible starters:
@@ -321,8 +319,8 @@ Source display:
 
 - For normal human-facing reports, keep `数据源执行记录` compact: source type, status, freshness, and record categories read.
 - `数据源执行记录` must appear before map analysis and decision inputs.
-- Do not print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON in a normal report unless the user asks for debug/audit/source details.
-- Exact source paths still belong in internal `source_execution_log` and optional JSON.
+- Do not print raw manifest URLs, GitHub raw URLs, database record paths/endpoints, or full JSON in a normal report unless the user asks for debug/audit/source details.
+- Exact source paths/endpoints still belong in internal `source_execution_log` and optional JSON.
 - If the output source says only `HLTV.org`, search, wiki, or news snippets and no structured source was read, stop and emit partial facts only. Do not continue into full report sections.
 
 No-prediction rules:

@@ -83,7 +83,7 @@ For a match URL:
 3. Resolve match ID, team IDs, slugs, event ID, format, time, status, lineup/veto/score when visible.
 4. If API/warehouse is configured, use it to hydrate structured fields after identity resolution.
 5. Otherwise read configured static JSON or the default public static manifest as the public database export.
-6. For natural-language match lookup, read `matches/index.json`; when a clear match exists, read that row's `data_pack_path` before team-only records.
+6. For natural-language match lookup, use the selected source's match search/index before team-only records. In the default public source this is `matches/index.json`; when a clear match exists, read that row's match data-pack reference such as `data_pack_path`.
 7. Hydrate team maps, map details, player ratings, event ratings, match packs, and compare-ready fields from the database export when present.
 8. If the database export is unavailable or missing a field, then attempt direct HLTV current-year team map summary stats, current-year team player stats, and event player ratings as supplemental fallback.
 9. Merge database fields into the data pack with `source=static_database` or `source=api_warehouse`; preserve direct HLTV fields with `source=direct_hltv`.

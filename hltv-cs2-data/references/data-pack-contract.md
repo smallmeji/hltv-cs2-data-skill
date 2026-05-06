@@ -34,9 +34,9 @@ User-facing Markdown should follow the user's language. If the user writes in Ch
 Default Chinese Markdown structure:
 
 1. `数据源执行记录`
-   - HLTV 定位状态、数据库 manifest/API 状态、读取的结构化记录类别、字段来源。
-   - A compliant output must internally record at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
-   - For normal human-facing reports, do not show raw URLs or exact database paths. Show compact source status and freshness only. Exact paths are reserved for JSON/debug/audit output.
+   - HLTV 定位状态、结构化源状态、读取的结构化记录类别、字段来源。
+   - A compliant output must internally record at least one exact structured record reference, such as an API endpoint, warehouse record ID, or static JSON path. Default public source examples include `matches/2394116/data-pack.json` and `teams/11861/map-details-overall.json`.
+   - For normal human-facing reports, do not show raw URLs or exact database paths/endpoints. Show compact source status and freshness only. Exact references are reserved for JSON/debug/audit output.
 2. `数据状态 / 数据缺口`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
    - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
@@ -188,9 +188,9 @@ Phase 2 can add these fields after collector and warehouse support exists:
     },
     "structured_source": {
       "mode": "static_database",
-      "manifest_url": "https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json",
-      "manifest_status": "success",
-      "record_paths": [
+      "capabilities_url": "https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json",
+      "capabilities_status": "success",
+      "record_references": [
         "matches/2393335/data-pack.json",
         "teams/6667/map-details-overall.json",
         "teams/8297/map-details-overall.json",

@@ -102,11 +102,11 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 3. **Structured data first for analysis**: map pools, map detail, CT/T, pistol, first kill/death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact API/warehouse/static JSON records when available.
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
 5. **No user cue required**: never wait for the user to explicitly request the database or data source. A request that names this skill, says "this skill", or asks for a CS2 match/team while the skill is active is already permission and instruction to hydrate structured data.
-6. **Match index for natural language**: if the user gives event/team names without a match URL, fetch `matches/index.json` from the static export after the manifest and search it before falling back to team-only comparison. When a single matching row is found, fetch that row's `data_pack_path` first.
+6. **Match index for natural language**: if the user gives event/team names without a match URL, use the selected structured source's match search/index after the capabilities/manifest step and search it before falling back to team-only comparison. In the default public source this is `matches/index.json`. When a single matching row is found, fetch that row's match data-pack reference first, such as `data_pack_path`.
 7. **Fail closed**: if manifest plus exact records cannot be read, output partial HLTV facts only with `structured_database_not_queried`.
 8. **Exact rows only**: if a team-map/player row is absent, write `missing` / `无数据`. Do not infer it from opponent data, another map, rankings, snippets, or memory.
 9. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
-10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths, and JSON only for debug/audit/machine-readable requests.
+10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
 11. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
 12. **Invalid-output triggers**: if a normal report includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, `Veto 预测`, `禁图/选图预测框架`, `可能的地图序列`, `胜率最高`, winner probabilities, or a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, the output is non-compliant and must be retried from the structured source.
 
@@ -169,7 +169,7 @@ When a public-data request returns `404`:
 1. If the URL is the raw GitHub `/public-data` directory, retry exact `/public-data/manifest.json`.
 2. If the URL contains `smallmeji.github.io`, GitHub Pages, or a platform-site public-data path, treat it as stale instructions, not as database failure. Replace it with the required raw GitHub manifest URL.
 3. If the URL is not the required raw GitHub manifest host/path, treat it as stale instructions and do not use it.
-4. If `manifest.json` works but an exact record path 404s, use manifest/index files to discover available records.
+4. If `manifest.json` works but an exact default-source record path 404s, use manifest/index files to discover available records. For alternate sources, use the equivalent source capabilities/index.
 5. If `manifest.json` cannot be read, stop with `structured_database_unavailable` / `structured_database_not_queried`.
 
 Do not turn a 404 into a full HLTV-only report.
@@ -236,7 +236,7 @@ Use only after structured data was attempted and failed or lacks a field. Direct
 
 ## Reference Map
 
-- `references/query-workflow.md`: detailed recipes for match URL, team comparison, single-team, hypothetical match, event ratings, and exact record paths.
+- `references/query-workflow.md`: detailed recipes for match URL, team comparison, single-team, hypothetical match, event ratings, and exact record references.
 - `references/data-pack-contract.md`: stable Markdown/JSON output contract and field mapping.
 - `references/decision-inputs.md`: how to organize factual decision inputs.
 - `references/standalone-mode.md`: public standalone mode and external-model failure handling.
