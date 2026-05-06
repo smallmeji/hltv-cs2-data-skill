@@ -12,13 +12,9 @@
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-本版本禁止使用的旧地址：
+这是唯一默认公开静态数据库入口。不要从记忆里推导、替换或尝试其他 host。来自其他 host 的 404 不能说明数据库不可用。
 
-```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
-```
-
-如果模型输出 `smallmeji.github.io` 数据源，说明它使用了旧指令、旧 skill 安装包或缓存上下文。请重新安装 `.skill`，并先要求它复述 `当前公开数据源版本`。
+如果外部模型报告的是 GitHub Pages / 平台站点地址 404，而不是上面的 raw GitHub manifest，说明它使用了旧指令、旧 skill 安装包或缓存上下文。请重新安装最新版 `.skill`，并先要求它复述 `当前公开数据源版本` 和 `默认 manifest URL`。
 
 ## 适合什么场景
 
@@ -75,6 +71,19 @@ warning: structured_database_not_queried
 - 没有静态数据库记录，却输出完整地图池 / 逐图详细分析。
 - 普通报告里默认输出完整 JSON。
 - 用搜索摘要、新闻、wiki、盘口页面替代数据库字段。
+
+### 404 排查规则
+
+出现 404 时，先判断访问的到底是什么：
+
+| 访问目标 | 解释 | 正确处理 |
+|:--|:--|:--|
+| raw GitHub 的 `/public-data` 目录 | 目录不是 JSON 文件，返回 404 正常 | 改读 `/public-data/manifest.json` |
+| raw GitHub 的 `/manifest.json` | 这是唯一默认入口 | 若失败，标记 `structured_database_unavailable` |
+| raw GitHub 的具体 JSON 文件 | 说明该记录可能未导出 | 回到 manifest / index 查可用路径 |
+| GitHub Pages / 平台站点派生地址 | 旧文档或模型记忆 | 不要继续使用，重新安装最新版 skill |
+
+如果不能成功读取 manifest 和至少一个准确 JSON 记录，不能输出完整数据包、逐图分析或胜率方向。只能输出 HLTV 基础事实和 `structured_database_not_queried`。
 
 正确输出必须在靠前位置包含 `数据源执行记录`。
 
@@ -290,6 +299,22 @@ hltv-cs2-data.skill
 ```
 
 这个包里包含同一份 `hltv-cs2-data/` skill 文件夹和 references 文档。
+
+### 安装后冒烟测试
+
+安装或更新 skill 后，先用这句测试，不要直接跑完整报告：
+
+```text
+使用 hltv-cs2-data。先复述 skill 里的当前公开数据源版本和默认 manifest URL，然后读取 manifest。不要使用 GitHub Pages 或平台站点派生地址。
+```
+
+预期结果：
+
+- 数据源版本是 `static-raw-2026-05-06`。
+- manifest URL 是 `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`。
+- 模型不应该提到 GitHub Pages / 平台站点的 public-data 地址。
+
+如果模型使用了其他 host，说明它仍在使用旧 skill、旧安装包或旧会话缓存。需要重新安装 `.skill`，并开新对话测试。
 
 ### 方式三：当普通指令文档使用
 

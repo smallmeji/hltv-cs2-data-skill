@@ -30,6 +30,8 @@ The base URL is a path prefix, not a JSON document. Some runtimes will return 40
 
 If an external model reports "data source returned 404", first check whether it fetched the base directory instead of `/manifest.json` or an exact JSON file. Directory 404 is a client error, not a database miss.
 
+If the fetched URL is a GitHub Pages or platform-site derived URL, it is stale instruction leakage. Do not use it, do not retry it, and do not treat its 404 as database unavailability. Return to the required raw GitHub manifest URL.
+
 Expected files include:
 
 ```text
@@ -60,6 +62,7 @@ External-model implementation note:
 - Search snippets, wikis, official event pages, and market pages can only fill match-background context; they cannot satisfy the structured database step.
 - If the model cannot fetch GitHub raw files, it must say the structured source is unavailable and stop before the analysis sections.
 - Normal reports should not print the raw GitHub URLs; however, the model must still perform the fetch internally.
+- After install/update, a smoke test should quote the source version and required manifest URL before generating reports. If the quoted URL is not the raw GitHub manifest, reinstall the skill and start a new conversation.
 
 ## Required Source Execution Log
 

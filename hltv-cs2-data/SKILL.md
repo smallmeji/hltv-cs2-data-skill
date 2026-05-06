@@ -17,6 +17,8 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 This is the only default public static database entry point. Do not derive or substitute another host from memory. A 404 from any other host is not evidence that the database is unavailable.
 
+If the model reports a GitHub Pages / platform-site URL instead of this raw GitHub manifest, it is using stale instructions or cached context. Ignore that URL, fetch the required manifest above, and record the correction in `数据源执行记录`.
+
 ## Purpose
 
 `hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV-derived CS2 multidimensional data guide that returns facts and model-ready decision inputs only.
@@ -101,6 +103,17 @@ Red flags for non-compliant output:
 - A full pre-match analysis generated from search summaries, wiki/news snippets, or market pages.
 - Sections such as `最近30天状态`, `赛事分布`, `对手质量`, `核心选手优势`, or `地图池深度` that contain numeric values but do not identify exact structured source rows.
 - A report titled or structured as `深度分析报告` that presents conclusions before `数据源执行记录`.
+
+## 404 Triage
+
+If any public-data request returns `404`, apply this order before continuing:
+
+1. If the fetched URL is the raw GitHub `/public-data` directory, retry the exact `/public-data/manifest.json` file.
+2. If the fetched URL is not the required raw GitHub manifest host/path, treat it as stale instructions and do not use it.
+3. If `/manifest.json` works but an exact record path returns 404, use manifest/index files to discover available records instead of inventing data.
+4. If `/manifest.json` cannot be read, stop with `structured_database_unavailable` / `structured_database_not_queried`.
+
+Do not turn a 404 into a full HLTV-only report. Without manifest plus exact database records, output partial facts only.
 
 ## Identity Facts vs Structured Stats
 

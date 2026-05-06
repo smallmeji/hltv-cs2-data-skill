@@ -16,6 +16,8 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 This is the only default public static database entry point. Do not derive or substitute another host from memory. A 404 from any other host is not evidence that the database is unavailable.
 
+If an external model reports a GitHub Pages / platform-site URL instead of the raw GitHub manifest above, it is using stale instructions, a stale installed skill, or cached context. Reinstall the latest `.skill` package and ask the model to quote the `Current public-data source version` and the `Required default manifest URL` before testing.
+
 ## What It Is For
 
 Use this skill when you want an LLM to gather the data needed to analyze a CS2 match, team pair, event, roster, or historical matchup.
@@ -69,6 +71,19 @@ These outputs are non-compliant:
 - Complete map pool / per-map detail with no static/API record.
 - Full JSON in a normal report when the user did not ask for JSON.
 - Search summaries, news, wiki, or market pages used as database fields.
+
+### 404 Triage
+
+When a fetch returns `404`, first identify what was fetched:
+
+| Fetched target | Meaning | Correct action |
+|:--|:--|:--|
+| Raw GitHub `/public-data` directory | Directories are not JSON files; 404 can be normal | Fetch `/public-data/manifest.json` |
+| Raw GitHub `/manifest.json` | The required default entry point | If this fails, mark `structured_database_unavailable` |
+| Raw GitHub exact JSON file | That record may not be exported | Return to manifest / indexes and use available paths |
+| GitHub Pages / platform-site derived URL | Stale docs or model memory | Do not use it; reinstall/update the skill |
+
+If the manifest and at least one exact JSON record cannot be read, do not output a complete data pack, per-map analysis, or winner direction. Output only basic HLTV facts with `structured_database_not_queried`.
 
 A correct output must include a `Data Source Execution Log` / `数据源执行记录` near the top.
 
@@ -279,6 +294,22 @@ Restart or reload skills if your environment requires it.
 Use `hltv-cs2-data.skill` if your environment supports installing `.skill` packages.
 
 The package contains the same `hltv-cs2-data/` skill folder and references.
+
+### Post-Install Smoke Test
+
+After installing or updating the skill, test with this prompt before asking for a full report:
+
+```text
+Use hltv-cs2-data. First quote the Current public-data source version and Required default manifest URL from the skill. Then fetch the manifest. Do not use any GitHub Pages or platform-site URL.
+```
+
+Expected result:
+
+- Source version is `static-raw-2026-05-06`.
+- Manifest URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+- The model does not mention a GitHub Pages / platform-site public-data URL.
+
+If the model uses a different host, it is running stale skill instructions or cached context. Reinstall the packaged skill and start a new conversation.
 
 ### Option 3: Use as plain instructions
 
