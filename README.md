@@ -50,7 +50,7 @@ Typical fields:
 - Current active-map pool.
 - Map summary: sample, W-D-L, win rate, Pick%, Ban%.
 - Map detail when exported: CT/T round win rate, pistol rate, first-kill and first-death conversion, rounds played/won.
-- Player ratings: annual and event ratings when exported.
+- Player ratings: annual and event HLTV Rating 3.0 when exported. JSON uses `rating2` as the compatibility field name; do not use `rating_2_0`.
 - Observed veto, map order, score, and result when available.
 - Data gaps and warnings.
 - `decision_inputs`: factual signals for a downstream model.
@@ -96,7 +96,7 @@ Recommended human report sections:
 1. Data Source Execution Log
 2. Data Status / Data Gaps
 3. Match Info
-4. Teams and Player Ratings
+4. Teams and Player Rating 3.0
 5. Map Pool Overview
 6. Per-Map Detail
 7. Special Veto Variables

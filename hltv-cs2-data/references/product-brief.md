@@ -20,7 +20,7 @@ Given a match, team pair, event, map, or historical cutoff, return a multidimens
 - Team identity, HLTV IDs, aliases, and ranking snapshots.
 - Match context: event, tier, format, LAN/online, time, status.
 - Map data: pick rate, ban rate, raw win rate, weighted win rate, sample size, tier filter, recent results.
-- Player data: annual ratings, event ratings, missing ratings.
+- Player data: annual HLTV Rating 3.0, event HLTV Rating 3.0, missing ratings.
 - Lineup data: starters, coaches, stand-ins, roster changes, new-team warnings.
 - Head-to-head data: direct matchup history when available.
 - Veto and map order when published.

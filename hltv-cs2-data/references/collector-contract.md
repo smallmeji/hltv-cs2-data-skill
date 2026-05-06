@@ -23,8 +23,8 @@ Collect these source types:
 - `team_map_stats`: pick/ban and map summary stats.
 - `team_map_side_stats`: CT-side and T-side win rates by team/map from HLTV team map stats pages and detailed map pages.
 - `team_match_history`: per-team map match rows.
-- `team_player_ratings`: team player annual ratings.
-- `event_player_ratings`: event-specific player ratings.
+- `team_player_ratings`: team player annual HLTV Rating 3.0 rows. Existing storage/API fields may remain `rating2` for compatibility.
+- `event_player_ratings`: event-specific HLTV Rating 3.0 rows. Do not introduce `rating_2_0`.
 - `match_detail`: match page facts.
 - `match_result`: completed score and per-map result.
 - `side_scores`: match-specific CT/T side score splits by map when HLTV exposes them reliably.
@@ -102,8 +102,8 @@ Lineup resolution order:
 
 Rating resolution order:
 
-1. Event rating for the same event.
-2. 2026 annual rating from HLTV stats.
+1. Event HLTV Rating 3.0 for the same event.
+2. 2026 annual HLTV Rating 3.0 from HLTV stats.
 3. Missing rating warning.
 
 Only use fallback ratings when the response marks the source and reason.

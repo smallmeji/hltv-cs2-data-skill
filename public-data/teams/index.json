@@ -1,11 +1,14 @@
 {
   "metadata": {
     "schema_version": "hltv-cs2-data.v1",
-    "requested_at": "2026-05-06T12:51:51.124Z",
+    "requested_at": "2026-05-06T14:58:48.807Z",
     "limit": 40,
     "source_policy": "api_with_legacy_fallback",
     "top_limit": 40,
-    "requested_extra_team_ids": [],
+    "requested_extra_team_ids": [
+      12257,
+      11712
+    ],
     "exported_extra_team_ids": [],
     "exported_team_count": 40
   },

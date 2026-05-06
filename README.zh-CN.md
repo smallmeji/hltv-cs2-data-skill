@@ -50,7 +50,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 - 当前 active map pool。
 - 地图 summary：样本、W-D-L、胜率、Pick%、Ban%。
 - 地图 detail：CT/T 回合胜率、手枪局、首杀后胜率、首死后胜率、总回合、赢回合。
-- 选手 rating：年度 rating、赛事 rating。
+- 选手 rating：年度 HLTV Rating 3.0、赛事 HLTV Rating 3.0。JSON 兼容字段名仍是 `rating2`，不要使用 `rating_2_0`。
 - 已公开的 Veto、地图顺序、比分和赛果。
 - 数据缺口与 warnings。
 - `decision_inputs`：给下游模型使用的事实信号。
@@ -96,7 +96,7 @@ events/<eventId>/player-ratings.json
 1. 数据源执行记录
 2. 数据状态 / 数据缺口
 3. 比赛信息
-4. 队伍与选手 rating
+4. 队伍与选手 Rating 3.0
 5. 地图池总览
 6. 逐图详细数据
 7. 特殊 Veto 变量

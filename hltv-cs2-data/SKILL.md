@@ -29,6 +29,7 @@ This is the only default public static database entry point. Do not derive anoth
 6. **Exact rows only**: if a team-map/player row is absent, write `missing` / `无数据`. Do not infer it from opponent data, another map, rankings, snippets, or memory.
 7. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
 8. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths, and JSON only for debug/audit/machine-readable requests.
+9. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
 
 Boundary sentence when the user asks for judgment:
 
@@ -93,7 +94,7 @@ For Chinese comparison or match requests, use this compact order:
 1. `数据源执行记录`
 2. `数据状态 / 数据缺口`
 3. `比赛信息` or `假设条件` / `队伍信息`
-4. `队伍与选手 rating`
+4. `队伍与选手 Rating 3.0`
 5. `地图池总览`
 6. `逐图详细分析`
 7. `特殊 Veto 变量`

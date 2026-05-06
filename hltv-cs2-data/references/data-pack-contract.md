@@ -45,8 +45,9 @@ Default Chinese Markdown structure:
    - Match ID, event, tier, LAN/online, BO format, schedule, status.
 4. `队伍与阵容`
    - Team names, HLTV IDs, rank snapshots, starters, coach/stand-in flags.
-5. `队伍与选手 rating`
-   - Annual rating and event rating when available.
+5. `队伍与选手 Rating 3.0`
+   - Annual HLTV Rating 3.0 and event HLTV Rating 3.0 when available.
+   - JSON may keep the compatibility field name `rating2`; do not use `rating_2_0`.
    - Mark missing values as `缺失`, not as guessed values.
    - For match URL queries with visible lineups, annual rating and event rating are required fetch attempts. If either cannot be retrieved, show a per-player `rating_status` and add a warning.
 6. `地图池`
