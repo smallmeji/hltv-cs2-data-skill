@@ -44,6 +44,8 @@ Required evidence in the output:
 - At least one exact `database_record_path`, such as `matches/2394116/data-pack.json`, `teams/11861/map-details-overall.json`, or `events/8250/player-ratings.json`.
 - Field-level source labels such as `direct_hltv`, `static_database`, `api_warehouse`, `direct_hltv_fallback`, or `missing`.
 
+For normal human-facing reports, do not print raw manifest URLs, database paths, or full JSON unless the user asks for debug/audit/source details or machine-readable output. Instead show a compact source status such as `结构化数据：已读取 public static database export；记录：match data-pack + team map details` and keep exact paths in internal `source_execution_log` / optional JSON.
+
 If this evidence is absent, the output is not compliant with this skill. In that case:
 
 - Do not call the result a complete `hltv-cs2-data` data pack.
@@ -67,6 +69,20 @@ Rules:
 - If an inactive historical map appears in a direct HLTV fallback page, label it as `inactive_historical_map` and exclude it from current BO3/BO5 map-pool and veto analysis.
 - `特殊 Veto 变量` means unusual behavior inside the current active pool only. A map not present in the structured record must not be invented as a veto variable.
 
+## Exact Row Data Gate
+
+Map and player fields must be row-exact. A value exists only when the structured record contains that exact team/player + map/stat row.
+
+Rules:
+
+- For each team-map cell, require an exact row keyed by `team_hltv_id`, `map_name`, and `data_type`.
+- If a team has no row for a map, output `无数据` / `missing`; do not infer values from the opponent, another map, old inactive maps, search snippets, or overall team form.
+- Do not fill `sample_maps`, win rate, CT/T, pistol, first-kill, first-death, pick %, or ban % unless that exact row exists.
+- If one side lacks a map row, move that map into `特殊 Veto 变量` or mark the cell as missing; do not call it `数据充分`.
+- Player ratings require exact player rows. If event rating or annual rating is missing for a player, mark that field as `缺失`.
+
+Example: if `Heroic + Anubis + overall` is absent from `matches/2394116/data-pack.json`, Heroic Anubis must be `无数据`, even if Aurora has Anubis data or Heroic has other map data.
+
 ## Judgment Output Contract
 
 When the user asks who is stronger, who has higher win rate, who is favored, or requests probabilities, the output must use a fixed fact-first structure. Do not produce a free-form "pre-match deep analysis report".
@@ -87,13 +103,15 @@ Mandatory Chinese section order for judgment requests:
 Rules:
 
 - `数据源执行记录` is mandatory and must list manifest/API status and exact record paths.
+- In normal human-facing reports, `数据源执行记录` should be compact and should not expose raw URLs or database paths. Exact paths are for debug/audit mode or JSON output only.
 - `队伍与选手 rating` must show available annual ratings and event ratings. If event ratings, lineup, or confirmed starters are missing, show `缺失` and add warnings instead of omitting the section.
 - `Veto / 比分` is factual only: visible veto steps, map order, scores, or `赛前不可见`. Veto prediction must not appear there.
 - Any Veto prediction, winner lean, map-win probability, match-win percentage, or score guess belongs only under `模型推理`.
 - `模型推理` must start with `以下为模型推理，不是 HLTV 事实数据。`
 - `模型推理` must include `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
 - If the inference gate blocks numeric probabilities, do not output exact percentages. A qualitative direction is allowed only when the user explicitly asks for judgment.
-- `JSON` is mandatory for product/data outputs and must include `source_execution_log`, `metadata.completeness_level`, `warnings`, `decision_inputs`, and `model_inference` when inference is requested.
+- `JSON` is mandatory only when the user asks for product-ready output, downstream LLM use, API-like output, debug/audit output, or machine-readable data. For a normal human-readable report, omit the full JSON block by default and offer it as available on request.
+- Do not output betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price. This remains true even inside `模型推理`.
 
 ## Operating Modes
 

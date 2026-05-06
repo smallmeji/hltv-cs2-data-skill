@@ -96,6 +96,7 @@ Not allowed:
 - Implied betting or strategy recommendations.
 - Filling missing fields from market prices or intuition.
 - Veto prediction or full pre-match report when the structured database was not queried.
+- Betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price. These never belong to `hltv-cs2-data`, even when numeric model inference is allowed.
 
 Chinese phrasing:
 
@@ -117,6 +118,7 @@ If the gate passes and the user explicitly asked for judgment:
 - Include `completeness_level`, key missing caveats, and whether veto is pre-match unknown.
 - Keep factual fields separate from inference fields.
 - Put Veto prediction only inside `Model Inference` as `veto_hypothesis`; factual `Veto / 比分` may contain only observed veto, map order, scores, or `unavailable`.
+- Do not add betting advice or odds commentary.
 
 ## API / Warehouse Override
 

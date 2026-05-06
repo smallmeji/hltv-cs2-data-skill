@@ -55,6 +55,12 @@ When the user asks who is stronger, who has higher win rate, or who is favored, 
 
 Veto predictions, exact win-rate percentages, and score guesses may appear only in `Model Inference`. The factual `Veto / Score` section may contain only observed veto, map order, scores, or `unavailable`. `Model Inference` must expose `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
 
+Normal human-facing reports do not need to print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON. Show a compact source status instead, such as `structured data: public static database export loaded`. Print exact URLs, paths, and JSON only when the user asks for debug, audit, source details, JSON, or downstream model output.
+
+Every map number must come from an exact team-map row. If a team has no row for a map, print `missing` / `no data`; do not infer it from the opponent, another map, search snippets, or overall team form. For example, if a data pack has no `Heroic + Anubis` row, Heroic Anubis must be `missing`.
+
+This skill must not output betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price, even inside `Model Inference`.
+
 ## What It Is Not
 
 This repository does not provide:

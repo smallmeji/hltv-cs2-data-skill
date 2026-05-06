@@ -53,6 +53,12 @@
 
 `Veto 预测`、具体胜率百分比、比分猜测只能出现在 `模型推理`。事实区的 `Veto / 比分` 只能写已经观察到的 veto、地图顺序、比分或 `赛前不可见`。`模型推理` 必须先写 `以下为模型推理，不是 HLTV 事实数据。`，并列出 `completeness_level`、`inference_permission` 和 `missing_high_impact_fields`。
 
+普通报告不需要展示原始 manifest URL、GitHub raw URL、数据库 record path 或完整 JSON。只需要展示简短来源状态，例如 `结构化数据：已读取 public static database export`。只有用户明确要求 debug、审计、source details、JSON 或给下游模型使用时，才输出具体 URL、路径和 JSON。
+
+每个地图数字必须来自精确的队伍-地图记录。如果某队某图没有记录，就写 `无数据`，不能从对手数据、其他地图、搜索摘要或整体状态里补。例如某场数据包里没有 `Heroic + Anubis` 行，就必须显示 Heroic Anubis `无数据`。
+
+本 skill 不输出投注建议、赔率分析、EV、Kelly 或仓位，即使在 `模型推理` 里也不输出。
+
 ## 不做什么
 
 这个仓库不提供：

@@ -37,6 +37,7 @@ Default Chinese Markdown structure:
 1. `数据源执行记录`
    - HLTV 定位状态、HLTV URL、数据库 manifest/API 状态、读取的数据库路径、字段来源。
    - A compliant output must show at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
+   - For normal human-facing reports, do not show raw URLs or exact database paths. Show compact source status and freshness only. Exact paths are reserved for JSON/debug/audit output.
 2. `数据状态 / 数据缺口`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
    - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
@@ -69,6 +70,7 @@ Default Chinese Markdown structure:
    - Explicitly list missing data and what cannot be inferred.
 12. `JSON`
    - Factual data and decision inputs with stable English keys.
+   - Include this section only when the user asks for machine-readable output, data pack output, downstream LLM use, debug/audit output, or explicit JSON.
 13. Optional `模型推理`
    - Only when the user asks for judgment.
    - Must start with `以下为模型推理，不是 HLTV 事实数据。`
@@ -99,6 +101,17 @@ Phase 1 data packs must support these field groups when available:
 - `scores`: map scores, match score, result status.
 - `decision_inputs`: factual model-ready factors grouped for downstream strategy.
 - `warnings`: missing data, stale data, low sample, reconstruction.
+
+## Exact Row Requirement
+
+All factual numeric cells must be backed by exact rows from the structured record.
+
+- Team-map stats require exact `team_hltv_id + map_name + data_type`.
+- Player ratings require exact player rows.
+- Event ratings require exact event/player rows.
+- If an exact row is absent, set the field to `missing` / `缺失` / `无数据`.
+- Do not infer missing team-map values from the opponent, another map, prior roster history, search snippets, or broad team form.
+- A map cannot be marked `数据充分` unless both teams have usable exact rows for that map.
 
 ## Phase 2 Fields
 
