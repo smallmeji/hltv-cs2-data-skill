@@ -63,6 +63,45 @@ Workflow:
 14. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
 15. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
+## One-Sentence Judgment Query
+
+User input:
+
+```text
+用 hltv-cs2-data 看 PGL Astana MOUZ vs Gentle Mates 谁胜率高
+```
+
+or:
+
+```text
+用 hltv-cs2-data 帮我看一下 PGL 上 Aurora 和 Heroic 谁更强
+```
+
+Workflow:
+
+1. Treat this as a full data-pack request plus optional model inference. Do not ask the user for JSON paths, API paths, or a match URL unless multiple plausible matches remain after lookup.
+2. Find the exact HLTV match when an event context is present. Extract `hltvMatchId`, `eventId` if visible, team IDs/slugs, format, schedule, stage/status, and visible lineup/veto/score.
+3. Fetch the public database manifest.
+4. If `matches/<hltvMatchId>/data-pack.json` exists, read it first.
+5. Read or attempt both teams' records:
+   - `teams/<id>/summary.json`
+   - `teams/<id>/map-details-overall.json`
+   - `teams/<id>/map-details-lan.json`
+   - `teams/<id>/players.json`
+6. If `eventId` is known, read or attempt `events/<eventId>/player-ratings.json`.
+7. Output the compact Chinese structure:
+   - `数据源执行记录`
+   - `数据状态 / 数据缺口`
+   - `比赛信息`
+   - `队伍与选手 rating`
+   - `地图池总览`
+   - `逐图详细分析`
+   - `特殊 Veto 变量`
+   - `给模型的决策输入`
+   - optional `模型推理`
+8. Keep the factual data pack compact and source-bound. Custom analysis sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived analysis after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载` or discuss it qualitatively inside `模型推理`.
+9. Keep the source log at the top. A source log at the end is non-compliant.
+
 ## Match URL Query
 
 User input:
@@ -160,6 +199,7 @@ Do not skip factual sections. If a section's source is missing, output the secti
 Source display:
 
 - For normal human-facing reports, keep `数据源执行记录` compact: source type, status, freshness, and record categories read.
+- `数据源执行记录` must appear before conclusions, map analysis, and `模型推理`.
 - Do not print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON in a normal report unless the user asks for debug/audit/source details.
 - Exact source paths still belong in internal `source_execution_log` and optional JSON.
 - If the output source says only `HLTV.org`, search, wiki, or news snippets and no structured source was read, stop and emit partial facts only. Do not continue into full report sections.

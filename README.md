@@ -107,6 +107,10 @@ When the user asks who is stronger, who has higher win rate, or who is favored, 
 
 Veto predictions, exact win-rate percentages, and score guesses may appear only in `Model Inference`. The factual `Veto / Score` section may contain only observed veto, map order, scores, or `unavailable`. `Model Inference` must expose `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
 
+This rule protects the factual layer; it does not prevent the calling model from analyzing. After the factual data pack, the model may freely create its own map weights, form weights, roster-impact notes, Veto hypotheses, win-rate estimates, or other strategy factors when the user asks for judgment. Those sections must live under `Model Inference` or be clearly labeled `derived_from_structured_data`. Model-created metrics must not be presented as HLTV facts, and missing raw fields must not be filled with invented numbers.
+
+Sections such as `recent 30-day form`, `event participation`, `opponent quality`, or `map-pool depth` are allowed when they state the source rows, time window, and calculation method. If exact rows are unavailable, mark the metric as missing or discuss it qualitatively inside `Model Inference`.
+
 Normal human-facing reports do not need to print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON. Show a compact source status instead, such as `structured data: public static database export loaded`. Print exact URLs, paths, and JSON only when the user asks for debug, audit, source details, JSON, or downstream model output.
 
 Every map number must come from an exact team-map row. If a team has no row for a map, print `missing` / `no data`; do not infer it from the opponent, another map, search snippets, or overall team form. For example, if a data pack has no `Heroic + Anubis` row, Heroic Anubis must be `missing`.

@@ -36,6 +36,29 @@ For team-name queries without a match URL, the model still must read the databas
 
 If the model cannot read `manifest.json` and at least one exact static/API record, it must stop with `structured_database_not_queried`. Correct HLTV lineup, rankings, news, search snippets, or market pages are not enough.
 
+## One-Sentence Query Mode
+
+The user should be able to trigger the full workflow with one sentence. Do not require the user to provide raw JSON URLs, API paths, or a manual step list.
+
+Examples:
+
+```text
+用 hltv-cs2-data 看 PGL Astana MOUZ vs Gentle Mates 谁胜率高
+用 hltv-cs2-data 帮我看一下 PGL 上 Aurora 和 Heroic 谁更强
+Use hltv-cs2-data to compare G2 vs FaZe for BLAST Rivals.
+```
+
+For one-sentence requests, automatically perform this sequence:
+
+1. Resolve the exact match when event context is present. Search/read HLTV match, event, upcoming, or results pages for the canonical `hltvMatchId`, `eventId`, teams, format, schedule, status, and visible lineup/veto/score.
+2. Fetch the public static database manifest.
+3. Prefer `matches/<hltvMatchId>/data-pack.json` if the match exists in the export.
+4. Always fetch or attempt both teams' `summary.json`, `map-details-overall.json`, `map-details-lan.json`, and `players.json`.
+5. If an `eventId` is known, fetch or attempt `events/<eventId>/player-ratings.json`.
+6. Produce the compact factual data pack first. Add `Model Inference` only if the user's wording asks for a judgment such as `谁胜率高`, `谁更强`, `favored`, or `probability`.
+
+If multiple plausible matches are found and the event/date cannot disambiguate them, ask one concise clarification question. Otherwise do not ask for extra URLs; use the database export and report missing records.
+
 ## Non-Negotiable Retrieval Checklist
 
 Before writing any map pool, player rating, per-map detail, Veto hypothesis, winner lean, or probability section, the model must complete this checklist:
@@ -62,9 +85,12 @@ warning: structured_database_not_queried
 Red flags for non-compliant output:
 
 - `数据来源：HLTV.org 官方数据` with no structured source status.
+- Source execution log appears only at the end of a long report instead of before analysis.
 - Current-year map tables or player ratings with no `static_database` / `api_warehouse` field source.
 - A normal report that includes a full JSON block without the user asking for JSON.
 - A full pre-match analysis generated from search summaries, wiki/news snippets, or market pages.
+- Sections such as `最近30天状态`, `赛事分布`, `对手质量`, `核心选手优势`, or `地图池深度` that contain numeric values but do not identify exact structured source rows.
+- A report titled or structured as `深度分析报告` that presents conclusions before `数据源执行记录`.
 
 ## Identity Facts vs Structured Stats
 
@@ -165,6 +191,47 @@ Rules:
 
 Example: if `Heroic + Anubis + overall` is absent from `matches/2394116/data-pack.json`, Heroic Anubis must be `无数据`, even if Aurora has Anubis data or Heroic has other map data.
 
+## Derived Analysis Boundary
+
+This skill should not remove the downstream model's freedom. It must only protect the factual data layer from fabricated or weakly sourced numbers.
+
+Use this boundary:
+
+- **Factual data pack**: strict. Numeric cells must come from exact structured records or be marked missing.
+- **Derived analysis / Model Inference**: flexible. The calling model may create custom factors, weights, narratives, map scores, or probability estimates if the user asks for judgment.
+- **External match background**: allowed for context only and labeled `external_context`.
+
+Derived sections are allowed when all of these are true:
+
+1. They appear after the factual data pack, usually inside `模型推理` / `Model Inference` or clearly labeled `derived_from_structured_data`.
+2. They state which factual inputs they used, such as map rows, player ratings, rank, lineup, CT/T, pistol, recent rows, or external background context.
+3. They do not present model-created metrics as HLTV facts.
+4. They do not fill missing raw fields with invented numbers.
+
+Allowed by default:
+
+- `比赛信息`
+- `队伍与阵容`
+- `队伍与选手 rating`
+- `地图池总览`
+- `逐图详细分析`
+- `特殊 Veto 变量`
+- `近期记录 / H2H` only when exact recent/H2H rows exist
+- `Veto / 比分` only for observed facts or `赛前不可见`
+- `给模型的决策输入`
+- `模型推理` only after the factual data pack and only when requested
+
+Allowed as derived analysis, but not as raw fact tables unless exact source rows exist:
+
+- `最近30天战绩`
+- `赛事参赛分布`
+- `最近对手质量`
+- `S-Tier 表现`
+- `核心选手评分优势` beyond exact annual/event rating rows
+- `地图池深度` as a scored conclusion before the factual map table
+
+If exact recent/event/opponent-quality rows exist, the model may show derived tables with a clear source label and calculation window. If they do not exist, discuss the topic qualitatively inside `模型推理` or mark it `未加载`. Do not create new numeric tables from memory, snippets, or unlogged calculations.
+
 ## Judgment Output Contract
 
 When the user asks who is stronger, who has higher win rate, who is favored, or requests probabilities, the output must use a fixed fact-first structure. Do not produce a free-form "pre-match deep analysis report".
@@ -185,6 +252,8 @@ Mandatory Chinese section order for judgment requests:
 Rules:
 
 - `数据源执行记录` is mandatory and must list manifest/API status and exact record paths.
+- `数据源执行记录` must be the first substantive section. Do not put it at the end after conclusions.
+- The title should describe a data pack or comparison, not a free-form `深度分析报告`, unless the user explicitly requested a narrative report.
 - In normal human-facing reports, `数据源执行记录` should be compact and should not expose raw URLs or database paths. It must still say whether structured data was read. Exact paths are for debug/audit mode or JSON output only.
 - `队伍与选手 rating` must show available annual ratings and event ratings. If event ratings, lineup, or confirmed starters are missing, show `缺失` and add warnings instead of omitting the section.
 - `Veto / 比分` is factual only: visible veto steps, map order, scores, or `赛前不可见`. Veto prediction must not appear there.
