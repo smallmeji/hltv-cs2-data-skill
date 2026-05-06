@@ -1,12 +1,12 @@
 # Standalone Public Mode
 
-Standalone public mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, local browser, CDP session, or Playwright session. It uses public HLTV pages first for match discovery and identity resolution, then must use the default public static JSON database export for structured stats.
+Standalone public mode lets someone use `hltv-cs2-data` immediately after installing the skill, without any private database, scraper, local browser, CDP session, or Playwright session. It uses public HLTV pages only for match discovery and identity resolution, then must use the default public static JSON database export for structured stats.
 
 ## Goal
 
-Given a natural-language request, a match URL, or two team names, first locate the relevant HLTV match/team/event page when possible. Then produce the best available strategy-neutral HLTV data pack by combining direct HLTV facts with configured API/warehouse data or the default public static JSON database export.
+Given a natural-language request, a match URL, or two team names, first locate the relevant HLTV match/team/event page when possible. Then produce the best available strategy-neutral HLTV data pack by combining direct HLTV identity facts with configured API/warehouse data or the default public static JSON database export.
 
-This is the default public mode. It must be useful, but honest about missing data. If the public database export is stale/missing, mark that field as unavailable instead of replacing it with Liquipedia/wiki/search snippets.
+This is the default public mode. It must be useful, but honest about missing data. If the public database export is stale/missing, mark that field as unavailable instead of replacing it with Liquipedia/wiki/search snippets. If the structured source cannot be read at all, stop at partial facts.
 
 ## Default Public Database Export
 
@@ -41,13 +41,25 @@ Expected files include:
 /events/<eventId>/player-ratings.json
 ```
 
-If this source cannot be read, add `structured_database_unavailable` and continue with direct HLTV partial data only. Do not silently switch to Liquipedia or another wiki as a replacement data source.
+If this source cannot be read, add `structured_database_unavailable` and continue with direct HLTV partial data only. Do not silently switch to Liquipedia or another wiki as a replacement data source. Do not produce a full report.
 
 The public static JSON database export is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV is the first match-discovery source and is often enough for match basics and simple context, but the database export is the required structured source for map/player/side/history fields when available.
 
 ## Required Source Execution Log
 
-Every standalone output must show whether the structured source was actually used. Put this near the top of Markdown, especially for Chinese output:
+Every standalone output must show whether the structured source was actually used. Put this near the top of Markdown, especially for Chinese output.
+
+For normal human-facing reports, use compact status:
+
+```text
+数据源执行记录：
+- HLTV 定位：成功
+- 结构化数据：已读取 public static database export
+- 读取记录：match data-pack + team map details + player ratings
+- 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
+```
+
+For debug/audit/JSON output, exact URLs and paths may be included:
 
 ```text
 数据源执行记录：
@@ -59,9 +71,17 @@ Every standalone output must show whether the structured source was actually use
 
 If the manifest or at least one exact static/API database record was not read, add `structured_database_not_queried`. In that state the model must not output a complete data pack, per-map detail analysis, veto prediction, or numeric win-rate percentages. It may output only partial HLTV facts and missing-data notes.
 
+Minimal fail-closed Chinese output:
+
+```text
+当前只能定位 HLTV 基础信息；结构化数据库/API/静态 JSON 未成功读取，不能生成完整 hltv-cs2-data 报告。
+可输出：比赛 ID、队伍、赛事、时间、可见阵容/比分。
+不可输出：完整地图池、逐图详细分析、Veto 预测、具体胜率百分比。
+```
+
 If API credentials are configured, API mode can be used after HLTV match/team identity is resolved. Otherwise use direct HLTV first for match discovery and the default public static JSON database export for structured fields.
 
-Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public lightweight users.
+Local browser/CDP access belongs only to internal collector maintenance. It must not be required from public standalone users.
 
 If `HLTV_CS2_STATIC_BASE_URL` or a user-provided static data-pack URL exists, use that JSON source instead of the default public static source for structured-data hydration. Static JSON is the public database path for Claude/GPT-style environments.
 
@@ -101,7 +121,7 @@ The user should not need to provide API query parameters.
 9. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
 10. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
 
-## Direct HLTV Data Sources
+## Direct HLTV Partial Fallback Sources
 
 Use only public HLTV pages available in the session:
 
@@ -138,7 +158,7 @@ Add missing-field warnings for unavailable data:
 - `event_rating_not_loaded`: event stats page was unreachable, event ID could not be resolved, or the player is not listed for the event.
 - `fetch_failed_cache_miss`: the host model/page reader could not return a readable snapshot for a known URL.
 - `fetch_failed_cf_challenge`: the URL was blocked by Cloudflare/access challenge.
-- `stats_page_unavailable_in_direct_mode`: a known deep stats page was not retrievable in lightweight mode.
+- `stats_page_unavailable_in_direct_mode`: a known deep stats page was not retrievable in direct fallback mode.
 - `pro_api_required_for_full_coverage`: hosted collector/API data is required for reliable coverage.
 - `lineup_unavailable`
 - `veto_unavailable`
@@ -148,11 +168,11 @@ Add missing-field warnings for unavailable data:
 
 ## Output Behavior
 
-Direct HLTV output must still follow the data pack contract:
+Direct HLTV partial fallback output must still follow the data pack contract where applicable:
 
 - Markdown summary first.
 - `数据源执行记录` / `source_execution_log` before analysis.
-- JSON summary or full JSON when requested.
+- JSON summary or full JSON only when requested.
 - `Decision Inputs` summarizing factual factors for downstream models.
 - Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
 - If explicitly requested, append a separate `Model Inference` section after the factual data pack only after applying `references/inference-gate.md`.
@@ -169,12 +189,12 @@ Direct HLTV mode cannot guarantee:
 - Exact as-of backtests.
 - Full head-to-head data.
 - Complete annual/event rating coverage, but it must attempt those fields before marking them missing.
-- CT/T side win-rate coverage; lightweight mode does not visit every map detail page. Use Pro/API or collector mode for `map_side_stats`.
+- CT/T side win-rate coverage from live pages; direct fallback mode does not visit every map detail page. Use static database/API or collector mode for `map_side_stats`.
 - Round-level data.
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.
 
-## Lightweight Inference Gate
+## Public Standalone Inference Gate
 
 Use this quick rule in standalone mode:
 

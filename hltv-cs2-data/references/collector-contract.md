@@ -153,4 +153,4 @@ Phase 2:
 - Opening side.
 - Pistol/advanced round details if HLTV exposes them reliably.
 
-Do not block Phase 1 lightweight usage on CT/T data, but the product API contract should reserve and expose `side_scores` from the start.
+Do not block Phase 1 public standalone usage on CT/T data, but the product API contract should reserve and expose `side_scores` from the start.

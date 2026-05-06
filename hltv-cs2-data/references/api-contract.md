@@ -2,7 +2,7 @@
 
 This is the product API shape for `hltv-cs2-data`. The skill may use this contract even before a backend exists.
 
-API mode is the Pro path. It is used when `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY` are configured. Lightweight users can still use Direct HLTV mode without these values.
+API mode is the Pro path. It is used when `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY` are configured. Users without API credentials should use public standalone mode: HLTV discovery first, then the hosted static JSON database export. Direct HLTV-only mode is partial fallback only.
 
 ## General Rules
 
@@ -114,7 +114,7 @@ The API should not expose:
 
 ## API Coverage Boundary
 
-API / warehouse mode is responsible for fields that lightweight direct mode cannot reliably fetch:
+API / warehouse mode is responsible for fields that direct HLTV partial fallback cannot reliably fetch:
 
 - Current-year team map summary stats.
 - Current-year team player stats.

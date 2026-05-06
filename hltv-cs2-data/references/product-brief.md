@@ -10,7 +10,7 @@ The skill supplies data from HLTV. The user-owned model supplies judgment and st
 
 The skill must be usable in two practical forms:
 
-- Direct HLTV skill: works immediately from public HLTV pages after installation through the host model's normal web/page-reading/search capability.
+- Public standalone skill: works immediately after installation by using public HLTV pages for match/team discovery, then the hosted static JSON database export for structured stats.
 - Optional product API mode: uses a central warehouse/API for complete and repeatable data packs.
 
 ## What This Product Does
@@ -27,7 +27,7 @@ Given a match, team pair, event, map, or historical cutoff, return a multidimens
 - Scores and historical results when available.
 - Data quality warnings and freshness.
 - Decision input groups for map pool, head-to-head, player form, roster state, match context, and data quality.
-- Data availability labels showing whether a field is available from lightweight direct access, in-app/browser sessions, internal collector runs, or hosted API/warehouse data.
+- Data availability labels showing whether a field is available from public static data, direct HLTV partial fallback, in-app/browser sessions, internal collector runs, or hosted API/warehouse data.
 
 The same data pack can be used by different users with different strategies.
 
@@ -65,10 +65,10 @@ User asks: Backtest NAVI vs GamerLegion before match time.
 
 ## Product Architecture
 
-Default:
+Default public standalone:
 
 ```text
-HLTV public pages -> hltv-cs2-data skill -> user-owned model
+HLTV public pages for identity -> hosted static JSON database export -> hltv-cs2-data skill -> user-owned model
 ```
 
 Optional enhanced product API:

@@ -2,7 +2,7 @@
 
 `hltv-cs2-data` 是一个 skill，用来从 HLTV 收集和整理 CS2 数据，并输出给大模型、分析师或产品系统使用的数据包。
 
-这个 skill 的核心定位是：只提供标准化数据，不内置策略。它负责把 HLTV 上能看到的事实数据整理成 Markdown 和 JSON，并把对模型有用的事实特征组织成 `decision_inputs`。是否预测胜率、怎么判断地图优势、怎么制定策略，由调用它的大模型或用户自己的策略决定。
+这个 skill 的核心定位是：只提供标准化数据，不内置策略。它负责把 HLTV 衍生的事实数据整理成普通 Markdown 报告，并把对模型有用的事实特征组织成 `decision_inputs`。只有用户明确要求机器可读、下游模型、debug/audit 或 JSON 时，才输出 JSON。是否预测胜率、怎么判断地图优势、怎么制定策略，由调用它的大模型或用户自己的策略决定。
 
 ## 适合什么场景
 
@@ -15,7 +15,7 @@
 - 查看不同地图胜率、每张地图的警匪胜率、对位数据和选手近期状态。
 - 输入赛事 rating 页面，补充选手在当前赛事里的 rating。
 - 做历史回测，要求只使用某个时间点之前可见的数据。
-- 把结构化 Markdown 和 JSON 交给另一个模型或策略系统继续判断。
+- 把结构化 Markdown 或按需输出的 JSON 交给另一个模型或策略系统继续判断。
 
 这个 skill 可以服务预测流程，但默认不直接预测。只有当用户明确要求“请根据这些数据判断胜率 / 谁更可能赢”时，模型才可以在事实数据包之后追加 `Model Inference`，并且必须说明那是模型推理，不是 HLTV 原始事实。
 
@@ -48,7 +48,7 @@
 6. `逐图详细分析`
 7. `特殊 Veto 变量`
 8. `给模型的决策输入`
-9. `JSON`
+9. `JSON`，仅用户要求机器可读 / 下游模型 / debug / 显式 JSON 时输出
 10. `模型推理`
 
 `Veto 预测`、具体胜率百分比、比分猜测只能出现在 `模型推理`。事实区的 `Veto / 比分` 只能写已经观察到的 veto、地图顺序、比分或 `赛前不可见`。`模型推理` 必须先写 `以下为模型推理，不是 HLTV 事实数据。`，并列出 `completeness_level`、`inference_permission` 和 `missing_high_impact_fields`。
@@ -84,13 +84,13 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 | 层级 | 适合场景 | 预期能力 |
 |:--|:--|:--|
-| 轻量版 | 比赛定位、单场临时公开 HLTV 查询 | 默认第一步。适合读取比赛基础信息、阵容、H2H、比赛页可见地图概览，以及尽力读取 stats 页面。深层 stats 页失败时必须标缺。 |
+| 公开独立版 | HLTV 定位 + 公开静态数据库补全 | 默认公开路径。HLTV 只负责找 match/team/event ID；地图、选手、CT/T 等结构化字段必须来自公开静态 JSON 数据库或 API。 |
 | 静态 JSON 数据库导出版 | 给 Claude/GPT/用户模型共享数据包 | 没有 API 时必须查询的公开结构化数据源。提供队伍、比赛、赛事、地图详情和 compare pack。 |
 | API 版 | 可重复分析、批量使用、正式产品 | 推荐用于完整年度数据、CT/T 警匪胜率、精确历史回测、阵容/veto/赛果快照、批量查询和稳定 freshness。 |
 
-轻量版足够应对比赛定位和一次性的公开 HLTV 数据查询。静态 JSON 或 API 版更适合需要重复分析、CT/T 数据、历史回测和正式产品化使用的场景。
+Direct HLTV-only 只够做可见事实的部分兜底，不足以生成完整报告、逐图详细分析、Veto 预测或具体胜率百分比。完整报告必须读取静态 JSON 或 API。
 
-轻量版依赖调用模型自己的网页读取能力。Claude、ChatGPT 或其他模型如果读不到 HLTV 深层 stats 页面，这是正常限制。此时 skill 应标记 `core_data_insufficient_for_numeric_inference`，并禁止输出具体胜率百分比。
+公开独立版依赖调用模型自己的网页读取能力完成 HLTV 定位，并依赖公开静态 JSON 数据库完成结构化数据补全。Claude、ChatGPT 或其他模型如果读不到 HLTV 深层 stats 页面，这是正常限制；不能因此用搜索摘要补数据。此时 skill 应标记 `core_data_insufficient_for_numeric_inference`，并禁止输出具体胜率百分比。
 
 ## 使用形态
 
@@ -171,7 +171,7 @@ HLTV_CS2_API_BASE_URL=https://your-api.example.com
 HLTV_CS2_API_KEY=your_api_key
 ```
 
-在 API 模式下，skill 应该优先查询数据 API。API 负责从维护好的 collector 和数据库返回标准化 Markdown + JSON 数据包。
+在 API 模式下，skill 应该优先查询数据 API。API 负责从维护好的 collector 和数据库返回标准化数据包。普通报告默认输出 Markdown；只有用户明确要求机器可读、下游模型、debug/audit 或 JSON 时才输出 JSON。
 
 优势：
 
@@ -233,7 +233,7 @@ hltv-cs2-data.skill
 ```text
 Use hltv-cs2-data for this match:
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
-Output Markdown and JSON.
+Output Markdown only.
 ```
 
 预期行为：
@@ -241,10 +241,10 @@ Output Markdown and JSON.
 - 识别 HLTV match ID。
 - 解析两队、赛事、赛制、时间、状态。
 - 在解析身份后读取公开静态数据库 manifest 或配置好的 API。
-- 输出 `数据源执行记录`，列明读取过的准确数据库路径。
+- 输出 `数据源执行记录`，证明已经读取结构化数据库/API/静态 JSON。普通报告不显示原始 URL 和准确路径。
 - 尽量收集地图池、阵容、选手 rating、veto、比分、近期比赛数据。
 - 对缺失数据明确标注。
-- 输出事实数据包和 JSON。
+- 输出事实 Markdown 报告；JSON 只在用户要求机器可读、下游模型或 debug/audit 时输出。
 - 如果年度地图池或 player rating 被 CF/页面读取失败阻断，不输出具体胜率百分比，只输出数据缺口和 API/数据仓建议。
 
 ### 2. 比较两个队伍
@@ -331,22 +331,21 @@ Only include data visible before that time.
 请使用 hltv-cs2-data 帮我整理这场比赛的数据：
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 
-请输出中文 Markdown 和 JSON。
+请输出中文 Markdown。
 只整理事实数据，不要直接预测胜率。
-如果有字段读取失败，请写清楚失败原因和对应 HLTV URL。
+如果有字段读取失败，请写清楚失败原因和 warning code。普通报告不要显示原始 URL 和数据库路径。
 ```
 
 ### 第二步：skill 应该做什么
 
-轻量版会按这个顺序尝试读取：
+公开独立版会按这个顺序尝试读取：
 
 1. 比赛页：match ID、队伍、赛事、赛制、时间、状态、可见阵容、veto、比分。
 2. 队伍身份：队伍 HLTV ID、slug、可见排名和阵容信息。
-3. Event ID：从比赛页赛事链接解析 event ID。
-4. 赛事 rating：尝试读取 `https://www.hltv.org/stats/players?event=<eventId>`。
-5. 年度选手 rating：尝试读取 `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`。
-6. 年度地图 summary：尝试读取 `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`。
-7. 如果深层 stats 页读取失败，保留 URL，并在对应字段写 `missing` 和 warning。
+3. 公开静态数据库 manifest：`public-data/manifest.json`。
+4. 准确静态记录：match data-pack、team summary、map-details、players、event ratings。
+5. 只有静态数据库缺字段时，才把 HLTV 年度 stats 页作为补充 fallback。
+6. 如果结构化数据完全没读到，必须停在部分事实，输出 warning `structured_database_not_queried`。
 
 默认只取当前年份数据，例如 2026 年比赛就使用 `2026-01-01` 到 `2026-12-31`。如果用户要求其他时间窗口，再按用户指定的时间窗口读取。
 
@@ -367,7 +366,7 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 | Veto / 比分 | 如果页面已显示，则输出 veto、地图顺序、比分 |
 | 给模型的决策输入 | 只放事实特征，不放胜率结论 |
 | 数据缺口 | 哪些字段没有拿到，为什么没有拿到 |
-| JSON | 稳定英文 key，方便程序或另一个模型继续使用 |
+| JSON | 仅用户明确要求时输出；稳定英文 key，方便程序或另一个模型继续使用 |
 
 ### 第四步：如果用户要求模型判断
 
@@ -391,7 +390,7 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
   "source_url": "https://www.hltv.org/stats/players?event=8250",
   "status": "missing",
   "warning": "fetch_failed_cache_miss",
-  "meaning": "The URL is known, but lightweight direct mode could not retrieve a readable table snapshot."
+  "meaning": "The URL is known, but direct fallback could not retrieve a readable table snapshot."
 }
 ```
 
@@ -500,11 +499,11 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 }
 ```
 
-## Direct HLTV 模式
+## Direct HLTV 部分兜底模式
 
-Direct HLTV mode 是默认模式。
+Direct HLTV-only 不是完整分析的默认路径，只是结构化静态数据库/API 读取失败时的部分兜底。
 
-它适合只安装 skill、没有私有 API、没有本地数据库、没有爬虫服务、也不想配置本地浏览器/CDP 的用户。模型会用自身环境可用的网页读取 / 搜索能力读取公开 HLTV 页面，并尽量输出可用的数据包。
+它适合模型只能读取公开 HLTV 页面、但无法读取静态 JSON 数据库或 API 的情况。此时只能输出可见比赛事实和数据缺口，不能输出完整报告、逐图详细分析、Veto 预测或具体胜率百分比。
 
 Direct mode 的限制：
 
@@ -520,19 +519,19 @@ Direct mode 的限制：
 
 ## 数据可获取性
 
-| 数据 | 轻量版是否提供 |
+| 数据 | 公开独立版是否提供 |
 |:--|:--|
-| 比赛信息 | ✅ |
-| 队伍 ID / 阵容 | ✅ |
-| Event ID | ✅ |
-| event rating | 尝试，失败就标缺 |
-| 年度选手 rating | 尝试，失败就标缺 |
-| 2026 地图 summary | ✅，优先读年度 team map summary；失败时可退回 match page core 数据并明确标注 |
-| W/D/L、Win rate、Pick%、Ban% | ✅，来自 2026 地图 summary |
-| CT/T 胜率 | 静态 JSON / API 可提供；直接 HLTV 轻量版默认不保证 |
+| 比赛信息 | ✅，来自 HLTV 定位或导出的 match pack |
+| 队伍 ID / 阵容 | ✅，可见或已导出时提供 |
+| Event ID | ✅，可解析或已导出时提供 |
+| event rating | 静态 JSON/API 已导出时提供；Direct fallback 可尝试，失败就标缺 |
+| 年度选手 rating | 静态 JSON/API 已导出时提供；Direct fallback 可尝试，失败就标缺 |
+| 2026 地图 summary | 静态 JSON/API 已导出时提供；Direct fallback 可尝试并明确标注 |
+| W/D/L、Win rate、Pick%、Ban% | 来自静态 JSON/API 精确行 |
+| CT/T 胜率 | 静态 JSON/API 已导出时提供 |
 | 历史回测快照 | ❌ 只在 API / 数据库增强版提供 |
 
-轻量版失败时使用这些 warning：
+Direct fallback 失败时使用这些 warning：
 
 - `fetch_failed_cache_miss`
 - `fetch_failed_cf_challenge`
@@ -555,7 +554,7 @@ HLTV -> collector -> central warehouse/API -> hltv-cs2-data skill -> downstream 
 - 采集 match detail、veto、lineup、result。
 - 给多个用户或多个模型共享同一套数据 API。
 
-但是，API / warehouse 不是第一版使用本 skill 的前提。没有 API 时，Direct HLTV mode 仍然可以工作。
+但是，API / warehouse 不是第一版使用本 skill 的前提。没有 API 时，应使用公开静态 JSON 数据库作为结构化数据源；Direct HLTV-only 只能作为部分兜底。
 
 ## References 说明
 

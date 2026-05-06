@@ -28,7 +28,7 @@ Workflow:
 8. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
 9. Fetch map stats for the requested tier/filter if available.
 10. Fetch player ratings and lineup if a match is specified and the source is reachable.
-11. Return Markdown + JSON factual data pack.
+11. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
 12. Build `Decision Inputs` from available facts.
 13. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
 14. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
@@ -64,11 +64,11 @@ Workflow:
    - If a player is missing from event stats, keep annual rating if available and mark `rating_event` as `缺失`.
    - If a coach or stand-in has no rating, mark `rating_status` explicitly instead of guessing.
 11. Fetch yearly team map stats from API/static database first. If unavailable or missing, then attempt HLTV team stats pages with the current calendar-year window, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-12. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct lightweight fallback mode, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载` unless the map detail page was explicitly loaded.
+12. In static/API mode, use exported `map-details` when present for CT/T, pistol, first kill, and first death fields. In direct HLTV partial fallback, stop at the team map summary page and mark `map_side_stats` as `Pro/API only` or `未加载` unless the map detail page was explicitly loaded.
 13. Use match-page map stats only as `recent_core_context` or fallback if the yearly stats pages cannot be reached. Label its time window explicitly.
 14. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
 15. Include veto/scores only if available and visible for the requested mode.
-16. For Chinese prompts, output the compact Chinese structure: `数据源执行记录`, `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, `JSON`.
+16. For Chinese prompts, output the compact Chinese structure: `数据源执行记录`, `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, and optional `JSON` only when requested.
 17. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
 
 For stronger/weaker or win-rate judgment requests, replace the single `地图池` section with:
@@ -116,6 +116,7 @@ Source display:
 - For normal human-facing reports, keep `数据源执行记录` compact: source type, status, freshness, and record categories read.
 - Do not print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON in a normal report unless the user asks for debug/audit/source details.
 - Exact source paths still belong in internal `source_execution_log` and optional JSON.
+- If the output source says only `HLTV.org`, search, wiki, or news snippets and no structured source was read, stop and emit partial facts only. Do not continue into full report sections.
 
 `模型推理` rules:
 

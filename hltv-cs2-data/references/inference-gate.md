@@ -2,7 +2,7 @@
 
 This reference controls when `hltv-cs2-data` may append numeric model inference after a factual data pack.
 
-The goal is not to stop downstream models from judging. The goal is to prevent exact percentages from being produced when the data pack is too incomplete, especially in lightweight direct mode where HLTV stats pages may be blocked by Cloudflare or unavailable to the host model.
+The goal is not to stop downstream models from judging. The goal is to prevent exact percentages from being produced when the data pack is too incomplete, especially in direct HLTV partial fallback where HLTV stats pages may be blocked by Cloudflare or unavailable to the host model.
 
 ## Completeness Levels
 
@@ -58,7 +58,7 @@ Block exact numeric inference if any of these is true:
 3. Player rating coverage is missing for both annual and event views.
 4. Two or more high-impact fields are missing, blocked by Cloudflare, or available only from search snippets.
 5. The only usable inputs are ranking, news snippets, market prices, or broad narrative context.
-6. The source mode is lightweight direct and marked `blocked`.
+6. The source mode is direct HLTV partial fallback and marked `blocked`.
 
 If blocked, add warning:
 

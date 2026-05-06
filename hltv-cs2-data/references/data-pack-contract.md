@@ -19,7 +19,7 @@ Use this order:
 11. Score/result history.
 12. Decision Inputs.
 13. Data warnings.
-14. JSON block for factual data and decision inputs.
+14. Optional JSON block for factual data and decision inputs, only when requested.
 15. Optional Model Inference section, only if explicitly requested by the user.
 
 Do not add prediction, probability, EV, strategy, or betting fields inside the factual HLTV data pack.
@@ -35,8 +35,8 @@ User-facing Markdown should follow the user's language. If the user writes in Ch
 Default Chinese Markdown structure:
 
 1. `数据源执行记录`
-   - HLTV 定位状态、HLTV URL、数据库 manifest/API 状态、读取的数据库路径、字段来源。
-   - A compliant output must show at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
+   - HLTV 定位状态、数据库 manifest/API 状态、读取的结构化记录类别、字段来源。
+   - A compliant output must internally record at least one exact structured record path, e.g. `matches/2394116/data-pack.json` or `teams/11861/map-details-overall.json`, unless the output is explicitly partial.
    - For normal human-facing reports, do not show raw URLs or exact database paths. Show compact source status and freshness only. Exact paths are reserved for JSON/debug/audit output.
 2. `数据状态 / 数据缺口`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.

@@ -27,7 +27,8 @@ The skill must be usable by someone who only installs the skill and has no acces
 - Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
 - Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as the structured data source. They may only be mentioned as external context when HLTV and the database cannot locate a match, and they must never replace map stats, player ratings, CT/T, veto, or result fields.
 - Do not require end users to run a local database, scraper, local browser, CDP session, or Playwright session.
-- Public lightweight mode should rely only on the host model's normal public web/page-reading/search capabilities and mark inaccessible deep stats fields as missing.
+- Public standalone mode uses the host model's normal public web/page-reading/search capability only for HLTV discovery and identity resolution. It must then read the structured static JSON database export or configured API/warehouse for map/player/detail fields.
+- Direct HLTV-only output is a degraded partial fallback. It can report visible match facts and missing fields, but it must not produce a complete report, per-map detail analysis, veto prediction, or numeric inference.
 - Retrieve only data visible from HLTV pages during the session and label unavailable deeper fields as missing.
 - A central collector/API may improve completeness and backtesting later, but it is not required for normal skill use.
 - If Cloudflare or access controls block collection, fail safely and report freshness/missing data. Do not fabricate data or bypass protections.
@@ -45,6 +46,8 @@ Required evidence in the output:
 - Field-level source labels such as `direct_hltv`, `static_database`, `api_warehouse`, `direct_hltv_fallback`, or `missing`.
 
 For normal human-facing reports, do not print raw manifest URLs, database paths, or full JSON unless the user asks for debug/audit/source details or machine-readable output. Instead show a compact source status such as `结构化数据：已读取 public static database export；记录：match data-pack + team map details` and keep exact paths in internal `source_execution_log` / optional JSON.
+
+A report whose only source is `HLTV.org`, search summaries, news snippets, wiki pages, or market pages is `direct_hltv_partial`. It is not compliant as a full `hltv-cs2-data` report.
 
 If this evidence is absent, the output is not compliant with this skill. In that case:
 
@@ -97,13 +100,13 @@ Mandatory Chinese section order for judgment requests:
 6. `逐图详细分析`
 7. `特殊 Veto 变量`
 8. `给模型的决策输入`
-9. `JSON`
+9. `JSON` only when requested
 10. `模型推理`
 
 Rules:
 
 - `数据源执行记录` is mandatory and must list manifest/API status and exact record paths.
-- In normal human-facing reports, `数据源执行记录` should be compact and should not expose raw URLs or database paths. Exact paths are for debug/audit mode or JSON output only.
+- In normal human-facing reports, `数据源执行记录` should be compact and should not expose raw URLs or database paths. It must still say whether structured data was read. Exact paths are for debug/audit mode or JSON output only.
 - `队伍与选手 rating` must show available annual ratings and event ratings. If event ratings, lineup, or confirmed starters are missing, show `缺失` and add warnings instead of omitting the section.
 - `Veto / 比分` is factual only: visible veto steps, map order, scores, or `赛前不可见`. Veto prediction must not appear there.
 - Any Veto prediction, winner lean, map-win probability, match-win percentage, or score guess belongs only under `模型推理`.
@@ -115,10 +118,11 @@ Rules:
 
 ## Operating Modes
 
-- **Lightweight / Direct HLTV mode**: default standalone mode for users without an API key. Accept match URLs or team names, read HLTV pages through the host model's normal public web/page-reading/search capability, output Markdown + JSON with missing-field warnings. No private database, scraper, local browser, or CDP required.
+- **Public standalone mode**: default mode for users without an API key. Use HLTV pages only to locate/verify the match, teams, event, IDs, lineup/veto/score if visible; then read the default public static JSON database export for structured map/player/detail fields. Output normal Markdown by default. Include JSON only when the user asks for machine-readable or downstream-model output. No private database, scraper, local browser, or CDP required.
 - **Static JSON database mode**: required structured-data mode for external users when no API is configured. After resolving match/team identity from HLTV, read `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, `/teams/<hltvTeamId>/map-details-overall.json`, `/events/<eventId>/player-ratings.json`, or `/matches/<matchId>/data-pack.json`.
+- **Direct HLTV partial fallback**: degraded fallback when the structured source cannot be read or has no exact record. It may output visible match facts and missing-data warnings only. It must not output `地图池总览`, `逐图详细分析`, full prediction-style reports, veto predictions, or numeric probabilities.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. After resolving match/team identity from HLTV or user-provided IDs, call the API for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
-- **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public lightweight skill user experience.
+- **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public standalone skill user experience.
 - **Design mode**: when asked to design collector/API/backend behavior, use product and collector references.
 
 ## Workflow
@@ -153,15 +157,15 @@ Rules:
    - If the structured database/API/static source is unavailable or missing a field, add `structured_database_unavailable` or `static_record_not_found`, then direct HLTV deep stats may be attempted as supplemental fallback with field-level warning labels.
    - If neither can retrieve enough data, output a partial pack with missing-source warnings.
 4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.
-5. Emit both Markdown and JSON when the user asks for product-ready output or downstream LLM use.
+5. Emit normal Markdown by default. Emit JSON only when the user asks for product-ready output, downstream LLM use, API-like output, debug/audit output, or explicit JSON.
 6. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
 7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
-8. When a page or field cannot be read, use the data availability matrix to label whether the failure belongs to lightweight direct mode, in-app/browser session mode, internal collector mode, or API/warehouse mode.
+8. When a page or field cannot be read, use the data availability matrix to label whether the failure belongs to direct HLTV partial fallback, in-app/browser session mode, internal collector mode, or API/warehouse mode.
 9. Before any numeric model inference, apply `references/inference-gate.md`. If the core data threshold is not met, do not output specific win-rate percentages; output only factual data, missing fields, and a qualitative low-confidence direction if explicitly requested.
 
 ## Output Rules
 
-Every data pack should include:
+Every complete structured data pack should include:
 
 - `metadata`: query, source, retrieved time, data cutoff, version, missing fields.
 - `source_execution_log`: HLTV lookup result, database/API manifest result, exact static/API record paths read, field-level source labels, and fallback status.
@@ -179,9 +183,11 @@ Every data pack should include:
 - `warnings`: small sample, stale data, roster changes, missing event data, low confidence parsing.
 - `not_included`: explicit note that model inference fields are not part of the HLTV fact data pack.
 
+If the structured database/API/static source was not read, do not emit a complete data pack. Emit a partial-facts response with warning `structured_database_not_queried`.
+
 For Chinese user-facing output, prefer this compact Markdown order:
 
-1. `数据源执行记录`: HLTV 定位是否成功、manifest/API 是否成功、读取了哪些数据库路径、哪些字段来自 `static_database` / `api_warehouse` / `direct_hltv` / `missing`。
+1. `数据源执行记录`: HLTV 定位是否成功、manifest/API 是否成功、是否读取了结构化数据。普通报告只显示紧凑状态，不显示原始 URL 或数据库路径；debug/JSON 模式才显示 exact paths。
 2. `数据状态`: source, freshness, completeness, missing high-impact fields.
 3. `比赛信息`: match ID, event, format, time, status.
 4. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
@@ -194,7 +200,7 @@ For Chinese user-facing output, prefer this compact Markdown order:
 11. `Veto / 比分`: veto, map order, scores, result when visible.
 12. `给模型的决策输入`: factual factors grouped by map pool, head-to-head, player form, roster state, side profile, match context, and data quality.
 13. `数据缺口`: what is missing and what must not be inferred.
-14. `JSON`: stable English-key JSON for downstream use.
+14. `JSON`: only when requested; stable English-key JSON for downstream use.
 
 Use tables for dense comparative data. Avoid long prose unless explaining a data warning.
 
@@ -224,7 +230,7 @@ For match URL data packs, visible starters require rating lookup attempts:
 - Try annual rating for the current calendar year or requested `as_of_date` year.
 - After resolving team IDs from the match page or team links, always visit each team's HLTV stats pages for the current calendar-year window before finalizing `maps`, `map_side_stats`, or `players`. Match-page map stats are only a recent-core fallback, not the primary map-pool source.
 - For team map summary stats, use the current calendar-year window by default, e.g. `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-- Lightweight mode stops at the team map summary page. Per-map CT/T side win rates require visiting each map detail page and belong to Pro/API or collector mode.
+- Direct HLTV partial fallback stops at the team map summary page. Per-map CT/T side win rates require visiting each map detail page and belong to static database/API or collector mode.
 - For annual team player ratings, use current-year HLTV team player stats when available, e.g. `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
 - If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
 - If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.
@@ -252,7 +258,7 @@ When the gate blocks numeric inference:
 - If the user asked who is favored, allow only a qualitative statement such as `方向性偏 G2，但不能给可靠百分比`.
 - Recommend API/warehouse data for full coverage.
 
-Lightweight direct mode under Cloudflare failure is usually `partial` or `blocked` completeness. It must not produce confident numeric ranges such as `65-72%` from rankings, search snippets, or market prices alone.
+Direct HLTV partial fallback under Cloudflare failure is usually `partial` or `blocked` completeness. It must not produce confident numeric ranges such as `65-72%` from rankings, search snippets, or market prices alone.
 
 ## Query Examples
 
@@ -268,7 +274,7 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 ```
 
 ```text
-Use hltv-cs2-data to fetch a FaZe + FURIA data pack. Output Markdown and JSON.
+Use hltv-cs2-data to fetch a FaZe + FURIA machine-readable data pack with Markdown and JSON.
 ```
 
 ```text

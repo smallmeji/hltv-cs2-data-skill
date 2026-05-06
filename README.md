@@ -86,13 +86,13 @@ The skill is useful in three tiers:
 
 | Tier | Best For | What To Expect |
 |:--|:--|:--|
-| Lightweight mode | Match discovery and one-off public HLTV lookups | Default first step. Good for match basics, lineups, H2H, visible match-page map context, and best-effort stats-page lookups. Deep stats pages may fail and must be labeled as missing. |
+| Public standalone mode | Match discovery plus hosted static database hydration | Default public path. HLTV is used to find the match/team IDs; the public static JSON database export is required for structured map/player/detail fields. |
 | Static JSON database export | Shared data packs for Claude/GPT/user models | Required public structured-data path when no API is configured. Gives stable team, match, event, map-detail, and compare packs when exported. |
 | API mode | Repeatable analysis and production use | Recommended for complete current-year stats, CT/T side data, exact historical backtests, lineup/veto/result snapshots, batch usage, and stable freshness guarantees. |
 
-Lightweight mode is enough for match discovery and one-off public HLTV lookups. Static JSON or API mode is recommended for repeatable analysis, CT/T side data, historical backtests, and production use.
+Direct HLTV-only output is partial fallback only. It is enough for visible match facts, but not enough for a complete report, per-map detail analysis, Veto prediction, or numeric inference. Static JSON or API mode is required for those sections.
 
-In lightweight mode, the host model's web reader may fail on HLTV stats pages. This is expected. The skill marks those fields as missing and uses warning code `core_data_insufficient_for_numeric_inference` when the missing fields are too important for numeric probability output.
+In direct fallback, the host model's web reader may fail on HLTV stats pages. This is expected. The skill marks those fields as missing and uses warning code `core_data_insufficient_for_numeric_inference` when the missing fields are too important for numeric probability output.
 
 ## Usage Modes
 
@@ -149,14 +149,15 @@ If the user asks "who is favored", "who has the higher win rate", or similar, th
 - `Special Veto Variables`: maps with no current-year data, extreme ban rate, tiny sample, or one side effectively not playing the map.
 - `Model Inference`: only when the user explicitly asks for judgment, clearly labeled as model-derived interpretation.
 
-### 2. Lightweight / Direct HLTV Mode
+### 2. Direct HLTV Partial Fallback
 
-Use this mode when you only want the skill instructions and public HLTV pages.
+Use this fallback only when the structured static database/API cannot be read.
 
 - No API key is required.
 - No user-owned database is required.
 - No local browser, CDP session, Playwright session, or local scraper is required from the user.
-- The model gathers available data from HLTV pages through the host model's normal web/page-reading/search capability.
+- The model reports only visible HLTV facts and missing-field warnings.
+- It must not output a complete report, per-map detail analysis, Veto prediction, or numeric probabilities.
 - Historical backtests are marked as `reconstructed` unless an exact snapshot is available.
 - Missing fields must be reported explicitly instead of being guessed.
 
@@ -171,7 +172,7 @@ HLTV_CS2_API_BASE_URL=https://your-api.example.com
 HLTV_CS2_API_KEY=your_api_key
 ```
 
-In API mode, the skill should query the data API first. The API is expected to return standardized Markdown + JSON data packs from a maintained collector and database.
+In API mode, the skill should query the data API first. The API is expected to return standardized data packs from a maintained collector and database. Human reports should be Markdown by default; JSON is included only when the user requests machine-readable or downstream-model output.
 
 Benefits:
 
@@ -216,7 +217,7 @@ For any model or workflow that does not have native skill support:
 2. Load only the relevant reference file for the task:
    - Match/team query: `references/query-workflow.md`
    - Output schema: `references/data-pack-contract.md`
-   - Direct HLTV mode: `references/standalone-mode.md`
+   - Public standalone mode: `references/standalone-mode.md`
    - Backtest: `references/backtest-mode.md`
 3. Ask the model to follow the fact-vs-inference boundary described in the skill.
 
@@ -227,17 +228,17 @@ For any model or workflow that does not have native skill support:
 ```text
 Use hltv-cs2-data for this match:
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
-Output Markdown and JSON.
+Output a normal Markdown report. Include JSON only if I ask for machine-readable output.
 ```
 
 Expected behavior:
 
 - Resolve match ID, teams, event, format, schedule, and status.
 - Read the public static database manifest or configured API after resolving identity.
-- Show `Data Source Execution Log` with exact record paths read.
+- Show compact `Data Source Execution Log` proving structured data was read.
 - Gather available map, lineup, player rating, veto, score, and recent result data.
 - Mark missing data explicitly.
-- Output a factual data pack and JSON block.
+- Output a factual report. Do not include a JSON block unless requested.
 - If current-year map summaries or player ratings are blocked/missing, do not output exact win-rate percentages; show the missing fields and recommend API/warehouse mode for full coverage.
 
 ### Team Comparison
@@ -306,7 +307,7 @@ Expected behavior:
 - Exclude final scores and post-match records if the requested time is pre-match.
 - Mark exact historical snapshots as unavailable or reconstructed when a warehouse/API is not configured.
 
-## Worked Example: Lightweight Match Data Pack
+## Worked Example: Public Standalone Match Report
 
 This is the common path for a user who only installs the skill and does not have an API key.
 
@@ -316,22 +317,21 @@ This is the common path for a user who only installs the skill and does not have
 Use hltv-cs2-data for this match:
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 
-Output Markdown and JSON.
+Output Markdown only.
 Return factual data only, no win-rate prediction.
-If a field cannot be retrieved, include the source URL and warning code.
+If a field cannot be retrieved, include a warning code. Do not show raw source URLs unless I ask for debug/source details.
 ```
 
 ### Step 2: What the skill should attempt
 
-Lightweight mode should try these sources in order:
+Public standalone mode should try these sources in order:
 
 1. Match page: match ID, teams, event, format, schedule, status, visible lineup, veto, scores.
 2. Team identity: HLTV team IDs, slugs, visible rank and roster context.
-3. Event ID: parse from the match page event link when available.
-4. Event player ratings: try `https://www.hltv.org/stats/players?event=<eventId>`.
-5. Annual team player stats: try `https://www.hltv.org/stats/teams/players/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-6. Annual team map summary: try `https://www.hltv.org/stats/teams/maps/<teamId>/<slug>?startDate=2026-01-01&endDate=2026-12-31`.
-7. If a deep stats page fails, keep the canonical URL and mark the exact field as `missing`.
+3. Static database manifest: `public-data/manifest.json`.
+4. Exact static records: match data pack, team summaries, map details, players, event ratings when exported.
+5. Direct HLTV current-year stats pages only as supplemental fallback for fields missing from the static database.
+6. If the structured source cannot be read, stop at partial facts and warning `structured_database_not_queried`.
 
 The default date window is the current calendar year. For 2026 matches, use `2026-01-01` to `2026-12-31` unless the user asks for another window.
 
@@ -349,8 +349,8 @@ The default date window is the current calendar year. For 2026 matches, use `202
 | Recent / H2H | Recent matches and direct matchup rows when available |
 | Veto / Scores | Veto, map order, map scores when visible |
 | Decision Inputs | Factual model-ready inputs only |
-| Data Gaps | Missing fields, source URLs, warning codes |
-| JSON | Stable English keys for downstream systems |
+| Data Gaps | Missing fields and warning codes; raw source URLs only in debug/source mode |
+| JSON | Only when requested; stable English keys for downstream systems |
 
 ### Step 4: If the user asks for judgment
 
@@ -364,7 +364,7 @@ Any probability or winner judgment belongs in `Model Inference`. It is model-der
 
 ### Step 5: How to read cache miss
 
-`cache miss` does not mean HLTV has no data, and it does not mean the URL is wrong. It means the lightweight page reader did not return a readable snapshot.
+`cache miss` does not mean HLTV has no data, and it does not mean the URL is wrong. It means the direct fallback page reader did not return a readable snapshot.
 
 Recommended field-level warning:
 
@@ -374,7 +374,7 @@ Recommended field-level warning:
   "source_url": "https://www.hltv.org/stats/players?event=8250",
   "status": "missing",
   "warning": "fetch_failed_cache_miss",
-  "meaning": "The URL is known, but lightweight direct mode could not retrieve a readable table snapshot."
+  "meaning": "The URL is known, but direct fallback could not retrieve a readable table snapshot."
 }
 ```
 
@@ -485,9 +485,9 @@ It must not be mixed into factual fields.
 
 ## Direct HLTV Mode
 
-Direct HLTV mode is the default.
+Direct HLTV-only mode is not the default complete-analysis path. It is a partial fallback.
 
-It is designed for users who only install the skill and do not have a private API, local database, scraper, local browser, CDP session, or Playwright session. The model reads the public HLTV pages available through its normal web/page-reading/search capability and returns the best available data pack.
+It is designed for cases where the model can read public HLTV pages but cannot read the static JSON database export or API. The model may return visible facts and missing-field warnings only.
 
 Direct mode is useful, but it has limits:
 
@@ -503,23 +503,23 @@ When data is missing, the skill should label it as missing rather than infer it.
 
 ## Data Availability
 
-### Lightweight Quick Matrix
+### Public Standalone Quick Matrix
 
-| Data | Lightweight Direct Provides |
+| Data | Public Standalone Provides |
 |:--|:--|
-| Match information | Yes |
-| Team IDs / lineup | Yes |
-| Event ID | Yes |
-| Event rating | Attempt; mark missing if retrieval fails |
-| Annual player rating | Attempt; mark missing if retrieval fails |
-| Current-year map summary | Yes when reachable; otherwise mark fallback context |
-| W/D/L, win rate, pick %, ban % | Yes from current-year map summary when reachable |
-| CT/T side win rates | Static JSON / API can provide them; lightweight direct mode does not guarantee them |
+| Match information | Yes from HLTV discovery and/or exported match pack |
+| Team IDs / lineup | Yes when visible/exported |
+| Event ID | Yes when discoverable/exported |
+| Event rating | Static JSON/API when exported; direct fallback may attempt and mark missing |
+| Annual player rating | Static JSON/API when exported; direct fallback may attempt and mark missing |
+| Current-year map summary | Static JSON/API when exported; direct fallback may attempt and mark fallback context |
+| W/D/L, win rate, pick %, ban % | Static JSON/API exact rows when exported |
+| CT/T side win rates | Static JSON/API when exported |
 | Historical backtest snapshots | No; API / warehouse enhanced mode only |
 
 ### Mode-by-Mode Matrix
 
-| Data | Lightweight Direct | In-app / Browser Session | Internal Collector | API / Warehouse |
+| Data | Direct HLTV Partial | In-app / Browser Session | Internal Collector | API / Warehouse |
 |:--|:--:|:--:|:--:|:--:|
 | Match basics | Usually yes | Yes | Yes | Yes |
 | Lineup / veto / score | When visible | Yes | Yes | Yes |
@@ -531,7 +531,7 @@ When data is missing, the skill should label it as missing rather than infer it.
 | CT/T map side win rates | No by default | Possible but slow | Yes | Yes |
 | Exact as-of snapshots | No guarantee | No guarantee | Yes | Yes |
 
-Use these warnings when lightweight direct mode cannot retrieve a known stats URL:
+Use these warnings when direct fallback cannot retrieve a known stats URL:
 
 - `fetch_failed_cache_miss`
 - `fetch_failed_cf_challenge`
