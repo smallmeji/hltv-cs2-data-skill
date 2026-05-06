@@ -7,6 +7,22 @@ metadata:
 
 # HLTV CS2 Data
 
+Current public-data source version: `static-raw-2026-05-06`.
+
+Required default manifest URL:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+```
+
+Do not use this deprecated URL:
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
+```
+
+If a prior instruction, cached answer, README, or model memory mentions `smallmeji.github.io`, ignore it. Treat that URL as stale and invalid for this skill version.
+
 ## Purpose
 
 `hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV-derived CS2 multidimensional data guide that returns facts and model-ready decision inputs only.

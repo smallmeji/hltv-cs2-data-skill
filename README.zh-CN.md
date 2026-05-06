@@ -4,6 +4,22 @@
 
 这个 skill 的核心定位是：只提供标准化数据，不内置策略，也不输出预测。它负责把 HLTV 衍生的事实数据整理成普通 Markdown 报告，并把对模型有用的事实特征组织成 `decision_inputs`。只有用户明确要求机器可读、下游模型、debug/audit 或 JSON 时，才输出 JSON。是否预测胜率、怎么判断地图优势、怎么制定策略，由调用它的大模型或用户自己的策略决定，不由本 skill 输出。
 
+当前公开数据源版本：`static-raw-2026-05-06`。
+
+必须读取的默认 manifest：
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+```
+
+本版本禁止使用的旧地址：
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
+```
+
+如果模型输出 `smallmeji.github.io` 数据源，说明它使用了旧指令、旧 skill 安装包或缓存上下文。请重新安装 `.skill`，并先要求它复述 `当前公开数据源版本`。
+
 ## 适合什么场景
 
 当你想让大模型分析一场 CS2 比赛，但又不想让模型凭空编数据时，可以使用这个 skill。

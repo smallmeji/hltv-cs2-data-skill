@@ -6,6 +6,22 @@
 
 The skill is intentionally data-only. It provides factual HLTV-derived data and organizes useful decision inputs, but it does not output winner predictions, probabilities, Veto hypotheses, score guesses, betting advice, EV logic, or stake sizing.
 
+Current public-data source version: `static-raw-2026-05-06`.
+
+Required default manifest URL:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+```
+
+Deprecated and invalid for this version:
+
+```text
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
+```
+
+If a model reports the deprecated `smallmeji.github.io` source, it is using stale instructions, a stale skill install, or cached context. Reinstall the `.skill` package and ask it to quote the `Current public-data source version`.
+
 ## What It Is For
 
 Use this skill when you want an LLM to gather the data needed to analyze a CS2 match, team pair, event, roster, or historical matchup.
