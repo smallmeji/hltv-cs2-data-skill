@@ -24,6 +24,8 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 - 输入一条 HLTV 比赛链接，获取这场比赛的数据包。
 - 输入两个队伍，例如 `NAVI 和 G2`，比较两队的地图池、选手状态、阵容变化和历史交手。
+- 输入一个队伍，例如 `Aurora`，输出单队地图池、选手 rating 和逐图详细数据。
+- 假设一场不存在或未公布的比赛，例如 `假设 NAVI 和 G2 打 S 级 LAN BO3`，输出双队结构化数据包和假设条件。
 - 查看不同地图胜率、每张地图的警匪胜率、对位数据和选手近期状态。
 - 输入赛事 rating 页面，补充选手在当前赛事里的 rating。
 - 做历史回测，要求只使用某个时间点之前可见的数据。
@@ -99,6 +101,12 @@ warning: structured_database_not_queried
 ```
 
 如果模型从 HLTV 页面直接跳到完整分析，或者只说“数据来源 HLTV.org”，就是没有正确使用本 skill。
+
+没有 HLTV match URL 不代表不能用。单队查询和假设比赛都应该走数据库记录：
+
+- 单队查询：解析 team ID，然后读取 `teams/<id>/summary.json`、`maps-overall.json`、`maps-lan.json`、`map-details-overall.json`、`map-details-lan.json`、`players.json`。
+- 假设比赛 / 双队对比：解析两个 team ID，然后读取双方同样的 team records。用户给出的 BO3/BO5、LAN/online、赛事级别、日期等只作为 `assumptions`。
+- 没有真实 match ID 时，Veto、地图顺序、比分、赛事 rating 和官方首发阵容默认写 `not_applicable` 或 `未加载`，不能编。
 
 HLTV 比赛页上的首发阵容可以是正确的，也允许作为阵容来源。但这只说明身份 / 阵容字段完成了，不代表地图、rating、CT/T、手枪局、首杀首死、Pick/Ban 数据已经加载。只要没有成功读取静态数据库/API 的准确记录，输出仍然只能算 `direct_hltv_partial`，不能生成完整逐图分析或具体胜率。
 
@@ -367,6 +375,37 @@ Focus on map pool, player form, roster changes, and head-to-head data.
 - 输出 manifest/API 状态和实际读取的数据库记录路径。
 - 将事实因素整理进 `decision_inputs`。
 - 默认不直接宣布谁赢；即使用户要求判断，也只输出数据和决策输入。
+
+### 2.1 单队数据包
+
+提示词示例：
+
+```text
+用 hltv-cs2-data 看一下 Aurora 这个队伍的数据。
+```
+
+预期行为：
+
+- 解析 Aurora 的 HLTV team ID。
+- 读取公开静态数据库里的单队记录。
+- 输出队伍信息、选手 rating、地图池总览、逐图详细数据、近期地图记录和数据缺口。
+- 不要求 match ID；没有对手、Veto、比分、赛事 rating 时写 `not_applicable`。
+
+### 2.2 假设比赛 / 双队对比
+
+提示词示例：
+
+```text
+假设 NAVI 和 G2 打一场 S 级 LAN BO3，用 hltv-cs2-data 给我数据包。
+```
+
+预期行为：
+
+- 解析两队 team ID。
+- 读取双方 team records。
+- 把 `S 级`、`LAN`、`BO3` 作为 `假设条件`，不是 HLTV 已观察事实。
+- 输出双方地图池、逐图详细数据、选手 rating、特殊 Veto 变量和给模型的决策输入。
+- 不输出胜率结论、Veto 预测或比分预测。
 
 ### 3. 比较两个队伍并准备给外部模型判断
 

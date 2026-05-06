@@ -25,6 +25,19 @@ Structured stats require database records. If the output contains map samples, C
 
 External public sources are allowed for match-background facts only. Official event pages, Liquipedia/wiki pages, news snippets, search summaries, and market pages may help confirm starters, stand-ins, coaches, format, stage, bracket context, schedule, LAN/online status, venue, or roster-change context. Label these fields as `external_context` when they are not from HLTV/database. Do not use them for map rows, win rates, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, H2H, recent rows, veto, scores, or results.
 
+## Query Types
+
+Classify the request before fetching records:
+
+| Query type | User wording | Required identity | Required records | Match-only fields |
+|:--|:--|:--|:--|:--|
+| `match_data_pack` | HLTV match URL or exact scheduled match | match ID + both teams | match data-pack when available, both team records | observed only |
+| `team_comparison` | two teams, no confirmed match | both team IDs | both team records | `not_applicable` |
+| `hypothetical_match` | "假设 X vs Y", "如果打 BO3", user-specified tier/format | both team IDs + assumptions | both team records | `not_applicable` unless provided |
+| `single_team_profile` | one team only | one team ID | one team's records | `not_applicable` |
+
+Do not fail just because no match page exists. A missing match page only disables match-specific fields; it does not block team-level map/player data when team records exist.
+
 Alias discipline:
 
 - Resolve aliases through the HLTV match page/team page or `teams/index.json`.
@@ -75,6 +88,66 @@ Workflow:
 15. Build `Decision Inputs` from available facts.
 16. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 17. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+
+## Hypothetical Match Query
+
+User input:
+
+```text
+假设 NAVI 和 G2 打一场 S 级 LAN BO3，给我数据包
+```
+
+or:
+
+```text
+如果 Aurora vs Heroic 在 PGL 打，谁的数据更好？
+```
+
+Workflow:
+
+1. Set `query_type=hypothetical_match` unless a real HLTV match is found quickly from the named event/date.
+2. Resolve both teams through HLTV team pages and/or `teams/index.json`.
+3. Fetch the public database manifest and both teams' exact records:
+   - `/teams/<id>/summary.json`
+   - `/teams/<id>/maps-overall.json`
+   - `/teams/<id>/maps-lan.json`
+   - `/teams/<id>/map-details-overall.json`
+   - `/teams/<id>/map-details-lan.json`
+   - `/teams/<id>/players.json`
+4. Record user-provided context as assumptions, for example `tier=S`, `format=BO3`, `match_environment=LAN`, `event=PGL`, `date=unknown`.
+5. If a real event ID is explicitly known, attempt `/events/<eventId>/player-ratings.json`; otherwise mark event rating `not_applicable_without_event_id`.
+6. Output `数据源执行记录`, `假设条件`, `数据状态 / 数据缺口`, `队伍与选手 rating`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, and `给模型的决策输入`.
+7. Mark Veto, map order, score, match status, and official lineup as `not_applicable` unless the user supplied them or a real match page was resolved.
+8. Do not output winner lean, probability, Veto prediction, score guess, or betting content.
+
+## Single-Team Query
+
+User input:
+
+```text
+用 hltv-cs2-data 看一下 Aurora 这个队伍的数据
+```
+
+or:
+
+```text
+给我 FaZe 2026 的地图详细数据
+```
+
+Workflow:
+
+1. Set `query_type=single_team_profile`.
+2. Resolve the team through HLTV and/or `teams/index.json`.
+3. Fetch the public database manifest and the team's exact records:
+   - `/teams/<id>/summary.json`
+   - `/teams/<id>/maps-overall.json`
+   - `/teams/<id>/maps-lan.json`
+   - `/teams/<id>/map-details-overall.json`
+   - `/teams/<id>/map-details-lan.json`
+   - `/teams/<id>/players.json`
+4. Output `数据源执行记录`, `队伍信息`, `数据状态 / 数据缺口`, `选手 rating`, `地图池总览`, `逐图详细数据`, `近期地图记录` if exported, and `给模型的决策输入`.
+5. Mark opponent, event rating, Veto, score, and match status as `not_applicable` unless the user adds match/event context.
+6. Do not infer team strength beyond source-backed facts.
 
 ## One-Sentence Judgment Query
 

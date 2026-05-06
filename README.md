@@ -26,6 +26,8 @@ Typical use cases:
 
 - Get a data pack for one HLTV match URL.
 - Compare two teams across map pool, player form, roster status, and head-to-head history.
+- Get a single-team profile, such as `Aurora`, with map pool, player ratings, and per-map detail.
+- Build a hypothetical matchup data pack, such as `assume NAVI vs G2 in an S-tier LAN BO3`, using team records plus clearly labeled assumptions.
 - Inspect map-specific win rates, CT/T side win rates, head-to-head records, and recent player form when available.
 - Pull event player ratings when an event stats page is available.
 - Build backtest-ready context with an `as_of` cutoff.
@@ -99,6 +101,12 @@ user request / HLTV URL
 ```
 
 If a model moves from HLTV pages straight into a full analysis, or only says `Data source: HLTV.org`, it did not use this skill correctly.
+
+A real HLTV match URL is not required for every request. Single-team and hypothetical-match requests should still use database records:
+
+- Single-team profile: resolve the team ID, then read `teams/<id>/summary.json`, `maps-overall.json`, `maps-lan.json`, `map-details-overall.json`, `map-details-lan.json`, and `players.json`.
+- Hypothetical match / team comparison: resolve both team IDs, then read both teams' records. User-provided format, tier, LAN/online status, date, or event context is an `assumption`, not an observed HLTV match fact.
+- Without a real match ID, Veto, map order, score, event rating, and official lineup are `not_applicable` or `missing`; do not invent them.
 
 Visible starters from an HLTV match page may be correct and are allowed as lineup facts. That does not prove structured map/player data was loaded. Without a successful static/API database record fetch, the output is still only `direct_hltv_partial`; it must not produce full per-map analysis or numeric win probabilities.
 
@@ -357,6 +365,33 @@ Expected behavior:
 - Show the manifest/API status and exact database record paths used.
 - Organize factual factors into `decision_inputs`.
 - Avoid declaring a winner. This skill is data-only even when the user asks for judgment.
+
+### Single-Team Profile
+
+```text
+Use hltv-cs2-data to show Aurora team data.
+```
+
+Expected behavior:
+
+- Resolve Aurora to a canonical HLTV team ID.
+- Read the public static database team records.
+- Output team identity, player ratings, map overview, per-map detail, recent exported rows, and data gaps.
+- Do not require a match ID. Opponent, Veto, score, event rating, and match status should be `not_applicable` unless match/event context is provided.
+
+### Hypothetical Match / Team Comparison
+
+```text
+Assume NAVI and G2 play an S-tier LAN BO3. Use hltv-cs2-data to prepare the data pack.
+```
+
+Expected behavior:
+
+- Resolve both team IDs.
+- Read both teams' records.
+- Treat `S-tier`, `LAN`, and `BO3` as assumptions, not observed HLTV facts.
+- Output map pool, per-map detail, player ratings, special veto variables, and decision inputs.
+- Do not output winner probabilities, Veto predictions, or score predictions.
 
 ### Team Comparison + Decision Inputs
 

@@ -58,6 +58,8 @@ Examples:
 用 hltv-cs2-data 看 PGL Astana MOUZ vs Gentle Mates 谁胜率高
 用 hltv-cs2-data 帮我看一下 PGL 上 Aurora 和 Heroic 谁更强
 Use hltv-cs2-data to compare G2 vs FaZe for BLAST Rivals.
+用 hltv-cs2-data 看一下 Aurora 这个队伍的数据
+假设 NAVI 和 G2 打一场 S 级 LAN BO3，给我两队数据包
 ```
 
 For one-sentence requests, automatically perform this sequence:
@@ -70,6 +72,31 @@ For one-sentence requests, automatically perform this sequence:
 6. Produce the compact factual data pack. If the user's wording asks for a judgment such as `谁胜率高`, `谁更强`, `favored`, or `probability`, do not answer with a probability or winner lean; instead output the factual comparison and say that prediction is outside this data-only skill.
 
 If multiple plausible matches are found and the event/date cannot disambiguate them, ask one concise clarification question. Otherwise do not ask for extra URLs; use the database export and report missing records.
+
+## Single-Team and Hypothetical Match Mode
+
+A real HLTV match page is not required for every request.
+
+Use `single_team_profile=true` when the user asks for one team only, such as `看一下 Aurora 的数据`, `给我 FaZe 的地图池`, or `Heroic 2026 数据`. Resolve the team through HLTV and/or `teams/index.json`, then read exact team records:
+
+- `teams/<id>/summary.json`
+- `teams/<id>/maps-overall.json`
+- `teams/<id>/maps-lan.json`
+- `teams/<id>/map-details-overall.json`
+- `teams/<id>/map-details-lan.json`
+- `teams/<id>/players.json`
+
+Do not require a match ID. Match-only fields such as opponent, event rating, Veto, map order, score, and lineup should be marked `not_applicable` unless the user provides event/match context.
+
+Use `hypothetical_match=true` when the user asks for an assumed matchup, such as `假设 NAVI 和 G2 打一场 BO3`, `Aurora vs Heroic 如果在 PGL 打`, or `比较两个队但没有具体比赛页`. Resolve both teams, read both teams' structured records, and output a neutral comparison data pack. Treat user-provided tier, format, LAN/online, event, date, or map subset as `assumptions`, not observed HLTV facts.
+
+For hypothetical matches:
+
+- Do not search indefinitely for a match page unless the user names a real event/date that likely has one.
+- Do not invent lineup, Veto, map order, score, event ratings, or H2H rows.
+- If an event ID is explicitly provided or found from a real event page, event ratings may be attempted and labeled normally.
+- If no event ID exists, event rating is `not_applicable` or `missing_event_context`.
+- `Decision Inputs` may summarize factual map/player/side data and user assumptions, but must not output winner lean, probabilities, Veto prediction, or score guess.
 
 ## Non-Negotiable Retrieval Checklist
 
