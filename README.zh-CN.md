@@ -1,6 +1,6 @@
 # hltv-cs2-data Skill 中文说明
 
-`hltv-cs2-data` 是一个 skill，用来从 HLTV 收集和整理 CS2 数据，并输出给大模型、分析师或产品系统使用的数据包。
+`hltv-cs2-data` 是一个 skill，用来读取 HLTV 衍生的结构化数据库 / 静态 JSON 数据，并输出给大模型、分析师或产品系统使用的数据包。
 
 这个 skill 的核心定位是：只提供标准化数据，不内置策略。它负责把 HLTV 衍生的事实数据整理成普通 Markdown 报告，并把对模型有用的事实特征组织成 `decision_inputs`。只有用户明确要求机器可读、下游模型、debug/audit 或 JSON 时，才输出 JSON。是否预测胜率、怎么判断地图优势、怎么制定策略，由调用它的大模型或用户自己的策略决定。
 
@@ -25,9 +25,9 @@
 
 ## 关键合规规则
 
-### 第一动作：必须查结构化数据库
+### 第一动作：HLTV 只定位身份，分析数据必须查结构化数据库
 
-模型不能只读 HLTV 页面就开始写分析正文。
+模型不能只读 HLTV 页面就开始写分析正文。HLTV 的作用是定位 match ID、team ID、event ID、首发阵容、已公开 Veto/比分等可见事实；地图池、选手 rating、CT/T、手枪局、首杀首死、Pick/Ban、近期记录等分析字段必须从结构化数据库/API/静态 JSON 中读取。
 
 每次比赛 / 双队对比查询都必须先完成：
 
@@ -59,6 +59,19 @@ warning: structured_database_not_queried
 - 用搜索摘要、新闻、wiki、盘口页面替代数据库字段。
 
 正确输出必须在靠前位置包含 `数据源执行记录`。
+
+对外部模型来说，合规流程应该是：
+
+```text
+用户问题 / HLTV URL
+  -> HLTV 最小定位：matchId、teamId、eventId、可见阵容/比分
+  -> 读取 public-data/manifest.json
+  -> 读取 matches/<matchId>/data-pack.json 或 teams/<id>/*.json
+  -> 只用这些结构化记录写地图池、选手 rating、逐图详细分析和决策输入
+  -> 用户明确要求判断时，再追加 Model Inference
+```
+
+如果模型从 HLTV 页面直接跳到完整分析，或者只说“数据来源 HLTV.org”，就是没有正确使用本 skill。
 
 HLTV 比赛页上的首发阵容可以是正确的，也允许作为阵容来源。但这只说明身份 / 阵容字段完成了，不代表地图、rating、CT/T、手枪局、首杀首死、Pick/Ban 数据已经加载。只要没有成功读取静态数据库/API 的准确记录，输出仍然只能算 `direct_hltv_partial`，不能生成完整逐图分析或具体胜率。
 
@@ -151,7 +164,7 @@ Direct HLTV-only 只够做可见事实的部分兜底，不足以生成完整报
 用 hltv-cs2-data 帮我看一下 FaZe 和 G2 谁胜率高
 ```
 
-skill 应先去 HLTV 定位比赛页或队伍页。例如 `PGL 上 Aurora 和 Heroic 谁胜率高`，要先搜索 / 读取 HLTV 的 match、event、results、upcoming 页面，找到确切比赛页。拿到 match ID / team ID / event ID 后，读取默认数据库 manifest：
+skill 应先去 HLTV 定位比赛页或队伍页。例如 `PGL 上 Aurora 和 Heroic 谁胜率高`，要先搜索 / 读取 HLTV 的 match、event、results、upcoming 页面，找到确切比赛页。拿到 match ID / team ID / event ID 后，必须停止 HLTV 深层统计浏览，转去读取默认数据库 manifest：
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
@@ -183,7 +196,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 ```
 
-在这个模式下，skill 应用 live HLTV 做比赛定位和可见事实确认，再用静态 JSON 数据库导出读取结构化字段。只有数据库导出不可用或缺字段时，才把 HLTV 深层 stats 页作为补充 fallback。
+在这个模式下，skill 应用 live HLTV 做比赛定位和可见事实确认，再用静态 JSON 数据库导出读取结构化字段。只有数据库导出已经尝试且不可用或缺字段时，才把 HLTV 深层 stats 页作为补充 fallback。不要把“HLTV 页面能打开”当成数据已经加载完成。
 
 不要使用 Liquipedia / Liquidpedia / wiki / 新闻片段 / 搜索摘要替代地图数据、选手 rating、CT/T、veto 或赛果字段。
 

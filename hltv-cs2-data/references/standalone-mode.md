@@ -8,6 +8,8 @@ Given a natural-language request, a match URL, or two team names, first locate t
 
 This is the default public mode. It must be useful, but honest about missing data. If the public database export is stale/missing, mark that field as unavailable instead of replacing it with Liquipedia/wiki/search snippets. If the structured source cannot be read at all, stop at partial facts.
 
+Important: direct HLTV lookup is not the main data path. It is the ID and visible-fact path. The public static JSON database export is the required data path for map pools, player ratings, map details, CT/T, pistol, first-kill, first-death, Pick/Ban, and exported recent rows.
+
 ## Default Public Database Export
 
 Use this base URL unless the user provides another static source or API source:
@@ -50,6 +52,7 @@ The public static JSON database export is usually enough for Top40 team map summ
 External-model implementation note:
 
 - Do not treat "I read HLTV successfully" as completion.
+- Do not continue from HLTV match/team pages into a full report before reading `manifest.json` and exact JSON records.
 - HLTV lineup/starter extraction is useful, but it only satisfies identity/lineup facts. It does not satisfy map, rating, CT/T, pistol, first-kill, first-death, Pick/Ban, or history fields.
 - Do not use the host model's memory, search snippets, or summaries to fill the database step.
 - If the model cannot fetch GitHub raw files, it must say the structured source is unavailable and stop before the analysis sections.
@@ -121,12 +124,12 @@ The user should not need to provide API query parameters.
 ## Query Resolution Order
 
 1. If input contains an HLTV match URL, read that HLTV page first and extract `hltvMatchId`, team IDs/slugs, event, format, time, status, lineup/veto/score if visible, and `eventId` when possible.
-2. If input is natural language with event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page. Example: `PGL 上 Aurora 和 Heroic 谁胜率高` should first find the PGL Aurora vs Heroic match on HLTV.
-3. Once the match page or canonical team IDs are known, hydrate structured stats from configured API/warehouse if available.
+2. If input is natural language with event/team names, search/read HLTV match, event, results, and upcoming pages first to locate the relevant match page. Example: `PGL 上 Aurora 和 Heroic 谁胜率高` should first find the PGL Aurora vs Heroic match on HLTV when possible.
+3. Once the match page or canonical team IDs are known, stop identity lookup and hydrate structured stats from configured API/warehouse if available.
 4. If no API/warehouse is configured, read the default or user-provided public database manifest and resolve `/matches/<matchId>/data-pack.json`, `/teams/index.json`, `/teams/<id>/*.json`, and `/events/<eventId>/player-ratings.json`.
 5. Record the manifest status and exact database paths read in `source_execution_log`.
 6. If the structured database was not queried successfully, fail closed: output partial facts only and add `structured_database_not_queried`.
-7. Only if the structured database source is unavailable or missing a field, attempt direct HLTV current-year stats pages as supplemental fallback for that field.
+7. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year stats pages as supplemental fallback for that field.
 8. If a map is mentioned, restrict or highlight that map.
 9. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
 10. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.

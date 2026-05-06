@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md)
 
-`hltv-cs2-data` is a skill for collecting and structuring CS2 data from HLTV into model-ready data packs.
+`hltv-cs2-data` is a skill for reading an HLTV-derived structured database / static JSON export and turning it into model-ready CS2 data packs.
 
 The skill is intentionally strategy-neutral. It provides factual HLTV-derived data, organizes useful decision inputs, and keeps any model judgment separate from the data layer. It does not include a built-in betting model, private correction rules, EV logic, or stake sizing.
 
@@ -27,9 +27,9 @@ User-facing Markdown follows the user's language. For Chinese prompts, the skill
 
 ## Critical Compliance Rule
 
-### First Move: Query Structured Data
+### First Move: HLTV Locates Identity; Structured Data Feeds Analysis
 
-The model must not read HLTV pages and then start the analytical body immediately.
+The model must not read HLTV pages and then start the analytical body immediately. HLTV pages are the identity and visible-fact layer: match ID, team ID, event ID, visible lineup, published veto, score, and status. Map pools, player ratings, CT/T, pistol rounds, first-kill/first-death conversion, Pick/Ban, and recent rows must come from structured database/API/static JSON records.
 
 Every match/team comparison query must first complete:
 
@@ -61,6 +61,19 @@ These outputs are non-compliant:
 - Search summaries, news, wiki, or market pages used as database fields.
 
 A correct output must include a `Data Source Execution Log` / `数据源执行记录` near the top.
+
+For external models, the compliant flow is:
+
+```text
+user request / HLTV URL
+  -> minimal HLTV identity lookup: matchId, teamId, eventId, visible lineup/score
+  -> fetch public-data/manifest.json
+  -> fetch matches/<matchId>/data-pack.json or teams/<id>/*.json
+  -> use only these structured records for map pool, ratings, per-map detail, and decision inputs
+  -> if the user explicitly asks for judgment, append Model Inference
+```
+
+If a model moves from HLTV pages straight into a full analysis, or only says `Data source: HLTV.org`, it did not use this skill correctly.
 
 Visible starters from an HLTV match page may be correct and are allowed as lineup facts. That does not prove structured map/player data was loaded. Without a successful static/API database record fetch, the output is still only `direct_hltv_partial`; it must not produce full per-map analysis or numeric win probabilities.
 
@@ -143,7 +156,7 @@ In direct fallback, the host model's web reader may fail on HLTV stats pages. Th
 
 `hltv-cs2-data` supports three operating modes.
 
-### 1. Direct HLTV First, Then Database Export
+### 1. Minimal HLTV Lookup, Then Database Export
 
 This is the default public mode. Users can ask natural questions without providing configuration:
 
@@ -151,7 +164,7 @@ This is the default public mode. Users can ask natural questions without providi
 Use hltv-cs2-data to compare FaZe and G2. Who has the higher win rate?
 ```
 
-The skill should first try to locate the match or teams on HLTV. For example, `PGL Aurora vs Heroic` should first search/read HLTV match, event, result, and upcoming pages to find the exact match page. After match/team IDs are known, it should query the database export:
+The skill should first try to locate the match or teams on HLTV. For example, `PGL Aurora vs Heroic` should first search/read HLTV match, event, result, and upcoming pages to find the exact match page. After match/team IDs are known, it must stop deep HLTV stats browsing and query the database export:
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
@@ -183,7 +196,7 @@ To use another static source, configure:
 HLTV_CS2_STATIC_BASE_URL=https://your-static-data.example.com/latest
 ```
 
-In this mode, the skill should use live HLTV for match discovery and visible facts, then use the static JSON database export for structured fields. Direct HLTV deep stats are only last-resort supplemental fallback when the database export is unavailable or missing a field.
+In this mode, the skill should use live HLTV for match discovery and visible facts, then use the static JSON database export for structured fields. Direct HLTV deep stats are only last-resort supplemental fallback after the database export was attempted and is unavailable or missing a field. Do not treat “HLTV page loaded” as completion.
 
 Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as substitute sources for map stats, player ratings, CT/T, veto, or result fields.
 
