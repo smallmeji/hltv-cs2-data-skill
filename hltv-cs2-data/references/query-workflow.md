@@ -11,6 +11,7 @@ For every match/team comparison query:
 1. Resolve match/team identity from HLTV or from the user's explicit IDs.
 2. Fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
    - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
+   - Do not call `smallmeji.github.io`, GitHub Pages, or platform-site public-data URLs; those are stale sources.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
 3. If the prompt contains event/team names but no exact match ID, fetch `matches/index.json` and search it before downgrading to team-only comparison.
 4. Fetch exact static/API records for the resolved entities. When `matches/index.json` returns one clear match, fetch that row's `data_pack_path` first.
@@ -23,6 +24,13 @@ Do not use direct HLTV deep stats pages as the primary replacement for this step
 HLTV match-page lineup is an identity fact. It may be correct even when no database query happened. Do not treat a correct lineup as proof that structured map/player data was loaded.
 
 Structured stats require database records. If the output contains map samples, CT/T, pistol, first-kill/first-death, Pick/Ban, annual ratings, or event ratings, each value must be traceable to an exact API/static record or explicitly marked as direct HLTV fallback. Player rating values are HLTV Rating 3.0 in human output; structured JSON uses `rating2` as the compatibility field name and must not use `rating_2_0`.
+
+Invalid-output guard:
+
+- If the report says `公开数据源 smallmeji.github.io 返回 404`, retry with the raw GitHub manifest. Do not continue.
+- If a match data-pack exists, using only HLTV data is non-compliant.
+- If the report contains `Veto 预测`, possible map sequence, winner probability, or betting/EV language, it is outside this skill.
+- If the report says CT/T, pistol, first-kill, first-death, Pick/Ban, or map details are missing while a fetched match data-pack contains them, retry from the data-pack Markdown.
 
 External public sources are allowed for match-background facts only. Official event pages, Liquipedia/wiki pages, news snippets, search summaries, and market pages may help confirm starters, stand-ins, coaches, format, stage, bracket context, schedule, LAN/online status, venue, or roster-change context. Label these fields as `external_context` when they are not from HLTV/database. Do not use them for map rows, win rates, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, H2H, recent rows, veto, scores, or results.
 
@@ -190,6 +198,7 @@ Workflow:
    - `给模型的决策输入`
 10. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
 11. Keep the source log at the top. A source log at the end is non-compliant.
+12. Do not answer the judgment in this skill. End with the boundary note when needed: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 
 ## Match URL Query
 

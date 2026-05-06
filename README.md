@@ -22,6 +22,14 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 This is the only default public static database entry point. Do not use a GitHub Pages URL, platform-site URL, or raw directory URL as the data source.
 
+Forbidden as structured data sources:
+
+- `smallmeji.github.io`
+- GitHub Pages
+- platform website pages
+- the raw `https://raw.githubusercontent.com/.../public-data` directory itself
+- search snippets, wiki pages, market pages, news snippets, or model memory
+
 If a model reports a `404`, first check what it fetched:
 
 | Fetched target | Meaning | Correct action |
@@ -29,7 +37,7 @@ If a model reports a `404`, first check what it fetched:
 | `/public-data` directory | Directories are not JSON files | Fetch `/public-data/manifest.json` |
 | `/manifest.json` | Required public entry point | If this fails, mark structured data unavailable |
 | Exact JSON file | That record may be absent | Use manifest/indexes to find available paths |
-| Any GitHub Pages/platform URL | Stale docs or cached model memory | Reinstall/update the skill |
+| `smallmeji.github.io` / GitHub Pages / platform URL | Stale docs or cached model memory | Use the raw GitHub manifest; reinstall/update if it still uses the stale URL |
 
 ## What It Does
 
@@ -90,6 +98,14 @@ If the user gives a natural-language match request such as `PGL Aurora vs Heroic
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
 
+Minimum valid public path:
+
+```text
+manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+```
+
+If `data-pack.json` contains a `markdown` field, use it as the factual skeleton. Do not rebuild an HLTV-only missing-field report.
+
 ## Output Boundary
 
 Normal user-facing output should be concise and should not print raw URLs, record paths, or full JSON unless the user asks for debug, audit, source details, JSON, or downstream-machine output.
@@ -107,6 +123,16 @@ Recommended human report sections:
 
 When the user asks "who has the higher win rate" or "who is favored", the skill still provides data only. The calling model or user's strategy layer may make the final judgment outside this skill.
 
+Normal reports must not contain:
+
+- Veto prediction
+- possible map sequence
+- winner/win-probability conclusion
+- Model Inference
+- betting, EV, Kelly, or stake sizing
+
+Those belong to the calling model or user strategy layer, not this data skill.
+
 ## Install
 
 Install the packaged skill file supported by your host environment:
@@ -122,7 +148,24 @@ Use hltv-cs2-data to get the data pack for:
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 ```
 
-The model should mention the current version and the raw GitHub manifest URL before producing structured map/player sections.
+For install/debug testing, the model may mention the current version and the raw GitHub manifest URL before producing structured map/player sections. Normal user-facing reports should keep the source log compact and hide raw URLs.
+
+Natural-language smoke test:
+
+```text
+Use hltv-cs2-data for the PGL Astana 2026 Aurora vs Heroic data pack.
+```
+
+Correct behavior:
+
+- Internally reads `manifest.json`
+- Internally reads `matches/index.json`
+- Matches `matches/2394116/data-pack.json`
+- Outputs Overall/LAN per-map detail, CT/T, pistol, first-kill, first-death, and Rating 3.0
+- Does not show raw URLs/JSON unless debug is requested
+- Does not output Veto prediction or winner judgment
+
+If the model still says `smallmeji.github.io` returned 404, it is using stale instructions or stale conversation context. Reinstall/update the skill and start a fresh conversation.
 
 ## Example Prompts
 
@@ -148,7 +191,8 @@ Use hltv-cs2-data to build a hypothetical S-tier LAN BO3 comparison for Aurora v
 Detailed instructions live in the skill package:
 
 - `hltv-cs2-data/SKILL.md`: core runtime rules.
-- `hltv-cs2-data/references/data-source-modes.md`: public static export/API/direct HLTV boundaries.
+- `hltv-cs2-data/references/standalone-mode.md`: public static export/direct HLTV boundaries and smoke tests.
+- `hltv-cs2-data/references/data-availability.md`: what each source mode can and cannot provide.
 - `hltv-cs2-data/references/data-pack-contract.md`: output schema and field rules.
 - `hltv-cs2-data/references/product-brief.md`: product scope.
 - `hltv-cs2-data/references/collector-contract.md`: collector/API architecture.

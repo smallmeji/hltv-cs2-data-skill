@@ -14,23 +14,17 @@ External public sources are allowed for match-background facts only. Use them to
 
 ## Default Public Database Export
 
-Use this base URL unless the user provides another static source or API source:
-
-```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
-```
-
-The first fetch must be the manifest URL, not the directory URL:
+The first structured fetch must be this exact manifest URL:
 
 ```text
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-The base URL is a path prefix, not a JSON document. Some runtimes will return 404 if they fetch the base directly. Do not treat that as data absence before trying `/manifest.json`.
+Do not fetch the raw `/public-data` directory URL as a data document. It is only a path prefix and may return 404. Do not use GitHub Pages, `smallmeji.github.io`, the product website, or any platform-site public-data path as the public database source.
 
 If an external model reports "data source returned 404", first check whether it fetched the base directory instead of `/manifest.json` or an exact JSON file. Directory 404 is a client error, not a database miss.
 
-If the fetched URL is a GitHub Pages or platform-site derived URL, it is stale instruction leakage. Do not use it, do not retry it, and do not treat its 404 as database unavailability. Return to the required raw GitHub manifest URL.
+If the fetched URL is `smallmeji.github.io`, GitHub Pages, or a platform-site derived URL, it is stale instruction leakage. Do not use it, do not retry it, and do not treat its 404 as database unavailability. Return to the required raw GitHub manifest URL.
 
 Expected files include:
 
@@ -45,6 +39,7 @@ Expected files include:
 /teams/<hltvTeamId>/map-details-lan.json
 /teams/<hltvTeamId>/players.json
 /calendar/upcoming.json
+/matches/index.json
 /matches/<matchId>/data-pack.json
 /events/<eventId>/player-ratings.json
 ```
@@ -56,13 +51,45 @@ The public static JSON database export is usually enough for Top40 team map summ
 External-model implementation note:
 
 - Do not treat "I read HLTV successfully" as completion.
-- Do not continue from HLTV match/team pages into a full report before reading `manifest.json` and exact JSON records.
+- Do not continue from HLTV match/team pages into a full report before reading `manifest.json`, `matches/index.json` when needed, and exact JSON records.
 - HLTV lineup/starter extraction is useful, but it only satisfies identity/lineup facts. It does not satisfy map, rating, CT/T, pistol, first-kill, first-death, Pick/Ban, or history fields.
 - Do not use the host model's memory, search snippets, or summaries to fill the database step.
 - Search snippets, wikis, official event pages, and market pages can only fill match-background context; they cannot satisfy the structured database step.
 - If the model cannot fetch GitHub raw files, it must say the structured source is unavailable and stop before the analysis sections.
 - Normal reports should not print the raw GitHub URLs; however, the model must still perform the fetch internally.
 - After install/update, a smoke test should quote the source version and required manifest URL before generating reports. If the quoted URL is not the raw GitHub manifest, reinstall the skill and start a new conversation.
+
+## Smoke Test For External Models
+
+Use this natural-language prompt after installing or updating the skill:
+
+```text
+用 hltv-cs2-data 看 PGL Astana 2026 Aurora vs Heroic 的数据包
+```
+
+The model must internally read:
+
+```text
+manifest.json
+matches/index.json
+matches/2394116/data-pack.json
+```
+
+Expected normal source log:
+
+```text
+数据源执行记录：
+- HLTV 定位：成功或已通过静态 match index 定位
+- 结构化数据：已读取 public static database export
+- 读取记录：match data-pack
+```
+
+Incorrect outputs:
+
+- Mentions `smallmeji.github.io` or GitHub Pages as the data source.
+- Says the public static source returned 404 without trying the raw manifest.
+- Uses only HLTV pages and says map detail/player rating/CT-T fields are missing when `matches/2394116/data-pack.json` exists.
+- Outputs `Veto 预测`, possible map sequence, winner probability, or model inference.
 
 ## Required Source Execution Log
 
@@ -219,11 +246,11 @@ Direct HLTV mode cannot guarantee:
 
 When these are needed, recommend API/warehouse mode rather than inventing missing fields.
 
-## Public Standalone Inference Gate
+## Public Standalone Decision Boundary
 
-Use this quick rule in standalone mode:
+Standalone mode is data-only:
 
-- If both teams have current-year map summary and at least one usable player-rating source, numeric inference may be allowed with caveats.
-- If either team's current-year map summary is missing, do not output map or match win-rate percentages.
-- If two or more high-impact fields are missing, do not output exact percentages.
-- If the result relies on search snippets, rankings, or market prices only, mark `completeness_level=partial` or `blocked` and stop before numeric inference.
+- Even when map summary, map detail, CT/T, pistol, first-kill/first-death, and player ratings are available, do not output a winner, probability, Veto prediction, score guess, betting view, or strategy conclusion.
+- If either team's structured current-year map/player records are missing, mark the relevant fields `未加载` and stop before full map-detail sections.
+- If the result relies on search snippets, rankings, market prices, or wiki/news context only, mark `completeness_level=partial` or `blocked`.
+- The calling model or user strategy may use the data to infer win rates outside this skill.

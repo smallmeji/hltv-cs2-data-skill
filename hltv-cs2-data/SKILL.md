@@ -1,6 +1,6 @@
 ---
 name: hltv-cs2-data
-description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-only: no predictions, probabilities, Veto hypotheses, score guesses, betting, EV, Kelly, or strategy conclusions."
+description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. Default public source is the raw GitHub manifest at /public-data/manifest.json; never use smallmeji.github.io or GitHub Pages as the data source. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-only: no predictions, probabilities, Veto hypotheses, score guesses, betting, EV, Kelly, or strategy conclusions."
 metadata:
   short-description: Strategy-neutral HLTV CS2 data packs
 ---
@@ -19,6 +19,28 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 This is the only default public static database entry point. Do not derive another host. If a model reports a GitHub Pages / platform-site public-data URL, treat it as stale instructions and return to the raw GitHub manifest above.
 
+## Hard Source Gate
+
+Before outputting any map/player/detail section, the model must read the raw GitHub manifest and at least one exact static/API record.
+
+Forbidden as structured data sources:
+
+- `smallmeji.github.io`
+- GitHub Pages URLs
+- platform website URLs
+- the raw `/public-data` directory URL without `manifest.json`
+- search snippets, wiki pages, market pages, or model memory
+
+If the output would say the public source is `smallmeji.github.io` or GitHub Pages and returned `404`, that is stale-source leakage. Retry the raw manifest URL above. If the raw manifest cannot be read, stop at partial HLTV facts; do not write a complete report.
+
+For natural-language match lookup, the minimum valid public path is:
+
+```text
+manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+```
+
+If `matches/<matchId>/data-pack.json` exists and contains `markdown`, use that Markdown as the canonical factual skeleton. Do not rebuild the report from HLTV alone.
+
 ## Non-Negotiable Rules
 
 1. **Data-only boundary**: never output winner predictions, match/map probabilities, Veto predictions, score guesses, betting advice, odds analysis, EV, Kelly, stake sizing, or strategy recommendations.
@@ -31,6 +53,7 @@ This is the only default public static database entry point. Do not derive anoth
 8. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
 9. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths, and JSON only for debug/audit/machine-readable requests.
 10. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
+11. **Invalid-output triggers**: if a normal report includes `smallmeji.github.io`, GitHub Pages as the data source, `Veto 预测`, `可能的地图序列`, `胜率最高`, winner probabilities, or a claim that CT/T/pistol/first-kill/first-death are missing while a match data-pack was available, the output is non-compliant and must be retried from the raw manifest/data-pack path.
 
 Boundary sentence when the user asks for judgment:
 
@@ -62,7 +85,7 @@ Do not bulk-load all references.
    - If event/team names are given, search/read HLTV match/event/upcoming/results/team pages only long enough to resolve canonical IDs, then use `matches/index.json` to find an exported exact match before treating the request as team-only.
    - If no real match exists, use `teams/index.json` after manifest fetch and mark the request as `team_comparison`, `hypothetical_match`, or `single_team_profile`.
 2. Fetch structured data:
-   - Fetch the required manifest.
+   - Fetch the required raw GitHub manifest exactly. Do not fetch `smallmeji.github.io`, GitHub Pages, platform-site URLs, or the raw directory URL as the structured source.
    - For natural-language match lookup, fetch `matches/index.json`; if exactly one row matches the event/team context, fetch its `data_pack_path`.
    - Prefer `matches/<matchId>/data-pack.json` for known matches.
    - Fetch exact team records as needed:
@@ -80,14 +103,17 @@ Do not bulk-load all references.
 
 If a match data-pack contains a `markdown` field, use that Markdown as the canonical factual skeleton. Do not state that CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown are missing when those values are present in the data-pack.
 
+If the user asks for a natural-language judgment such as "谁胜率高", still output only the data pack. Do not add `Veto 预测`, map-sequence hypotheses, model inference, or a winner conclusion.
+
 ## 404 Handling
 
 When a public-data request returns `404`:
 
 1. If the URL is the raw GitHub `/public-data` directory, retry exact `/public-data/manifest.json`.
-2. If the URL is not the required raw GitHub manifest host/path, treat it as stale instructions and do not use it.
-3. If `manifest.json` works but an exact record path 404s, use manifest/index files to discover available records.
-4. If `manifest.json` cannot be read, stop with `structured_database_unavailable` / `structured_database_not_queried`.
+2. If the URL contains `smallmeji.github.io`, GitHub Pages, or a platform-site public-data path, treat it as stale instructions, not as database failure. Replace it with the required raw GitHub manifest URL.
+3. If the URL is not the required raw GitHub manifest host/path, treat it as stale instructions and do not use it.
+4. If `manifest.json` works but an exact record path 404s, use manifest/index files to discover available records.
+5. If `manifest.json` cannot be read, stop with `structured_database_unavailable` / `structured_database_not_queried`.
 
 Do not turn a 404 into a full HLTV-only report.
 
@@ -106,6 +132,15 @@ For Chinese comparison or match requests, use this compact order:
 9. `Veto / 比分` only for observed facts or `not_applicable`
 10. `给模型的决策输入`
 11. `JSON` only when requested
+
+Forbidden normal-report sections:
+
+- `Veto 预测`
+- `可能的 Veto 流程`
+- `可能的地图序列`
+- `Model Inference`
+- `胜率最高`
+- `推荐投注` / `EV` / `Kelly`
 
 For English prompts, mirror the same structure in English.
 

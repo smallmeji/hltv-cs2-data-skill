@@ -22,6 +22,14 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 这是唯一默认公开静态数据库入口。不要使用 GitHub Pages 地址、平台网站地址或 raw 目录地址作为数据源。
 
+明确禁止作为结构化数据源：
+
+- `smallmeji.github.io`
+- GitHub Pages
+- 平台网站页面
+- `https://raw.githubusercontent.com/.../public-data` 目录本身
+- 搜索摘要、wiki、盘口页面、新闻片段或模型记忆
+
 如果模型说返回 `404`，先看它访问的是什么：
 
 | 访问目标 | 含义 | 正确处理 |
@@ -29,7 +37,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 | `/public-data` 目录 | 目录不是 JSON 文件 | 改读 `/public-data/manifest.json` |
 | `/manifest.json` | 必须读取的默认入口 | 失败则标记结构化数据不可用 |
 | 具体 JSON 文件 | 该记录可能未导出 | 回到 manifest/index 查可用路径 |
-| GitHub Pages / 平台站点 URL | 旧文档或缓存记忆 | 更新或重装 skill |
+| `smallmeji.github.io` / GitHub Pages / 平台站点 URL | 旧文档或缓存记忆 | 改读 raw GitHub manifest；仍然使用旧地址则重装 skill |
 
 ## 能做什么
 
@@ -90,6 +98,14 @@ events/<eventId>/player-ratings.json
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
 
+最小合法路径：
+
+```text
+manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+```
+
+如果 `data-pack.json` 里有 `markdown` 字段，应优先用它作为事实骨架。不要只用 HLTV 页面重新写一份缺字段报告。
+
 ## 输出边界
 
 普通用户报告应该简洁。除非用户明确要求 debug、审计、source details、JSON 或给下游模型使用，否则不要输出 raw URL、record path 或完整 JSON。
@@ -107,6 +123,16 @@ events/<eventId>/player-ratings.json
 
 如果用户问“谁胜率高 / 谁更强 / 谁更可能赢”，本 skill 仍只输出数据。最终判断由调用它的大模型或用户自己的策略完成。
 
+普通报告里不要出现这些内容：
+
+- Veto 预测
+- 可能的地图序列
+- 胜率最高 / 具体胜率百分比
+- Model Inference
+- 投注、EV、Kelly、仓位
+
+这些属于调用模型或用户策略层，不属于本数据 skill。
+
 ## 安装
 
 安装仓库里的 skill 包：
@@ -122,7 +148,24 @@ hltv-cs2-data.skill
 https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 ```
 
-正确行为：模型应先提到当前数据版本和 raw GitHub manifest，然后再输出结构化地图 / 选手字段。
+正确行为：安装 / debug 测试时，模型可以提到当前数据版本和 raw GitHub manifest；普通用户报告应只显示简洁数据源状态，不显示 raw URL。
+
+自然语言 smoke test：
+
+```text
+用 hltv-cs2-data 看 PGL Astana 2026 Aurora vs Heroic 的数据包
+```
+
+正确行为：
+
+- 内部读取 `manifest.json`
+- 内部读取 `matches/index.json`
+- 匹配 `matches/2394116/data-pack.json`
+- 输出里有 Overall/LAN 逐图详情、CT/T、手枪局、首杀后、首死后、Rating 3.0
+- 不显示 raw URL / JSON，除非用户要求 debug
+- 不输出 Veto 预测或胜率判断
+
+如果模型仍然说 `smallmeji.github.io` 返回 404，说明它加载的是旧 skill 或旧上下文，需要重装 skill 并新开对话。
 
 ## 示例提示词
 
@@ -148,7 +191,8 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 详细规则在 skill 包内：
 
 - `hltv-cs2-data/SKILL.md`：核心运行规则。
-- `hltv-cs2-data/references/data-source-modes.md`：公开静态导出 / API / direct HLTV 边界。
+- `hltv-cs2-data/references/standalone-mode.md`：公开静态导出 / direct HLTV 边界和 smoke test。
+- `hltv-cs2-data/references/data-availability.md`：不同数据源模式能提供什么、不能提供什么。
 - `hltv-cs2-data/references/data-pack-contract.md`：输出结构和字段规则。
 - `hltv-cs2-data/references/product-brief.md`：产品定位。
 - `hltv-cs2-data/references/collector-contract.md`：collector/API 架构。
