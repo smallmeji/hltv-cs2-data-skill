@@ -29,7 +29,9 @@ User-facing Markdown follows the user's language. For Chinese prompts, the skill
 
 ### First Move: HLTV Locates Identity; Structured Data Feeds Analysis
 
-The model must not read HLTV pages and then start the analytical body immediately. HLTV pages are the identity and visible-fact layer: match ID, team ID, event ID, visible lineup, published veto, score, and status. Map pools, player ratings, CT/T, pistol rounds, first-kill/first-death conversion, Pick/Ban, and recent rows must come from structured database/API/static JSON records.
+The model must not read HLTV pages and then start the analytical body immediately. HLTV pages are the identity and visible-fact layer: match ID, team ID, event ID, visible lineup, format, stage, published veto, score, and status. Map pools, player ratings, CT/T, pistol rounds, first-kill/first-death conversion, Pick/Ban, and recent rows must come from structured database/API/static JSON records.
+
+Public external sources may be used for match-background context, but not as a replacement for structured data. Allowed background fields include starters, stand-ins/coaches, format, stage, schedule, LAN/online status, venue/country, bracket/group context, and public roster-change notes. If these facts do not come from HLTV or the database, label them as `external_context`. These sources must not fill map win rates, samples, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, H2H, recent map rows, veto, score, or result fields.
 
 Every match/team comparison query must first complete:
 

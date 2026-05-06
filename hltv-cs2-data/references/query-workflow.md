@@ -23,6 +23,8 @@ HLTV match-page lineup is an identity fact. It may be correct even when no datab
 
 Structured stats require database records. If the output contains map samples, CT/T, pistol, first-kill/first-death, Pick/Ban, annual ratings, or event ratings, each value must be traceable to an exact API/static record or explicitly marked as direct HLTV fallback.
 
+External public sources are allowed for match-background facts only. Official event pages, Liquipedia/wiki pages, news snippets, search summaries, and market pages may help confirm starters, stand-ins, coaches, format, stage, bracket context, schedule, LAN/online status, venue, or roster-change context. Label these fields as `external_context` when they are not from HLTV/database. Do not use them for map rows, win rates, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, H2H, recent rows, veto, scores, or results.
+
 Alias discipline:
 
 - Resolve aliases through the HLTV match page/team page or `teams/index.json`.
@@ -52,13 +54,14 @@ Workflow:
 5. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
 6. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
 7. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
-8. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
-9. Fetch map stats for the requested tier/filter if available.
-10. Fetch player ratings and lineup if a match is specified and the source is reachable.
-11. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
-12. Build `Decision Inputs` from available facts.
-13. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
-14. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+8. For match-background gaps only, public external context may be used and labeled `external_context`.
+9. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
+10. Fetch map stats for the requested tier/filter if available.
+11. Fetch player ratings and lineup if a match is specified and the source is reachable.
+12. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
+13. Build `Decision Inputs` from available facts.
+14. If the user explicitly asks for judgment, apply `references/inference-gate.md`; append numeric `Model Inference` only when the gate passes.
+15. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Match URL Query
 
@@ -83,7 +86,7 @@ Workflow:
    - `field_sources`
 7. If `database_manifest_status` is not `success` and no API record was read, output only a partial HLTV pack with `structured_database_not_queried`. Do not produce `地图池总览`, `逐图详细分析`, veto prediction, numeric match probability, or a complete report.
 8. Resolve both canonical team IDs and slugs from match-page team links, static team index, or team pages. Do not stop at match-page summary data.
-9. Fetch lineups from the match page or static/API pack when visible/available.
+9. Fetch lineups from the match page or static/API pack when visible/available. If lineup is unclear, public external context may be used for starters/stand-in/coaches/roster notes and labeled `external_context`.
 10. Always attempt to fetch player ratings from structured records first. If static/API ratings are missing, then use direct HLTV fallback for visible starters:
    - Extract or resolve `eventId` from the match page/event link whenever possible.
    - Event rating must be fetched from `https://www.hltv.org/stats/players?event=<eventId>` when `eventId` is known.

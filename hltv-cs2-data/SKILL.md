@@ -11,7 +11,7 @@ metadata:
 
 `hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV-derived CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
 
-Primary analysis data must come from the structured data layer: configured warehouse/API when available, otherwise the default public static JSON database export. Public HLTV pages are used only to locate canonical match/team/event IDs and verify visible match facts such as schedule, lineup, veto, map order, score, or result. Direct HLTV stats pages are only supplemental fallback after the structured source has been attempted and field-level missing data has been recorded. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
+Primary analysis data must come from the structured data layer: configured warehouse/API when available, otherwise the default public static JSON database export. Public HLTV pages are used to locate canonical match/team/event IDs and verify visible match facts such as schedule, lineup, format, stage, veto, map order, score, or result. Other public external sources may be used only to confirm match-background facts, not structured stats. Direct HLTV stats pages are only supplemental fallback after the structured source has been attempted and field-level missing data has been recorded. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
 
 Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
 
@@ -72,8 +72,18 @@ HLTV match pages are allowed and preferred for identity facts:
 
 - current match URL and `hltvMatchId`
 - event, schedule, format, status
+- match phase/stage, bracket context, LAN/online context when visible
 - visible starters / lineup
 - visible veto, map order, score, or result
+
+Other public external sources, such as official event pages, Liquipedia/wiki pages, news snippets, search results, or market pages, may be used only as match-background context when clearly labeled `external_context`. Allowed background fields include:
+
+- likely/announced starters, stand-ins, coaches, and roster notes
+- event name, tournament phase, bracket position, playoff/group context
+- match format, schedule/timezone, LAN/online status, venue/country
+- public roster-change notes that explain lineup uncertainty
+
+These sources must never be used to fill structured analytical fields such as map rows, sample counts, win rates, CT/T, pistol, first-kill, first-death, Pick/Ban, player ratings, H2H tables, or recent-map rows. If a background fact conflicts with HLTV or the database, label the conflict instead of silently choosing one.
 
 However, a correct lineup does not satisfy the structured-data requirement. The following fields must come from exact static/API database records when available:
 
@@ -94,7 +104,7 @@ When a user uses aliases, resolve the canonical HLTV team identity before readin
 - Preferred structured source: HLTV-derived static JSON database export or central data warehouse/API. The default public static source is the public database export for external models.
 - Original upstream source: HLTV pages only.
 - Do not use private display websites as a data source. Display sites are presentation surfaces, not product data interfaces.
-- Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as the structured data source. They may only be mentioned as external context when HLTV and the database cannot locate a match, and they must never replace map stats, player ratings, CT/T, veto, or result fields.
+- Do not use Liquipedia, Liquidpedia, wikis, news snippets, search summaries, or market pages as the structured data source. They may be used as labeled `external_context` for match-background facts such as lineup notes, format, stage, schedule, venue, or bracket context, but they must never replace map stats, player ratings, CT/T, pistol, first-kill, first-death, Pick/Ban, H2H, recent rows, veto, score, or result fields when HLTV/database records are expected.
 - Do not require end users to run a local database, scraper, local browser, CDP session, or Playwright session.
 - Public standalone mode uses the host model's normal public web/page-reading/search capability only for HLTV discovery and identity resolution. It must then read the structured static JSON database export or configured API/warehouse for map/player/detail fields.
 - Direct HLTV-only output is a degraded partial fallback. It can report visible match facts and missing fields, but it must not produce a complete report, per-map detail analysis, veto prediction, or numeric inference.

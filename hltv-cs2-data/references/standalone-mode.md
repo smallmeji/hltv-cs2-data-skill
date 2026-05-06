@@ -10,6 +10,8 @@ This is the default public mode. It must be useful, but honest about missing dat
 
 Important: direct HLTV lookup is not the main data path. It is the ID and visible-fact path. The public static JSON database export is the required data path for map pools, player ratings, map details, CT/T, pistol, first-kill, first-death, Pick/Ban, and exported recent rows.
 
+External public sources are allowed for match-background facts only. Use them to clarify starters, stand-ins, coaches, roster notes, format, stage, bracket context, schedule, LAN/online status, venue, or country. Label these as `external_context` when they are not from HLTV/database. Do not use them for map stats, player ratings, CT/T, pistol, first-kill/first-death, Pick/Ban, H2H, recent rows, veto, score, result, or any numeric analytical field.
+
 ## Default Public Database Export
 
 Use this base URL unless the user provides another static source or API source:
@@ -55,6 +57,7 @@ External-model implementation note:
 - Do not continue from HLTV match/team pages into a full report before reading `manifest.json` and exact JSON records.
 - HLTV lineup/starter extraction is useful, but it only satisfies identity/lineup facts. It does not satisfy map, rating, CT/T, pistol, first-kill, first-death, Pick/Ban, or history fields.
 - Do not use the host model's memory, search snippets, or summaries to fill the database step.
+- Search snippets, wikis, official event pages, and market pages can only fill match-background context; they cannot satisfy the structured database step.
 - If the model cannot fetch GitHub raw files, it must say the structured source is unavailable and stop before the analysis sections.
 - Normal reports should not print the raw GitHub URLs; however, the model must still perform the fetch internally.
 
@@ -154,7 +157,7 @@ Use only public HLTV pages available in the session:
 
 Do not use private display websites as a source.
 
-Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as map/player/side/history data sources. At most, they can help describe non-critical external context when HLTV and the public database export both fail to locate a match; label that context as `external_non_hltv`.
+Do not use Liquipedia, Liquidpedia, wikis, news snippets, or search summaries as map/player/side/history data sources. They can help describe match-background context such as stage, format, bracket, venue, schedule, roster notes, stand-ins, or coaches; label that context as `external_context`.
 
 For precise coverage expectations, follow `references/data-availability.md`.
 
