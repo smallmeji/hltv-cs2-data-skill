@@ -12,8 +12,9 @@ For every match/team comparison query:
 2. Fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
    - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
-3. Fetch exact static/API records for the resolved entities.
-4. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 Rating 3.0`, or `给模型的决策输入`.
+3. If the prompt contains event/team names but no exact match ID, fetch `matches/index.json` and search it before downgrading to team-only comparison.
+4. Fetch exact static/API records for the resolved entities. When `matches/index.json` returns one clear match, fetch that row's `data_pack_path` first.
+5. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 Rating 3.0`, or `给模型的决策输入`.
 
 If the manifest or exact records cannot be fetched, output a short partial-facts response with `structured_database_not_queried`. Do not produce a full pre-match report.
 
@@ -64,11 +65,12 @@ Workflow:
 2. If no exact match page is implied, resolve both teams from HLTV team pages and/or the public database `teams/index.json`.
 3. After match/team IDs are known, immediately hydrate structured stats from configured API/warehouse if available.
 4. If no API/warehouse is configured, read the default public static JSON database export. The first required URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-5. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
-6. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
-7. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
-8. If `matches/<matchId>/data-pack.json` contains a `markdown` field, use it as the canonical data skeleton. It is already rendered from the structured rows and should prevent field mapping mistakes. You may summarize or localize it, but do not drop rendered fields such as CT/T, pistol, first-kill, first-death, total rounds, Pick/Ban, or event-tier breakdown.
-9. Before writing map tables, run the mandatory field audit:
+5. If the prompt includes event context, read `/matches/index.json` and try to locate a single exact exported match. If found, treat the query as `match_data_pack` and read that row's `data_pack_path`.
+6. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
+7. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
+8. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
+9. If `matches/<matchId>/data-pack.json` contains a `markdown` field, use it as the canonical data skeleton. It is already rendered from the structured rows and should prevent field mapping mistakes. You may summarize or localize it, but do not drop rendered fields such as CT/T, pistol, first-kill, first-death, total rounds, Pick/Ban, or event-tier breakdown. If these fields appear in the data-pack/markdown, saying they are `未加载` is non-compliant.
+10. Before writing map tables, run the mandatory field audit:
    - `比赛数 = sample_maps`
    - `W-L = wins-losses` or `W-D-L = wins-draws-losses`
    - `胜率 = raw_win_rate`, or `wins / sample_maps` only when `raw_win_rate` is missing
@@ -80,14 +82,14 @@ Workflow:
    - `首死后 = first_death_round_win_rate`
    - `总回合 / 赢回合 = total_rounds_played / rounds_won`
    - `赛事等级分布 = event_tier_breakdown`
-10. For match-background gaps only, public external context may be used and labeled `external_context`.
-11. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
-12. Fetch map stats for the requested tier/filter if available.
-13. Fetch player ratings and lineup if a match is specified and the source is reachable.
-14. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
-15. Build `Decision Inputs` from available facts.
-16. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
-17. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+11. For match-background gaps only, public external context may be used and labeled `external_context`.
+12. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
+13. Fetch map stats for the requested tier/filter if available.
+14. Fetch player ratings and lineup if a match is specified and the source is reachable.
+15. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
+16. Build `Decision Inputs` from available facts.
+17. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
+18. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## Hypothetical Match Query
 
@@ -168,15 +170,16 @@ Workflow:
 1. Treat this as a full data-pack request. Do not ask the user for JSON paths, API paths, or a match URL unless multiple plausible matches remain after lookup.
 2. Find the exact HLTV match when an event context is present. Extract `hltvMatchId`, `eventId` if visible, team IDs/slugs, format, schedule, stage/status, and visible lineup/veto/score.
 3. Fetch the public database manifest.
-4. If `matches/<hltvMatchId>/data-pack.json` exists, read it first.
-5. Read or attempt both teams' records:
+4. If HLTV search/page access did not produce a match ID, read `matches/index.json` and search `search_text`, event name, team names, and date/status. If one clear exported match exists, use that row's `hltv_match_id` and `data_pack_path`.
+5. If `matches/<hltvMatchId>/data-pack.json` or an index row `data_pack_path` exists, read it first.
+6. Read or attempt both teams' records:
    - `teams/<id>/summary.json`
    - `teams/<id>/map-details-overall.json`
    - `teams/<id>/map-details-lan.json`
    - `teams/<id>/players.json`
-6. If `eventId` is known, read or attempt `events/<eventId>/player-ratings.json`.
-7. If the match data-pack has a `markdown` field, use that pre-rendered Markdown as the starting skeleton and keep all factual fields it already contains.
-8. Output the compact Chinese structure:
+7. If `eventId` is known, read or attempt `events/<eventId>/player-ratings.json`.
+8. If the match data-pack has a `markdown` field, use that pre-rendered Markdown as the starting skeleton and keep all factual fields it already contains. Do not mark CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown as missing when the skeleton contains them.
+9. Output the compact Chinese structure:
    - `数据源执行记录`
    - `数据状态 / 数据缺口`
    - `比赛信息`
@@ -185,8 +188,8 @@ Workflow:
    - `逐图详细分析`
    - `特殊 Veto 变量`
    - `给模型的决策输入`
-9. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
-10. Keep the source log at the top. A source log at the end is non-compliant.
+10. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
+11. Keep the source log at the top. A source log at the end is non-compliant.
 
 ## Match URL Query
 

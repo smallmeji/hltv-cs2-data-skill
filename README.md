@@ -76,6 +76,7 @@ For a match or team query:
 Expected record examples:
 
 ```text
+matches/index.json
 teams/<hltvTeamId>/summary.json
 teams/<hltvTeamId>/players.json
 teams/<hltvTeamId>/maps-overall.json
@@ -84,6 +85,8 @@ teams/<hltvTeamId>/map-details-lan.json
 matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
+
+If the user gives a natural-language match request such as `PGL Aurora vs Heroic`, read `matches/index.json` and search event/team names first. When exactly one row matches, fetch that row's `data_pack_path`. Do not downgrade to a missing-field report just because direct HLTV page lookup failed.
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
 

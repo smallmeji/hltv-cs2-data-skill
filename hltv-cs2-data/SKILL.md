@@ -25,11 +25,12 @@ This is the only default public static database entry point. Do not derive anoth
 2. **HLTV is identity first**: use HLTV pages to resolve match ID, team IDs, event ID, schedule, format, visible lineup, visible veto, score, or result.
 3. **Structured data first for analysis**: map pools, map detail, CT/T, pistol, first kill/death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact API/warehouse/static JSON records when available.
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
-5. **Fail closed**: if manifest plus exact records cannot be read, output partial HLTV facts only with `structured_database_not_queried`.
-6. **Exact rows only**: if a team-map/player row is absent, write `missing` / `无数据`. Do not infer it from opponent data, another map, rankings, snippets, or memory.
-7. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
-8. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths, and JSON only for debug/audit/machine-readable requests.
-9. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
+5. **Match index for natural language**: if the user gives event/team names without a match URL, fetch `matches/index.json` from the static export after the manifest and search it before falling back to team-only comparison. When a single matching row is found, fetch that row's `data_pack_path` first.
+6. **Fail closed**: if manifest plus exact records cannot be read, output partial HLTV facts only with `structured_database_not_queried`.
+7. **Exact rows only**: if a team-map/player row is absent, write `missing` / `无数据`. Do not infer it from opponent data, another map, rankings, snippets, or memory.
+8. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
+9. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths, and JSON only for debug/audit/machine-readable requests.
+10. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
 
 Boundary sentence when the user asks for judgment:
 
@@ -58,10 +59,11 @@ Do not bulk-load all references.
 
 1. Resolve identity:
    - If a match URL exists, read the HLTV match page and extract `hltvMatchId`, teams, event, format, time, status, visible lineup/veto/score, and event ID when visible.
-   - If event/team names are given, search/read HLTV match/event/upcoming/results/team pages only long enough to resolve canonical IDs.
+   - If event/team names are given, search/read HLTV match/event/upcoming/results/team pages only long enough to resolve canonical IDs, then use `matches/index.json` to find an exported exact match before treating the request as team-only.
    - If no real match exists, use `teams/index.json` after manifest fetch and mark the request as `team_comparison`, `hypothetical_match`, or `single_team_profile`.
 2. Fetch structured data:
    - Fetch the required manifest.
+   - For natural-language match lookup, fetch `matches/index.json`; if exactly one row matches the event/team context, fetch its `data_pack_path`.
    - Prefer `matches/<matchId>/data-pack.json` for known matches.
    - Fetch exact team records as needed:
      - `teams/<id>/summary.json`
@@ -75,6 +77,8 @@ Do not bulk-load all references.
 4. Use database/API/static rows for factual tables.
 5. Mark missing or not-applicable fields explicitly.
 6. Output Markdown by default. Include JSON only if requested for machine-readable, downstream-model, debug, or audit use.
+
+If a match data-pack contains a `markdown` field, use that Markdown as the canonical factual skeleton. Do not state that CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown are missing when those values are present in the data-pack.
 
 ## 404 Handling
 

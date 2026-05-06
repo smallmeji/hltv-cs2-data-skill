@@ -76,6 +76,7 @@ Ancient, Anubis, Dust2, Inferno, Mirage, Nuke, Overpass
 常见记录路径：
 
 ```text
+matches/index.json
 teams/<hltvTeamId>/summary.json
 teams/<hltvTeamId>/players.json
 teams/<hltvTeamId>/maps-overall.json
@@ -84,6 +85,8 @@ teams/<hltvTeamId>/map-details-lan.json
 matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
+
+如果用户只给自然语言比赛，例如 `PGL Aurora vs Heroic`，先读 `matches/index.json` 搜索赛事名和双方队名；匹配到唯一比赛后，读取该行的 `data_pack_path`。不要在找不到 HLTV 页面时直接降级成缺字段报告。
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
 
