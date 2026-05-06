@@ -197,9 +197,9 @@ Direct HLTV partial fallback output must still follow the data pack contract whe
 - JSON summary or full JSON only when requested.
 - `Decision Inputs` summarizing factual factors for downstream models.
 - Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
-- If explicitly requested, append a separate `Model Inference` section after the factual data pack only after applying `references/inference-gate.md`.
+- Do not append `Model Inference`. This skill is data-only even when the user asks for judgment.
 
-If the user asks who is favored or who has higher win rate, first return the data pack. If the user wants this model to judge, append a clearly labeled `Model Inference` section only when the core data gate allows it. If the gate fails, provide a qualitative low-confidence direction at most and state that exact percentages are blocked.
+If the user asks who is favored or who has higher win rate, return the data pack and decision inputs only. Add the boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 
 Do not call an output a full `hltv-cs2-data` data pack if the database/API/static source was not queried. Use `partial HLTV facts` instead.
 

@@ -1,6 +1,6 @@
 # Data Pack Contract
 
-This contract defines the stable output shape for `hltv-cs2-data`. It keeps HLTV factual data, decision inputs, and optional downstream model inference separate.
+This contract defines the stable output shape for `hltv-cs2-data`. It keeps HLTV factual data and model-ready decision inputs separate from any downstream prediction layer.
 
 ## Markdown Structure
 
@@ -20,11 +20,10 @@ Use this order:
 12. Decision Inputs.
 13. Data warnings.
 14. Optional JSON block for factual data and decision inputs, only when requested.
-15. Optional Model Inference section, only if explicitly requested by the user.
 
-Do not add prediction, probability, EV, strategy, or betting fields inside the factual HLTV data pack.
+Do not add prediction, probability, Veto hypothesis, score guess, EV, strategy, or betting fields inside the HLTV data pack.
 
-If the user explicitly asks for judgment, add a separate `Model Inference` section after the factual pack. The section must state that it is model-derived and not HLTV fact data.
+If the user explicitly asks for judgment, output the same factual data pack and decision inputs, then add a short boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 
 A complete data pack must include proof that the model queried the structured data layer. If no API/warehouse/static JSON record was read after HLTV identity resolution, the output must be marked as partial and must include warning `structured_database_not_queried`.
 
@@ -71,11 +70,10 @@ Default Chinese Markdown structure:
 12. `JSON`
    - Factual data and decision inputs with stable English keys.
    - Include this section only when the user asks for machine-readable output, data pack output, downstream LLM use, debug/audit output, or explicit JSON.
-13. Optional `模型推理`
-   - Only when the user asks for judgment.
-   - Must start with `以下为模型推理，不是 HLTV 事实数据。`
-   - Must include `completeness_level`, `inference_permission`, and `missing_high_impact_fields`.
-   - Veto prediction, winner lean, match percentage, and map percentage are allowed only here.
+13. No `模型推理`
+   - This skill is data-only.
+   - Do not output Veto prediction, winner lean, match percentage, map percentage, score guess, strategy, or betting content.
+   - If the user asks for those, output the data pack and boundary note only.
 
 Readability rules:
 
@@ -302,11 +300,12 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "map_win_probability",
     "match_win_probability",
     "winner_prediction",
+    "veto_prediction",
+    "score_prediction",
     "strategy_recommendation",
     "betting_ev",
     "stake_sizing"
-  ],
-  "model_inference": null
+  ]
 }
 ```
 
@@ -345,40 +344,26 @@ Use explicit warnings for:
 - Historical snapshot unavailable for `as_of_date`.
 - Collector parse error or stale data.
 
-## Fact vs Inference Boundary
+## Data-Only Boundary
 
 The data contract may include descriptive rates such as raw map win rate, weighted win rate, and sample count. These are historical data fields, not predictions.
 
-Map-pool sections must use only the active map pool exposed by the structured record or derived from the record. Do not invent inactive maps such as `Vertigo`, `Cache`, or `Train` as current veto variables. If an inactive map is shown for historical context, mark it `inactive_historical_map` and keep it outside current map-pool averages and veto analysis.
+Map-pool sections must use only the active map pool exposed by the structured record or derived from the record. Do not invent inactive maps such as `Vertigo`, `Cache`, or `Train` as current Veto variables. If an inactive map is shown for historical context, mark it `inactive_historical_map` and keep it outside current map-pool averages and Veto context.
 
 Do not add model-derived fields inside factual objects such as `teams`, `match`, `maps`, `players`, `lineups`, `veto`, `scores`, or `metadata`.
 
 `decision_inputs` are still factual fields. They may summarize and organize observed/derived facts for downstream models, but they must not contain predicted probabilities or recommended actions.
 
-If requested, model-derived fields may appear only under `model_inference`, for example:
-
-```json
-"model_inference": {
-  "requested": true,
-  "disclaimer": "This section is model-derived inference, not HLTV fact data.",
-  "completeness_level": "usable",
-  "inference_permission": "numeric_allowed",
-  "missing_high_impact_fields": [],
-  "veto_hypothesis": [],
-  "map_win_probabilities": [],
-  "match_win_probability": null,
-  "winner_lean": null,
-  "reasoning_summary": [],
-  "uncertainty_notes": []
-}
-```
-
-Never hide model-derived values in factual fields such as:
+Do not output model-derived values anywhere in this skill, including:
 
 - `predicted_map_win_probability`
 - `predicted_match_win_probability`
+- `winner_prediction`
+- `winner_lean`
+- `veto_hypothesis`
+- `score_prediction`
 - `fair_odds`
 - `ev`
 - `stake`
 
-Betting-specific fields remain outside this skill unless the user invokes a separate betting/strategy layer.
+Betting-specific fields remain outside this skill.

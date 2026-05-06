@@ -29,7 +29,7 @@ This reference defines which data can be expected from each access mode. It prev
 | CT/T side win rates | From static JSON/API when exported |
 | Historical backtest snapshots | No; API / warehouse enhanced mode only |
 
-Direct HLTV partial fallback can be useful but incomplete. If current-year map summary or player ratings cannot be loaded from a structured source, exact numeric model inference must be blocked by `references/inference-gate.md`, and the output must not be presented as a complete report.
+Direct HLTV partial fallback can be useful but incomplete. If current-year map summary or player ratings cannot be loaded from a structured source, the output must not be presented as a complete report. This data skill never outputs numeric model inference.
 
 For normal public users, direct HLTV should be attempted first only for match discovery and identity resolution. Static JSON database export should then be queried for structured map/player/side/history fields. Direct HLTV deep stats are last-resort supplemental fallback only when the database export is unavailable or missing a field.
 
@@ -69,7 +69,7 @@ When direct fallback cannot retrieve a deep stats page, use field-level warnings
 - A known URL must not be reported as "data does not exist" unless HLTV itself clearly says no data exists.
 - Match-page recent-core map stats must not be used as a replacement for current-year team map summary stats unless clearly labeled as fallback context.
 - Public standalone mode must not ask public users to run a local browser, CDP, Playwright, or scraper.
-- Market prices, rankings, news snippets, and search summaries are not substitutes for missing current-year map/rating data when producing numeric probabilities.
+- Market prices, rankings, news snippets, and search summaries are not substitutes for missing current-year map/rating data and must not be used to produce probabilities inside this data skill.
 - Liquipedia, Liquidpedia, wikis, news snippets, and search summaries are not substitutes for the structured database export.
 
 ## Recommended Resolution And Fallback Order

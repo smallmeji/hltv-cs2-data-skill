@@ -4,7 +4,7 @@
 
 ## One-Line Positioning
 
-Provide standardized HLTV CS2 data packs for downstream LLMs, models, analysts, and products, while keeping factual data separate from optional model inference.
+Provide standardized HLTV CS2 data packs for downstream LLMs, models, analysts, and products. This product is a data layer, not a prediction layer.
 
 The skill supplies data from HLTV. The user-owned model supplies judgment and strategy.
 
@@ -31,9 +31,9 @@ Given a match, team pair, event, map, or historical cutoff, return a multidimens
 
 The same data pack can be used by different users with different strategies.
 
-## Model Inference Boundary
+## Data-Only Boundary
 
-The factual data pack must not include model-derived:
+The data pack must not include model-derived:
 
 - Map win probability.
 - Match win probability.
@@ -43,7 +43,7 @@ The factual data pack must not include model-derived:
 - Stake sizing.
 - Strategy recommendation.
 
-If the user explicitly asks for probability or judgment, the calling model may append a separate `Model Inference` section after the data pack and decision inputs. That section must state that it is not HLTV fact data.
+If the user explicitly asks for probability or judgment, this skill still returns only the data pack and decision inputs. The calling model or user-owned strategy decides the probability or winner outside this skill.
 
 ## Intended User Flow
 
@@ -53,7 +53,7 @@ Example:
 User asks: FaZe + FURIA, who has higher win rate?
 ```
 
-`hltv-cs2-data` should first return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. If the user explicitly wants the model to judge, add a separate `Model Inference` section.
+`hltv-cs2-data` should return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. It should not output the final judgment itself.
 
 Example:
 

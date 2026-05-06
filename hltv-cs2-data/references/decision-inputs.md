@@ -1,6 +1,6 @@
 # Decision Inputs
 
-`decision_inputs` is the bridge between factual HLTV data and optional `Model Inference`.
+`decision_inputs` is the bridge between factual HLTV data and downstream user-owned analysis.
 
 It does not decide who wins. It organizes factual, source-backed factors that a user-owned model can weight however it wants.
 
@@ -118,7 +118,7 @@ Include:
 - Match-specific CT/T score splits only when available.
 - Side-stat missing marker when HLTV page/API does not expose it.
 
-Use side-profile fields only as factual context. Do not infer tactical strength unless the user explicitly asks for model inference.
+Use side-profile fields only as factual context. Do not infer tactical strength.
 
 ### match_context
 
@@ -161,4 +161,4 @@ Not allowed inside `decision_inputs`:
 - "Bet Over."
 - "This is positive EV."
 
-Those belong only in `Model Inference` or a separate betting/strategy skill when the user explicitly asks.
+Those belong outside `hltv-cs2-data`. This skill only returns facts and decision-input context.

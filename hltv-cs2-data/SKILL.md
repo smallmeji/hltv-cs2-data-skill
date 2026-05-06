@@ -1,6 +1,6 @@
 ---
 name: hltv-cs2-data
-description: "Use when a user needs the hltv-cs2 product/data skill: CS2 data packs from an HLTV-derived structured database/static JSON export, including team resolution, match data, map pool history, player ratings, veto, lineup, event ratings, score history, model-inference-ready context, or backtest/time-travel context. HLTV pages may be used for minimal identity lookup and visible match facts, but map/player/detail analysis MUST read the configured API/warehouse or public static JSON database records first. This skill prepares Markdown reports and optional JSON data outputs for downstream user-owned analysis. The data pack must keep facts separate from inference; if the user explicitly asks for prediction or probabilities, provide them only in a clearly labeled Model Inference section."
+description: "Use when a user needs the hltv-cs2 product/data skill: CS2 factual data packs from an HLTV-derived structured database/static JSON export, including team resolution, match data, map pool history, player ratings, veto, lineup, event ratings, score history, decision-input context, or backtest/time-travel context. HLTV pages may be used for minimal identity lookup and visible match facts, but map/player/detail analysis MUST read the configured API/warehouse or public static JSON database records first. This skill prepares Markdown reports and optional JSON data outputs for downstream user-owned analysis. It is data-only: do not output predictions, probabilities, Veto hypotheses, score guesses, betting advice, EV, Kelly, or strategy conclusions."
 metadata:
   short-description: Strategy-neutral HLTV CS2 data packs
 ---
@@ -9,11 +9,11 @@ metadata:
 
 ## Purpose
 
-`hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV-derived CS2 multidimensional data guide that keeps facts, decision inputs, and inference separate.
+`hltv-cs2-data` is the skill for the `hltv-cs2` product concept: an HLTV-derived CS2 multidimensional data guide that returns facts and model-ready decision inputs only.
 
-Primary analysis data must come from the structured data layer: configured warehouse/API when available, otherwise the default public static JSON database export. Public HLTV pages are used to locate canonical match/team/event IDs and verify visible match facts such as schedule, lineup, format, stage, veto, map order, score, or result. Other public external sources may be used only to confirm match-background facts, not structured stats. Direct HLTV stats pages are only supplemental fallback after the structured source has been attempted and field-level missing data has been recorded. If the user asks for judgment, the calling model may add a separate `Model Inference` section after the data pack.
+Primary analysis data must come from the structured data layer: configured warehouse/API when available, otherwise the default public static JSON database export. Public HLTV pages are used to locate canonical match/team/event IDs and verify visible match facts such as schedule, lineup, format, stage, veto, map order, score, or result. Other public external sources may be used only to confirm match-background facts, not structured stats. Direct HLTV stats pages are only supplemental fallback after the structured source has been attempted and field-level missing data has been recorded.
 
-Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
+Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in prediction model and must not produce final winner judgments. If the user asks "who is favored" or "who has higher win rate", interpret the request as "return the data needed for the user's own model to decide".
 
 The skill must be usable by someone who only installs the skill and has no access to any private database, scraper, or API.
 
@@ -23,7 +23,7 @@ For this skill, "find the data" means:
 
 1. Use HLTV only as the identity layer: match ID, event ID, team IDs, team slugs, visible starters, veto, score, and status.
 2. Immediately hydrate structured stats from the database/API/static JSON layer.
-3. Only after structured records are read may the model write map-pool tables, player-rating tables, per-map detail analysis, decision inputs, Veto hypotheses, or probabilities.
+3. Only after structured records are read may the model write map-pool tables, player-rating tables, per-map detail analysis, and factual decision inputs.
 
 Do not browse HLTV deep stats pages as the first source for maps, ratings, CT/T, pistol, first-kill, first-death, Pick/Ban, recent rows, or H2H when a static/API database source is available or may be available.
 
@@ -55,13 +55,13 @@ For one-sentence requests, automatically perform this sequence:
 3. Prefer `matches/<hltvMatchId>/data-pack.json` if the match exists in the export.
 4. Always fetch or attempt both teams' `summary.json`, `map-details-overall.json`, `map-details-lan.json`, and `players.json`.
 5. If an `eventId` is known, fetch or attempt `events/<eventId>/player-ratings.json`.
-6. Produce the compact factual data pack first. Add `Model Inference` only if the user's wording asks for a judgment such as `谁胜率高`, `谁更强`, `favored`, or `probability`.
+6. Produce the compact factual data pack. If the user's wording asks for a judgment such as `谁胜率高`, `谁更强`, `favored`, or `probability`, do not answer with a probability or winner lean; instead output the factual comparison and say that prediction is outside this data-only skill.
 
 If multiple plausible matches are found and the event/date cannot disambiguate them, ask one concise clarification question. Otherwise do not ask for extra URLs; use the database export and report missing records.
 
 ## Non-Negotiable Retrieval Checklist
 
-Before writing any map pool, player rating, per-map detail, Veto hypothesis, winner lean, or probability section, the model must complete this checklist:
+Before writing any map pool, player rating, per-map detail, or decision-input section, the model must complete this checklist:
 
 1. Locate/verify the match or teams on HLTV.
 2. Fetch the public static database manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
@@ -141,7 +141,7 @@ When a user uses aliases, resolve the canonical HLTV team identity before readin
 
 ## Mandatory Structured Data Gate
 
-For any complete match data pack, team comparison, per-map detail analysis, or numeric `Model Inference`, the model must prove it queried a structured data source after resolving HLTV identity.
+For any complete match data pack, team comparison, per-map detail analysis, or decision-input section, the model must prove it queried a structured data source after resolving HLTV identity.
 
 Required evidence in the output:
 
@@ -191,22 +191,24 @@ Rules:
 
 Example: if `Heroic + Anubis + overall` is absent from `matches/2394116/data-pack.json`, Heroic Anubis must be `无数据`, even if Aurora has Anubis data or Heroic has other map data.
 
-## Derived Analysis Boundary
+## Data-Only Boundary
 
-This skill should not remove the downstream model's freedom. It must only protect the factual data layer from fabricated or weakly sourced numbers.
+This skill is a data provider. It should not decide the match, create probabilities, predict Veto, guess scores, recommend strategy, or output betting content.
 
 Use this boundary:
 
 - **Factual data pack**: strict. Numeric cells must come from exact structured records or be marked missing.
-- **Derived analysis / Model Inference**: flexible. The calling model may create custom factors, weights, narratives, map scores, or probability estimates if the user asks for judgment.
+- **Decision inputs**: still factual. They can group and summarize source-backed facts for downstream models, but they must not contain winner leans, map-win probabilities, match-win probabilities, Veto predictions, score guesses, or recommendations.
 - **External match background**: allowed for context only and labeled `external_context`.
+- **Prediction / strategy layer**: outside this skill. The user's own model may use the data elsewhere, but this skill must not write that layer.
 
-Derived sections are allowed when all of these are true:
+Descriptive derived sections are allowed when all of these are true:
 
-1. They appear after the factual data pack, usually inside `模型推理` / `Model Inference` or clearly labeled `derived_from_structured_data`.
+1. They appear after the factual data pack and are clearly labeled `derived_from_structured_data` or included under `给模型的决策输入`.
 2. They state which factual inputs they used, such as map rows, player ratings, rank, lineup, CT/T, pistol, recent rows, or external background context.
 3. They do not present model-created metrics as HLTV facts.
 4. They do not fill missing raw fields with invented numbers.
+5. They do not conclude who will win or estimate probability.
 
 Allowed by default:
 
@@ -219,7 +221,6 @@ Allowed by default:
 - `近期记录 / H2H` only when exact recent/H2H rows exist
 - `Veto / 比分` only for observed facts or `赛前不可见`
 - `给模型的决策输入`
-- `模型推理` only after the factual data pack and only when requested
 
 Allowed as derived analysis, but not as raw fact tables unless exact source rows exist:
 
@@ -230,13 +231,13 @@ Allowed as derived analysis, but not as raw fact tables unless exact source rows
 - `核心选手评分优势` beyond exact annual/event rating rows
 - `地图池深度` as a scored conclusion before the factual map table
 
-If exact recent/event/opponent-quality rows exist, the model may show derived tables with a clear source label and calculation window. If they do not exist, discuss the topic qualitatively inside `模型推理` or mark it `未加载`. Do not create new numeric tables from memory, snippets, or unlogged calculations.
+If exact recent/event/opponent-quality rows exist, the model may show derived tables with a clear source label and calculation window. If they do not exist, mark the metric `未加载`. Do not create new numeric tables from memory, snippets, or unlogged calculations.
 
-## Judgment Output Contract
+## Data-Only Output Contract
 
-When the user asks who is stronger, who has higher win rate, who is favored, or requests probabilities, the output must use a fixed fact-first structure. Do not produce a free-form "pre-match deep analysis report".
+When the user asks who is stronger, who has higher win rate, who is favored, or requests probabilities, the output must still be data-only. Translate that request into a structured factual comparison that another model or the user can judge from. Do not produce a free-form "pre-match deep analysis report".
 
-Mandatory Chinese section order for judgment requests:
+Mandatory Chinese section order for comparison requests:
 
 1. `数据源执行记录`
 2. `数据状态 / 数据缺口`
@@ -247,7 +248,6 @@ Mandatory Chinese section order for judgment requests:
 7. `特殊 Veto 变量`
 8. `给模型的决策输入`
 9. `JSON` only when requested
-10. `模型推理`
 
 Rules:
 
@@ -257,12 +257,10 @@ Rules:
 - In normal human-facing reports, `数据源执行记录` should be compact and should not expose raw URLs or database paths. It must still say whether structured data was read. Exact paths are for debug/audit mode or JSON output only.
 - `队伍与选手 rating` must show available annual ratings and event ratings. If event ratings, lineup, or confirmed starters are missing, show `缺失` and add warnings instead of omitting the section.
 - `Veto / 比分` is factual only: visible veto steps, map order, scores, or `赛前不可见`. Veto prediction must not appear there.
-- Any Veto prediction, winner lean, map-win probability, match-win percentage, or score guess belongs only under `模型推理`.
-- `模型推理` must start with `以下为模型推理，不是 HLTV 事实数据。`
-- `模型推理` must include `completeness_level`, `inference_permission`, and `missing_high_impact_fields` before any conclusion.
-- If the inference gate blocks numeric probabilities, do not output exact percentages. A qualitative direction is allowed only when the user explicitly asks for judgment.
+- Do not output Veto prediction, winner lean, map-win probability, match-win percentage, score guess, or qualitative "favored" conclusion.
+- If the user asks directly for a prediction, answer with the data pack and one short boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 - `JSON` is mandatory only when the user asks for product-ready output, downstream LLM use, API-like output, debug/audit output, or machine-readable data. For a normal human-readable report, omit the full JSON block by default and offer it as available on request.
-- Do not output betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price. This remains true even inside `模型推理`.
+- Do not output betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price.
 
 ## Operating Modes
 
@@ -287,7 +285,6 @@ Rules:
    - Product positioning: `references/product-brief.md`.
    - Standalone use: `references/standalone-mode.md`.
    - Data availability by access mode: `references/data-availability.md`.
-   - Inference gate: `references/inference-gate.md`.
    - Data pack schema: `references/data-pack-contract.md`.
    - Decision input schema: `references/decision-inputs.md`.
    - API contract: `references/api-contract.md`.
@@ -307,9 +304,9 @@ Rules:
 4. Match the user's language for user-facing Markdown. If the user writes in Chinese, output Chinese headings, labels, and warnings by default. Keep JSON field names stable in English.
 5. Emit normal Markdown by default. Emit JSON only when the user asks for product-ready output, downstream LLM use, API-like output, debug/audit output, or explicit JSON.
 6. Include metadata, freshness, source URLs, cutoff time, sample sizes, and warnings.
-7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, add a separate `Model Inference` section after the data pack and label it as non-HLTV inference.
+7. Keep the data pack factual and organize `Decision Inputs` as factual features. If the user explicitly asks for probability, winner judgment, or strategy, do not provide that conclusion inside this skill; output the data and boundary note instead.
 8. When a page or field cannot be read, use the data availability matrix to label whether the failure belongs to direct HLTV partial fallback, in-app/browser session mode, internal collector mode, or API/warehouse mode.
-9. Before any numeric model inference, apply `references/inference-gate.md`. If the core data threshold is not met, do not output specific win-rate percentages; output only factual data, missing fields, and a qualitative low-confidence direction if explicitly requested.
+9. Do not output numeric model inference. Missing fields should be reported as data quality warnings, not converted into low-confidence predictions.
 
 ## Output Rules
 
@@ -329,7 +326,7 @@ Every complete structured data pack should include:
 - `side_scores`: match-specific CT/T score splits when visible or available through API/warehouse.
 - `decision_inputs`: model-ready factual factors such as map pool, head-to-head, player form, roster state, match context, and data quality.
 - `warnings`: small sample, stale data, roster changes, missing event data, low confidence parsing.
-- `not_included`: explicit note that model inference fields are not part of the HLTV fact data pack.
+- `not_included`: explicit note that prediction, probability, strategy, and betting fields are not part of the HLTV fact data pack.
 
 If the structured database/API/static source was not read, do not emit a complete data pack. Emit a partial-facts response with warning `structured_database_not_queried`.
 
@@ -341,7 +338,7 @@ For Chinese user-facing output, prefer this compact Markdown order:
 4. `队伍与阵容`: teams, ranks, starters, coach/stand-in notes.
 5. `选手数据`: annual/event ratings and missing rating flags.
 6. `地图池总览`: per-map samples, raw win rate, weighted win rate, pick/ban when available.
-7. `逐图详细分析`: when map detail data exists and the user asks for stronger/weaker/win-rate judgment, analyze each playable map separately using sample size, overall/LAN win rate, CT/T, pistol, first-kill/first-death, rounds won, pick/ban, and data quality.
+7. `逐图详细分析`: when map detail data exists, summarize each playable map separately using sample size, overall/LAN win rate, CT/T, pistol, first-kill/first-death, rounds won, pick/ban, and data quality.
 8. `特殊 Veto 变量`: maps that one team rarely plays, permanently bans, has no current-year data on, or has extreme low sample. Do not mix these maps into the normal map average.
 9. `近期记录 / H2H`: recent records and direct matchup map rows when available.
 10. `警匪胜率`: each team's CT-side and T-side win rate by map when available from HLTV team map stats pages.
@@ -354,7 +351,7 @@ Use tables for dense comparative data. Avoid long prose unless explaining a data
 
 ## Per-Map Detail Analysis Requirement
 
-When the user asks `who is favored`, `who has higher win rate`, `which team is stronger`, or any similar judgment request, and map detail data is available, the Markdown output must include a per-map detail section before `Model Inference`.
+When the user asks `who is favored`, `who has higher win rate`, `which team is stronger`, or any similar judgment request, and map detail data is available, the Markdown output must include a per-map detail section. The section is factual; it is not a winner prediction.
 
 For each playable map, include:
 
@@ -369,7 +366,7 @@ For each playable map, include:
 
 If both teams effectively do not play a map, one team has no current-year data, or one team has an extreme ban rate / tiny sample, move that map into `特殊 Veto 变量` instead of treating it as a normal map edge. Example: in a BO3 where both sides each remove one map, the normal detailed analysis may focus on roughly five or six realistic maps, while high-ban/no-data maps are documented separately.
 
-This requirement is still strategy-neutral: it organizes factual map-level evidence. Any final winner direction or percentage belongs only in `Model Inference`.
+This requirement is strategy-neutral: it organizes factual map-level evidence for a downstream model. Do not add final winner direction or percentage.
 
 For match URL data packs, visible starters require rating lookup attempts:
 
@@ -383,30 +380,26 @@ For match URL data packs, visible starters require rating lookup attempts:
 - If either lookup fails, mark the exact player/field as `缺失` / `missing`; do not leave the whole rating section unloaded without attempting lookup.
 - If a coach, stand-in, or new player has no listed rating, report that as a data quality warning rather than inferring a value.
 
-If the user requested judgment, append:
+## No Prediction Policy
 
-- `model_inference`: clearly labeled model-derived interpretation, separated from facts, only after applying the inference gate.
-- `veto_hypothesis`: optional model-derived Veto prediction, only inside `model_inference`; never under factual `Veto / 比分`.
+This skill must not output model inference.
 
-## Model Inference Gate
+Never output:
 
-Numeric probabilities are allowed only when the collected data is strong enough for the requested judgment.
+- winner lean or "favored" conclusion;
+- map-win or match-win probabilities;
+- score prediction;
+- Veto hypothesis or predicted map pool;
+- betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price;
+- strategy recommendation.
 
-For match-level or map-level probability requests, do **not** output exact percentages if either condition is true:
+If the user asks for any of the above, return the factual data pack and add:
 
-- The structured database/API/static export was not queried after HLTV identity resolution.
-- Current-year map summary is missing for either team.
-- Two or more high-impact fields are missing or blocked, including current-year map summary, annual player ratings, event player ratings when event ID is known, confirmed/expected lineup, or relevant veto/map-order context.
+```text
+本 skill 只输出 HLTV 衍生数据和给模型的事实输入；胜率、Veto 预测和策略判断由调用模型或用户自己的策略完成。
+```
 
-When the gate blocks numeric inference:
-
-- Say clearly that the factual data pack is incomplete.
-- List the exact missing fields and source URLs that failed.
-- Use warning code `core_data_insufficient_for_numeric_inference`.
-- If the user asked who is favored, allow only a qualitative statement such as `方向性偏 G2，但不能给可靠百分比`.
-- Recommend API/warehouse data for full coverage.
-
-Direct HLTV partial fallback under Cloudflare failure is usually `partial` or `blocked` completeness. It must not produce confident numeric ranges such as `65-72%` from rankings, search snippets, or market prices alone.
+Direct HLTV partial fallback under Cloudflare failure is usually `partial` or `blocked` completeness. It must not produce confident numeric ranges or qualitative winner conclusions from rankings, search snippets, or market prices alone.
 
 ## Query Examples
 
@@ -434,7 +427,7 @@ https://www.hltv.org/matches/2393335/faze-vs-furia-blast-rivals-2026-season-1
 Backtest match 2393335 as of 2026-04-30 22:30 Asia/Shanghai. Only return data visible at that time.
 ```
 
-If the user asks which team has the higher win rate, provide the relevant data pack first. If the user explicitly asks this model to judge after collecting data, append `Model Inference`.
+If the user asks which team has the higher win rate, provide the relevant data pack and decision inputs only. Do not append `Model Inference`.
 
 Default user-facing input can be simple natural language. Do not require users to know API parameters.
 
@@ -449,14 +442,14 @@ Allowed:
 - Organize factual features into `decision_inputs` for downstream user-owned models.
 - Identify data quality issues.
 - Produce Markdown and JSON.
-- Provide model inference only when explicitly requested, and only after a separate factual HLTV data pack.
-- Apply the inference gate before giving numeric probabilities.
+- Keep all outputs data-only, including when the user asks who is stronger.
 
 Not allowed:
 
 - Mix model inference into factual HLTV fields.
 - Treat `decision_inputs` as predictions.
 - Present model-derived probability as HLTV data.
+- Output model-derived probability at all.
 - Use private correction logs, private prediction frameworks, or hidden strategy rules as a model.
 - Recommend bets.
 - Compute Kelly, EV, or max buy price.

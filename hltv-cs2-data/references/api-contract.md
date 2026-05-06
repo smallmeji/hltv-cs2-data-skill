@@ -38,7 +38,7 @@ Returns match context, teams, lineups, ratings, map pool, veto, scores, warnings
 GET /compare?teamA=6667&teamB=8297&tier=S&asOf=2026-04-30T14:00:00Z
 ```
 
-Returns factual team comparison data. Predicted probabilities must not be mixed into factual fields. If requested, return model-derived values only under a separate `model_inference` object.
+Returns factual team comparison data. Predicted probabilities, winner leans, Veto hypotheses, score guesses, strategy, and betting fields must not be returned by this API/skill layer.
 
 Responses should include `decision_inputs` when enough factual data is available. These are model-ready factual factors, not predictions.
 
