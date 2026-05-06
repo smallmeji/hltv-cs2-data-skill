@@ -54,14 +54,27 @@ Workflow:
 5. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
 6. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
 7. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.
-8. For match-background gaps only, public external context may be used and labeled `external_context`.
-9. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
-10. Fetch map stats for the requested tier/filter if available.
-11. Fetch player ratings and lineup if a match is specified and the source is reachable.
-12. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
-13. Build `Decision Inputs` from available facts.
-14. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
-15. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+8. If `matches/<matchId>/data-pack.json` contains a `markdown` field, use it as the canonical data skeleton. It is already rendered from the structured rows and should prevent field mapping mistakes. You may summarize or localize it, but do not drop rendered fields such as CT/T, pistol, first-kill, first-death, total rounds, Pick/Ban, or event-tier breakdown.
+9. Before writing map tables, run the mandatory field audit:
+   - `比赛数 = sample_maps`
+   - `W-L = wins-losses` or `W-D-L = wins-draws-losses`
+   - `胜率 = raw_win_rate`, or `wins / sample_maps` only when `raw_win_rate` is missing
+   - `Pick% = pick_pct`
+   - `Ban% = ban_pct`
+   - `CT/T = ct_side_win_rate / t_side_win_rate`
+   - `手枪局 = pistol_round_win_rate`
+   - `首杀后 = first_kill_round_win_rate`
+   - `首死后 = first_death_round_win_rate`
+   - `总回合 / 赢回合 = total_rounds_played / rounds_won`
+   - `赛事等级分布 = event_tier_breakdown`
+10. For match-background gaps only, public external context may be used and labeled `external_context`.
+11. Only if the structured database source was attempted and is unavailable or missing a field, attempt direct HLTV current-year team map summary, annual player stats, and event rating pages as supplemental fallback.
+12. Fetch map stats for the requested tier/filter if available.
+13. Fetch player ratings and lineup if a match is specified and the source is reachable.
+14. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
+15. Build `Decision Inputs` from available facts.
+16. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
+17. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 ## One-Sentence Judgment Query
 
@@ -89,7 +102,8 @@ Workflow:
    - `teams/<id>/map-details-lan.json`
    - `teams/<id>/players.json`
 6. If `eventId` is known, read or attempt `events/<eventId>/player-ratings.json`.
-7. Output the compact Chinese structure:
+7. If the match data-pack has a `markdown` field, use that pre-rendered Markdown as the starting skeleton and keep all factual fields it already contains.
+8. Output the compact Chinese structure:
    - `数据源执行记录`
    - `数据状态 / 数据缺口`
    - `比赛信息`
@@ -98,8 +112,8 @@ Workflow:
    - `逐图详细分析`
    - `特殊 Veto 变量`
    - `给模型的决策输入`
-8. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
-9. Keep the source log at the top. A source log at the end is non-compliant.
+9. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
+10. Keep the source log at the top. A source log at the end is non-compliant.
 
 ## Match URL Query
 

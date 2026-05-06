@@ -111,6 +111,46 @@ All factual numeric cells must be backed by exact rows from the structured recor
 - Do not infer missing team-map values from the opponent, another map, prior roster history, search snippets, or broad team form.
 - A map cannot be marked `数据充分` unless both teams have usable exact rows for that map.
 
+## Mandatory Map Field Mapping
+
+When a static/API map-detail row exists, the human-facing output must use these exact field mappings. Do not invent alternate field names and then mark values as `0` or missing.
+
+| 中文字段 | Required source field |
+|:---|:---|
+| 地图样本 / 比赛数 | `sample_maps` |
+| 胜场 | `wins` |
+| 平局 | `draws` when present, otherwise `0` / omitted |
+| 负场 | `losses` |
+| W-D-L / W-L | `wins`, `draws`, `losses` |
+| 胜率 | `raw_win_rate`; if it is missing but `wins` and `sample_maps` exist, compute `wins / sample_maps` and label it as derived from exact row fields |
+| Pick% | `pick_pct` |
+| Ban% | `ban_pct` |
+| CT 胜率 | `ct_side_win_rate` |
+| T 胜率 | `t_side_win_rate` |
+| 总回合 | `total_rounds_played` |
+| 赢回合 | `rounds_won` |
+| 手枪局样本 | `pistol_rounds` |
+| 手枪局胜场 | `pistol_rounds_won` |
+| 手枪局胜率 | `pistol_round_win_rate` |
+| 首杀后回合胜率 | `first_kill_round_win_rate` |
+| 首死后回合胜率 | `first_death_round_win_rate` |
+| 赛事等级分布 | `event_tier_breakdown` |
+| 数据状态 | `detail_status` and `side_stats_status` |
+
+Common wrong mappings are forbidden:
+
+- Do not use `matches_played`, `maps_played`, `played`, `win_percent`, or `map_win_rate` unless those exact fields are present in the fetched JSON.
+- Do not convert an absent alias field into `0`. If the alias field is absent, look for the required source field above.
+- Do not show `比赛数 0` when `sample_maps` is non-zero.
+- Do not show `胜率 0.0%` when `raw_win_rate` is present or can be computed from `wins / sample_maps`.
+- Do not omit CT/T, pistol, first-kill, first-death, total rounds, or event-tier breakdown when those fields exist in `map-details` or `matches/<id>/data-pack.json`.
+
+For normal Chinese output, the minimum per-map detail table should include:
+
+`队伍`, `地图`, `类型(overall/LAN)`, `样本`, `W-L`, `胜率`, `Pick%`, `Ban%`, `S/A/B/C 分布`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`.
+
+If the fetched `matches/<id>/data-pack.json` contains a `markdown` field, treat that Markdown as the canonical pre-rendered data skeleton. You may reformat it for readability, but you must not drop fields that are already rendered there.
+
 ## Phase 2 Fields
 
 Phase 2 can add these fields after collector and warehouse support exists:
