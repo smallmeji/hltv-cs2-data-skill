@@ -10,7 +10,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Direct HLTV partial fallback | None beyond the host model's normal web/page-reading/search tools | Partial visible facts only when structured data cannot be read |
 | In-app/browser session | A user-visible browser session available to the model | Interactive investigation and manual verification |
 | Internal collector | Maintained by the product operator with persistent browser/session handling | Scheduled collection into warehouse |
-| Static JSON database export | Hosted or local exported JSON data packs. Default public manifest: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json` | Required public structured-data source after HLTV identity resolution |
+| Static JSON database export | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Required public structured-data source after HLTV identity resolution |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
 ## What Each Mode Can Provide

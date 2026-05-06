@@ -35,7 +35,7 @@
 
 1. 用 HLTV 定位 match/team/event ID。
 2. 读取公开静态数据库 manifest：
-   `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`
+   `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`
    - 不要把 `.../public-data` 目录当成 API 地址直接读取。GitHub raw 目录返回 404 是正常的，不代表数据库不存在。
    - 必须读取 `/manifest.json` 或具体 JSON 文件。
 3. 根据 ID 读取准确记录，例如：
@@ -136,7 +136,7 @@ HLTV 比赛页上的首发阵容可以是正确的，也允许作为阵容来源
 普通公开用户默认不需要配置数据源。skill 会先用 HLTV 页面定位和确认比赛、队伍、赛事。拿到 match ID / team ID / event ID 后，必须查询结构化数据层。没有 API 时，默认结构化数据源就是公开静态 JSON 数据库导出：
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
 如果 HLTV 找到了比赛页，数据库导出用于加载地图详情、CT/T、选手 rating、导出的 match pack 等结构化字段。如果 HLTV 找不到或读不到比赛页，才用 manifest 反查已导出的比赛 / 队伍记录。API / 数据仓可以提供更完整、更可复现的历史数据，但这不是安装本 skill 的前提。
@@ -172,13 +172,13 @@ Direct HLTV-only 只够做可见事实的部分兜底，不足以生成完整报
 skill 应先去 HLTV 定位比赛页或队伍页。例如 `PGL 上 Aurora 和 Heroic 谁胜率高`，要先搜索 / 读取 HLTV 的 match、event、results、upcoming 页面，找到确切比赛页。拿到 match ID / team ID / event ID 后，必须停止 HLTV 深层统计浏览，转去读取默认数据库 manifest：
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
 基础路径前缀是：
 
 ```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 ```
 
 不要把基础目录当 JSON 读取；必须先追加 `/manifest.json`。基础目录只是路径前缀，不是 JSON 文件；某些运行环境直接读取基础目录会返回 404，这不代表数据不存在。
