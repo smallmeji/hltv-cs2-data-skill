@@ -24,6 +24,8 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 
 The base URL is a path prefix, not a JSON document. Some runtimes will return 404 if they fetch the base directly. Do not treat that as data absence before trying `/manifest.json`.
 
+If an external model reports "data source returned 404", first check whether it fetched the base directory instead of `/manifest.json` or an exact JSON file. Directory 404 is a client error, not a database miss.
+
 Expected files include:
 
 ```text
@@ -44,6 +46,14 @@ Expected files include:
 If this source cannot be read, add `structured_database_unavailable` and continue with direct HLTV partial data only. Do not silently switch to Liquipedia or another wiki as a replacement data source. Do not produce a full report.
 
 The public static JSON database export is usually enough for Top40 team map summaries, map-detail fields, player ratings, and exported match packs. Direct HLTV is the first match-discovery source and is often enough for match basics and simple context, but the database export is the required structured source for map/player/side/history fields when available.
+
+External-model implementation note:
+
+- Do not treat "I read HLTV successfully" as completion.
+- HLTV lineup/starter extraction is useful, but it only satisfies identity/lineup facts. It does not satisfy map, rating, CT/T, pistol, first-kill, first-death, Pick/Ban, or history fields.
+- Do not use the host model's memory, search snippets, or summaries to fill the database step.
+- If the model cannot fetch GitHub raw files, it must say the structured source is unavailable and stop before the analysis sections.
+- Normal reports should not print the raw GitHub URLs; however, the model must still perform the fetch internally.
 
 ## Required Source Execution Log
 
@@ -120,6 +130,12 @@ The user should not need to provide API query parameters.
 8. If a map is mentioned, restrict or highlight that map.
 9. Use the current calendar year as the default data window, e.g. `2026-01-01` to `2026-12-31` in 2026.
 10. If `as_of_date` is mentioned, enter backtest discipline and use the calendar year containing `as_of_date`, but mark exact snapshots unavailable unless an API/warehouse exists.
+
+Alias resolution notes:
+
+- Use HLTV match-page team links as the canonical identity when a match is known.
+- For standalone team-name queries, use `/teams/index.json` after manifest fetch to confirm exported team IDs and slugs.
+- `Gentle Mates` / `M8` should resolve to team `13404` when confirmed by HLTV. Do not resolve it to `M80` (`12376`) just because the alias text is similar.
 
 ## Direct HLTV Partial Fallback Sources
 

@@ -2,6 +2,31 @@
 
 Use these recipes when preparing data packs.
 
+## Required First Move
+
+Do not begin the analytical body from HLTV text alone.
+
+For every match/team comparison query:
+
+1. Resolve match/team identity from HLTV or from the user's explicit IDs.
+2. Fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+   - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
+   - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
+3. Fetch exact static/API records for the resolved entities.
+4. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 rating`, `给模型的决策输入`, or `模型推理`.
+
+If the manifest or exact records cannot be fetched, output a short partial-facts response with `structured_database_not_queried`. Do not produce a full pre-match report.
+
+HLTV match-page lineup is an identity fact. It may be correct even when no database query happened. Do not treat a correct lineup as proof that structured map/player data was loaded.
+
+Structured stats require database records. If the output contains map samples, CT/T, pistol, first-kill/first-death, Pick/Ban, annual ratings, or event ratings, each value must be traceable to an exact API/static record or explicitly marked as direct HLTV fallback.
+
+Alias discipline:
+
+- Resolve aliases through the HLTV match page/team page or `teams/index.json`.
+- If the prompt says `M8` and the match page says `Gentle Mates`, use HLTV team `13404`.
+- Do not map `M8` to `M80` (`12376`) or to a similarly named opponent unless HLTV identity resolution confirms it.
+
 ## Team-vs-Team Query
 
 User input:
@@ -70,6 +95,22 @@ Workflow:
 15. Include veto/scores only if available and visible for the requested mode.
 16. For Chinese prompts, output the compact Chinese structure: `数据源执行记录`, `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, and optional `JSON` only when requested.
 17. If the user asked for probability or winner judgment, apply `references/inference-gate.md`. If the gate fails, add `core_data_insufficient_for_numeric_inference` and do not give exact percentages.
+
+Concrete record example:
+
+For `https://www.hltv.org/matches/2394118/mouz-vs-gentle-mates-pgl-astana-2026`, after HLTV identity resolution, the model should attempt at minimum:
+
+- `/matches/2394118/data-pack.json`
+- `/teams/4494/summary.json`
+- `/teams/4494/map-details-overall.json`
+- `/teams/4494/map-details-lan.json`
+- `/teams/4494/players.json`
+- `/teams/13404/summary.json`
+- `/teams/13404/map-details-overall.json`
+- `/teams/13404/map-details-lan.json`
+- `/teams/13404/players.json`
+
+If those records are not read, do not output a full MOUZ vs Gentle Mates report. Correct HLTV starters alone are insufficient.
 
 For stronger/weaker or win-rate judgment requests, replace the single `地图池` section with:
 

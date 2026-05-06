@@ -27,7 +27,44 @@ User-facing Markdown follows the user's language. For Chinese prompts, the skill
 
 ## Critical Compliance Rule
 
+### First Move: Query Structured Data
+
+The model must not read HLTV pages and then start the analytical body immediately.
+
+Every match/team comparison query must first complete:
+
+1. Use HLTV to resolve match/team/event IDs.
+2. Fetch the public static database manifest:
+   `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`
+   - Do not fetch `.../public-data` as if it were an API endpoint. GitHub raw directory URLs can return `404`; that does not mean the database export is unavailable.
+   - Fetch `/manifest.json` or exact JSON files.
+3. Fetch exact records by ID, for example:
+   - `teams/<hltvTeamId>/summary.json`
+   - `teams/<hltvTeamId>/players.json`
+   - `teams/<hltvTeamId>/map-details-overall.json`
+   - `teams/<hltvTeamId>/map-details-lan.json`
+   - `matches/<hltvMatchId>/data-pack.json`
+4. Only then write map pool, player rating, per-map detail, decision inputs, or model inference.
+
+If step 2 or step 3 fails, stop and output:
+
+```text
+Only basic HLTV identity facts were located. The structured database/API/static JSON source was not read, so a complete hltv-cs2-data report cannot be generated.
+warning: structured_database_not_queried
+```
+
+These outputs are non-compliant:
+
+- `Data source: HLTV.org official data` without structured source status.
+- Complete map pool / per-map detail with no static/API record.
+- Full JSON in a normal report when the user did not ask for JSON.
+- Search summaries, news, wiki, or market pages used as database fields.
+
 A correct output must include a `Data Source Execution Log` / `数据源执行记录` near the top.
+
+Visible starters from an HLTV match page may be correct and are allowed as lineup facts. That does not prove structured map/player data was loaded. Without a successful static/API database record fetch, the output is still only `direct_hltv_partial`; it must not produce full per-map analysis or numeric win probabilities.
+
+Aliases must be resolved back to the canonical HLTV identity. For example, `M8` / `Gentle Mates` should resolve to HLTV team `13404` when confirmed by the match page. Do not resolve it to `M80` (`12376`) or another similarly named team.
 
 The log must show:
 
@@ -58,6 +95,14 @@ Veto predictions, exact win-rate percentages, and score guesses may appear only 
 Normal human-facing reports do not need to print raw manifest URLs, GitHub raw URLs, database record paths, or full JSON. Show a compact source status instead, such as `structured data: public static database export loaded`. Print exact URLs, paths, and JSON only when the user asks for debug, audit, source details, JSON, or downstream model output.
 
 Every map number must come from an exact team-map row. If a team has no row for a map, print `missing` / `no data`; do not infer it from the opponent, another map, search snippets, or overall team form. For example, if a data pack has no `Heroic + Anubis` row, Heroic Anubis must be `missing`.
+
+Example: for `MOUZ vs Gentle Mates`, after HLTV identity resolution, a compliant model should attempt:
+
+- `matches/<matchId>/data-pack.json`
+- `teams/4494/summary.json`, `teams/4494/map-details-overall.json`, `teams/4494/map-details-lan.json`, `teams/4494/players.json`
+- `teams/13404/summary.json`, `teams/13404/map-details-overall.json`, `teams/13404/map-details-lan.json`, `teams/13404/players.json`
+
+If those records were not read, correct HLTV starters are not enough for a complete report.
 
 This skill must not output betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price, even inside `Model Inference`.
 

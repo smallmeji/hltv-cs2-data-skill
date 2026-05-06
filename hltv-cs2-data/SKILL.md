@@ -1,6 +1,6 @@
 ---
 name: hltv-cs2-data
-description: "Use when a user needs the hltv-cs2 product/data skill: CS2 data packs from HLTV-derived data, including team resolution, match data, map pool history, player ratings, veto, lineup, event ratings, score history, model-inference-ready context, or backtest/time-travel context. This skill prepares Markdown and JSON data outputs for downstream user-owned analysis. The HLTV data pack must keep facts separate from inference; if the user explicitly asks for prediction or probabilities, provide them only in a clearly labeled Model Inference section."
+description: "Use when a user needs the hltv-cs2 product/data skill: CS2 data packs from HLTV-derived data, including team resolution, match data, map pool history, player ratings, veto, lineup, event ratings, score history, model-inference-ready context, or backtest/time-travel context. This skill prepares Markdown reports and optional JSON data outputs for downstream user-owned analysis. The HLTV data pack must keep facts separate from inference; if the user explicitly asks for prediction or probabilities, provide them only in a clearly labeled Model Inference section."
 metadata:
   short-description: Strategy-neutral HLTV CS2 data packs
 ---
@@ -16,6 +16,56 @@ It uses public HLTV pages first to locate and verify the match, teams, event, sc
 Do not extend or reuse any private prediction, betting, or strategy framework. This skill has no built-in fixed prediction model; any judgment belongs to the calling model or user strategy.
 
 The skill must be usable by someone who only installs the skill and has no access to any private database, scraper, or API.
+
+## Non-Negotiable Retrieval Checklist
+
+Before writing any map pool, player rating, per-map detail, Veto hypothesis, winner lean, or probability section, the model must complete this checklist:
+
+1. Locate/verify the match or teams on HLTV.
+2. Fetch the public static database manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+   - Do not fetch `.../public-data` as if it were an API endpoint. Raw GitHub directory URLs can return `404`; that does not mean the database export is unavailable.
+   - The manifest file is the required first structured-data fetch.
+3. Fetch at least one exact static/API record after identity resolution, such as:
+   - `teams/<hltvTeamId>/summary.json`
+   - `teams/<hltvTeamId>/players.json`
+   - `teams/<hltvTeamId>/map-details-overall.json`
+   - `teams/<hltvTeamId>/map-details-lan.json`
+   - `matches/<hltvMatchId>/data-pack.json`
+4. In the answer, include a compact `数据源执行记录` saying whether structured data was read.
+
+If step 2 or step 3 fails, stop. Do not continue into a full report. Output only:
+
+```text
+当前只能定位 HLTV 基础信息；结构化数据库/API/静态 JSON 未成功读取，不能生成完整 hltv-cs2-data 报告。
+warning: structured_database_not_queried
+```
+
+Red flags for non-compliant output:
+
+- `数据来源：HLTV.org 官方数据` with no structured source status.
+- Current-year map tables or player ratings with no `static_database` / `api_warehouse` field source.
+- A normal report that includes a full JSON block without the user asking for JSON.
+- A full pre-match analysis generated from search summaries, wiki/news snippets, or market pages.
+
+## Identity Facts vs Structured Stats
+
+HLTV match pages are allowed and preferred for identity facts:
+
+- current match URL and `hltvMatchId`
+- event, schedule, format, status
+- visible starters / lineup
+- visible veto, map order, score, or result
+
+However, a correct lineup does not satisfy the structured-data requirement. The following fields must come from exact static/API database records when available:
+
+- current-year map rows, sample counts, W-D-L, raw win rate, weighted win rate, Pick %, Ban %
+- CT/T side rates, pistol rate, first-kill and first-death round conversion
+- annual player ratings and event ratings
+- exported recent map rows, H2H rows, match data packs, and decision input tables
+
+If the output has correct HLTV lineup but no successful static/API database fetch, it is still only `direct_hltv_partial`. It must not present itself as complete, and it must not produce full per-map analysis or numeric winner probabilities.
+
+When a user uses aliases, resolve the canonical HLTV team identity before reading database records. Example: `M8` / `Gentle Mates` must resolve to HLTV team `13404` when that is the match-page team. Do not confuse it with `M80` (`12376`) or unrelated teams that merely contain similar strings.
 
 ## Source Policy
 

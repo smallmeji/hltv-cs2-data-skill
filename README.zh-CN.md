@@ -25,7 +25,44 @@
 
 ## 关键合规规则
 
+### 第一动作：必须查结构化数据库
+
+模型不能只读 HLTV 页面就开始写分析正文。
+
+每次比赛 / 双队对比查询都必须先完成：
+
+1. 用 HLTV 定位 match/team/event ID。
+2. 读取公开静态数据库 manifest：
+   `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`
+   - 不要把 `.../public-data` 目录当成 API 地址直接读取。GitHub raw 目录返回 404 是正常的，不代表数据库不存在。
+   - 必须读取 `/manifest.json` 或具体 JSON 文件。
+3. 根据 ID 读取准确记录，例如：
+   - `teams/<hltvTeamId>/summary.json`
+   - `teams/<hltvTeamId>/players.json`
+   - `teams/<hltvTeamId>/map-details-overall.json`
+   - `teams/<hltvTeamId>/map-details-lan.json`
+   - `matches/<hltvMatchId>/data-pack.json`
+4. 然后才可以输出地图池、选手 rating、逐图详细分析、决策输入或模型推理。
+
+如果第 2 或第 3 步失败，必须停止，只输出：
+
+```text
+当前只能定位 HLTV 基础信息；结构化数据库/API/静态 JSON 未成功读取，不能生成完整 hltv-cs2-data 报告。
+warning: structured_database_not_queried
+```
+
+下面这些输出都是不合规的：
+
+- 只写 `数据来源：HLTV.org 官方数据`，没有 `结构化数据：已读取...`。
+- 没有静态数据库记录，却输出完整地图池 / 逐图详细分析。
+- 普通报告里默认输出完整 JSON。
+- 用搜索摘要、新闻、wiki、盘口页面替代数据库字段。
+
 正确输出必须在靠前位置包含 `数据源执行记录`。
+
+HLTV 比赛页上的首发阵容可以是正确的，也允许作为阵容来源。但这只说明身份 / 阵容字段完成了，不代表地图、rating、CT/T、手枪局、首杀首死、Pick/Ban 数据已经加载。只要没有成功读取静态数据库/API 的准确记录，输出仍然只能算 `direct_hltv_partial`，不能生成完整逐图分析或具体胜率。
+
+别名必须先回到 HLTV 官方身份。比如 `M8` / `Gentle Mates` 在对应比赛页里应解析为 HLTV team `13404`；不能误当成 `M80` (`12376`) 或其他字符串相近的队伍。
 
 这段记录必须写清：
 
@@ -56,6 +93,14 @@
 普通报告不需要展示原始 manifest URL、GitHub raw URL、数据库 record path 或完整 JSON。只需要展示简短来源状态，例如 `结构化数据：已读取 public static database export`。只有用户明确要求 debug、审计、source details、JSON 或给下游模型使用时，才输出具体 URL、路径和 JSON。
 
 每个地图数字必须来自精确的队伍-地图记录。如果某队某图没有记录，就写 `无数据`，不能从对手数据、其他地图、搜索摘要或整体状态里补。例如某场数据包里没有 `Heroic + Anubis` 行，就必须显示 Heroic Anubis `无数据`。
+
+举例：如果查询 `MOUZ vs Gentle Mates`，HLTV 定位后应尝试读取：
+
+- `matches/<matchId>/data-pack.json`
+- `teams/4494/summary.json`、`teams/4494/map-details-overall.json`、`teams/4494/map-details-lan.json`、`teams/4494/players.json`
+- `teams/13404/summary.json`、`teams/13404/map-details-overall.json`、`teams/13404/map-details-lan.json`、`teams/13404/players.json`
+
+如果这些记录没有读取成功，即使首发阵容来自 HLTV 且看起来正确，也不能输出完整报告。
 
 本 skill 不输出投注建议、赔率分析、EV、Kelly 或仓位，即使在 `模型推理` 里也不输出。
 
