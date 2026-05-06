@@ -9,8 +9,8 @@ Do not begin the analytical body from HLTV text alone. HLTV lookup is only the i
 For every match/team comparison query:
 
 1. Resolve match/team identity from HLTV or from the user's explicit IDs.
-2. Fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-   - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
+2. Fetch `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`.
+   - Do not call `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` directly; raw GitHub directories can return `404`.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
 3. Fetch exact static/API records for the resolved entities.
 4. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 rating`, or `给模型的决策输入`.
@@ -50,7 +50,7 @@ Workflow:
 1. If the prompt includes an event context, such as `PGL 上 Aurora 和 Heroic`, search/read HLTV event, upcoming, result, and match pages first to locate the exact match page.
 2. If no exact match page is implied, resolve both teams from HLTV team pages and/or the public database `teams/index.json`.
 3. After match/team IDs are known, immediately hydrate structured stats from configured API/warehouse if available.
-4. If no API/warehouse is configured, read the default public static JSON database export. The first required URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+4. If no API/warehouse is configured, read the default public static JSON database export. The first required URL is `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`.
 5. Use the manifest to fetch exact record paths. Prefer `/matches/<matchId>/data-pack.json` when an exact match is known. Otherwise use `/teams/index.json`, `/teams/<id>/summary.json`, `/teams/<id>/maps-overall.json`, `/teams/<id>/maps-lan.json`, `/teams/<id>/map-details-overall.json`, `/teams/<id>/map-details-lan.json`, `/teams/<id>/players.json`, and `/events/<eventId>/player-ratings.json` when available.
 6. Add a `数据源执行记录` / `source_execution_log` section showing the HLTV page read, manifest status, exact database paths read, and field-level source labels.
 7. If the manifest or at least one exact API/static database record was not read, stop before complete analysis. Add warning `structured_database_not_queried`; do not output map-pool detail, veto prediction, winner percentages, or a full pre-match report.

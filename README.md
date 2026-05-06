@@ -35,7 +35,7 @@ Every match/team comparison query must first complete:
 
 1. Use HLTV to resolve match/team/event IDs.
 2. Fetch the public static database manifest:
-   `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`
+   `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`
    - Do not fetch `.../public-data` as if it were an API endpoint. GitHub raw directory URLs can return `404`; that does not mean the database export is unavailable.
    - Fetch `/manifest.json` or exact JSON files.
 3. Fetch exact records by ID, for example:
@@ -136,7 +136,7 @@ This repository does not provide:
 For normal public use, the skill first uses HLTV pages to locate and verify the match, teams, and event. After IDs are known, it must query the structured data layer. If no API is configured, the default structured source is the public static JSON database export:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
 ```
 
 If the match page is found on HLTV, the database export is used to load structured fields such as map details, CT/T, player ratings, and exported match packs. If the match page cannot be found/read on HLTV, the skill may also use the manifest to reverse-search exported match/team records. API/warehouse mode can provide richer and more reproducible snapshots when configured, but it is optional.
@@ -170,13 +170,13 @@ Use hltv-cs2-data to compare FaZe and G2. Who has the higher win rate?
 The skill should first try to locate the match or teams on HLTV. For example, `PGL Aurora vs Heroic` should first search/read HLTV match, event, result, and upcoming pages to find the exact match page. After match/team IDs are known, it must stop deep HLTV stats browsing and query the database export:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
 ```
 
 The base path prefix is:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
 ```
 
 Do not fetch the base directory as JSON; append `/manifest.json` first.

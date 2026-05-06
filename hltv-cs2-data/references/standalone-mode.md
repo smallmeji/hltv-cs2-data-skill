@@ -17,13 +17,13 @@ External public sources are allowed for match-background facts only. Use them to
 Use this base URL unless the user provides another static source or API source:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest
 ```
 
 The first fetch must be the manifest URL, not the directory URL:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
 ```
 
 The base URL is a path prefix, not a JSON document. Some runtimes will return 404 if they fetch the base directly. Do not treat that as data absence before trying `/manifest.json`.
@@ -80,7 +80,7 @@ For debug/audit/JSON output, exact URLs and paths may be included:
 ```text
 数据源执行记录：
 - HLTV 定位：成功 / 失败，URL: ...
-- 静态数据库 manifest：成功 / 失败，URL: https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+- 静态数据库 manifest：成功 / 失败，URL: https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
 - 已读取数据库记录：matches/2394116/data-pack.json, teams/11861/map-details-overall.json, ...
 - 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
 ```

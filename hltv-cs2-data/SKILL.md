@@ -64,7 +64,7 @@ If multiple plausible matches are found and the event/date cannot disambiguate t
 Before writing any map pool, player rating, per-map detail, or decision-input section, the model must complete this checklist:
 
 1. Locate/verify the match or teams on HLTV.
-2. Fetch the public static database manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+2. Fetch the public static database manifest: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`.
    - Do not fetch `.../public-data` as if it were an API endpoint. Raw GitHub directory URLs can return `404`; that does not mean the database export is unavailable.
    - The manifest file is the required first structured-data fetch.
 3. Fetch at least one exact static/API record after identity resolution, such as:
@@ -124,7 +124,7 @@ When a user uses aliases, resolve the canonical HLTV team identity before readin
 
 ## Source Policy
 
-- Default public static base URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data`. Default public manifest URL: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+- Default public static base URL: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest`. Default public manifest URL: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`.
 - Default resolution order for normal users: minimal direct HLTV match/event/team lookup for identity and visible facts -> configured warehouse/API for structured stats if available -> default public static JSON database export for structured stats -> direct HLTV deep stats only as last-resort supplemental fallback for missing fields. The structured database/API/static step is mandatory before analysis sections.
 - Default date window: current calendar year only, e.g. 2026-01-01 to 2026-12-31 for the current 2026 season, unless the user explicitly requests another window.
 - Preferred structured source: HLTV-derived static JSON database export or central data warehouse/API. The default public static source is the public database export for external models.
@@ -265,7 +265,7 @@ Rules:
 ## Operating Modes
 
 - **Public standalone mode**: default mode for users without an API key. Use HLTV pages only to locate/verify the match, teams, event, IDs, lineup/veto/score if visible; then read the default public static JSON database export for structured map/player/detail fields. Output normal Markdown by default. Include JSON only when the user asks for machine-readable or downstream-model output. No private database, scraper, local browser, or CDP required.
-- **Static JSON database mode**: required structured-data mode for external users when no API is configured. After resolving match/team identity from HLTV, read `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, `/teams/<hltvTeamId>/map-details-overall.json`, `/events/<eventId>/player-ratings.json`, or `/matches/<matchId>/data-pack.json`.
+- **Static JSON database mode**: required structured-data mode for external users when no API is configured. After resolving match/team identity from HLTV, read `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`, then read standardized JSON files under the same base, such as `/teams/<hltvTeamId>/summary.json`, `/teams/<hltvTeamId>/map-details-overall.json`, `/events/<eventId>/player-ratings.json`, or `/matches/<matchId>/data-pack.json`.
 - **Direct HLTV partial fallback**: degraded fallback when the structured source cannot be read or has no exact record. It may output visible match facts and missing-data warnings only. It must not output `地图池总览`, `逐图详细分析`, full prediction-style reports, veto predictions, or numeric probabilities.
 - **Pro / API mode**: enhanced mode for users with `HLTV_CS2_API_BASE_URL` and `HLTV_CS2_API_KEY`. After resolving match/team identity from HLTV or user-provided IDs, call the API for standardized data packs, exact snapshots, veto, lineup, result, and backtest support.
 - **Internal collector mode**: backend maintenance mode only. It may use persistent browser profiles or CDP to collect HLTV stats into a central warehouse, but this is not part of the public standalone skill user experience.
@@ -295,7 +295,7 @@ Rules:
    - If the user provides an HLTV match URL, open/read that HLTV match page first and extract `hltvMatchId`, teams, event, format, schedule, status, lineup/veto/score if visible, and `eventId` when possible.
    - If the user gives a natural-language query such as `PGL 上 Aurora 和 Heroic 谁胜率高`, search/read HLTV match/event/result/upcoming pages first to find the relevant match page. Do not start from static JSON unless HLTV cannot locate the match.
    - After a match page or canonical team IDs are resolved, stop browsing and hydrate structured stats from the configured warehouse/API when available.
-   - If no API/warehouse is configured, the next required step is the default public static JSON database export: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`. Do not stop after HLTV page facts and do not continue to deep HLTV stats before trying this manifest.
+   - If no API/warehouse is configured, the next required step is the default public static JSON database export: `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json`. Do not stop after HLTV page facts and do not continue to deep HLTV stats before trying this manifest.
    - Read `/matches/<matchId>/data-pack.json`, `/teams/<hltvTeamId>/*.json`, and `/events/<eventId>/player-ratings.json` as available. Mark field-level source as `static_database`.
    - Record these attempts in `数据源执行记录` / `source_execution_log`. If the manifest or static/API records were not read, stop before complete analysis and add `structured_database_not_queried`.
    - If the match page cannot be found/read on HLTV, use the public static database export to reverse-search exported matches/teams.
