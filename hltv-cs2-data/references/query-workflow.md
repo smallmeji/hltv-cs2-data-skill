@@ -9,28 +9,35 @@ Do not begin the analytical body from HLTV text alone. HLTV lookup is only the i
 For every match/team comparison query:
 
 1. Resolve match/team identity from HLTV or from the user's explicit IDs.
-2. Fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+2. Hydrate from a structured source. Source priority:
+   - configured API / warehouse
+   - user-provided static JSON export
+   - default public raw GitHub static export
+3. For the default public raw GitHub export, fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
    - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
    - Do not call `smallmeji.github.io`, GitHub Pages, or platform-site public-data URLs; those are stale sources.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
-3. If the prompt contains event/team names but no exact match ID, fetch `matches/index.json` and search it before downgrading to team-only comparison.
-4. Fetch exact static/API records for the resolved entities. When `matches/index.json` returns one clear match, fetch that row's `data_pack_path` first.
-5. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 Rating 3.0`, or `给模型的决策输入`.
+4. For alternate API/static sources, use the equivalent capabilities/search/data-pack endpoint or record. Do not require GitHub path names if the source exposes the same canonical fields.
+5. If the prompt contains event/team names but no exact match ID, use match search/index before downgrading to team-only comparison. For the default public source this is `matches/index.json`.
+6. Fetch exact structured records for the resolved entities. When the match index/search returns one clear match, fetch that match data pack first.
+7. Only then write `地图池总览`, `逐图详细分析`, `队伍与选手 Rating 3.0`, or `给模型的决策输入`.
 
-If the manifest or exact records cannot be fetched, output a short partial-facts response with `structured_database_not_queried`. Do not produce a full pre-match report.
+If the structured source capabilities/manifest or exact records cannot be fetched, output a short partial-facts response with `structured_database_not_queried`. Do not produce a full pre-match report.
 
 Do not use direct HLTV deep stats pages as the primary replacement for this step. Direct HLTV map/player/stat pages are only supplemental fallback after the database/API/static records were attempted and logged.
 
 HLTV match-page lineup is an identity fact. It may be correct even when no database query happened. Do not treat a correct lineup as proof that structured map/player data was loaded.
 
-Structured stats require database records. If the output contains map samples, CT/T, pistol, first-kill/first-death, Pick/Ban, annual ratings, or event ratings, each value must be traceable to an exact API/static record or explicitly marked as direct HLTV fallback. Player rating values are HLTV Rating 3.0 in human output; structured JSON uses `rating2` as the compatibility field name and must not use `rating_2_0`.
+Structured stats require exact structured records. If the output contains map samples, CT/T, pistol, first-kill/first-death, Pick/Ban, annual ratings, or event ratings, each value must be traceable to an exact API/static record or explicitly marked as direct HLTV fallback. Player rating values are HLTV Rating 3.0 in human output. The default public JSON uses `rating2` as a compatibility field name; alternate sources may use another raw name, but human output must not call it Rating 2.0 unless the source explicitly says it is HLTV Rating 2.0.
 
 Invalid-output guard:
 
 - If the report says `公开数据源 smallmeji.github.io 返回 404`, retry with the raw GitHub manifest. Do not continue.
-- If a match data-pack exists, using only HLTV data is non-compliant.
-- If the report contains `Veto 预测`, possible map sequence, winner probability, or betting/EV language, it is outside this skill.
-- If the report says CT/T, pistol, first-kill, first-death, Pick/Ban, or map details are missing while a fetched match data-pack contains them, retry from the data-pack Markdown.
+- If a structured match data pack exists, using only HLTV data is non-compliant.
+- If the report contains `Veto 预测`, `禁图/选图预测框架`, possible map sequence, winner probability, or betting/EV language, it is outside this skill.
+- If the report labels player ratings as `Rating 2.0`, retry and label them `Rating 3.0`.
+- If the report source line only says `HLTV CS2 数据平台` or another vague source label without `已读取 public static database export` or `已读取 API/warehouse`, retry the source execution log and structured fetch.
+- If the report says CT/T, pistol, first-kill, first-death, Pick/Ban, or map details are missing while a fetched structured match data pack contains them, retry from the data-pack/record.
 
 External public sources are allowed for match-background facts only. Official event pages, Liquipedia/wiki pages, news snippets, search summaries, and market pages may help confirm starters, stand-ins, coaches, format, stage, bracket context, schedule, LAN/online status, venue, or roster-change context. Label these fields as `external_context` when they are not from HLTV/database. Do not use them for map rows, win rates, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, H2H, recent rows, veto, scores, or results.
 
@@ -98,6 +105,22 @@ Workflow:
 16. Build `Decision Inputs` from available facts.
 17. If the user explicitly asks for judgment, do not answer with a winner lean or probability. Return the factual data pack and boundary note: `本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。`
 18. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
+
+Chinese source-log requirement:
+
+The first normal section must be:
+
+```text
+## 数据源执行记录
+
+- 技能触发：hltv-cs2-data
+- 身份定位：HLTV / static match index / user input
+- 结构化数据：已读取 public static database export
+- 读取记录：match data-pack / team map details / player ratings / event ratings
+- 输出边界：事实数据包，不包含预测、概率、投注或 Veto 猜测
+```
+
+Do not replace this with a single sentence such as `数据源：HLTV CS2 数据平台`.
 
 ## Hypothetical Match Query
 

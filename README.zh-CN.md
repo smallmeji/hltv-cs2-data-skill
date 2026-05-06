@@ -98,13 +98,13 @@ events/<eventId>/player-ratings.json
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
 
-最小合法路径：
+默认公开 raw GitHub 数据源的最小合法路径：
 
 ```text
 manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 ```
 
-如果 `data-pack.json` 里有 `markdown` 字段，应优先用它作为事实骨架。不要只用 HLTV 页面重新写一份缺字段报告。
+如果换成其他 API / 静态源，使用等价的 capabilities/search/data-pack 流程即可，不要求路径名一样。如果解析到的数据包里有 `markdown` 字段，应优先用它作为事实骨架。不要只用 HLTV 页面重新写一份缺字段报告。
 
 ## 输出边界
 

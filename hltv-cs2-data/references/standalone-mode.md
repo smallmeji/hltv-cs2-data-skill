@@ -99,11 +99,15 @@ For normal human-facing reports, use compact status:
 
 ```text
 数据源执行记录：
+- 技能触发：hltv-cs2-data
 - HLTV 定位：成功
 - 结构化数据：已读取 public static database export
 - 读取记录：match data-pack + team map details + player ratings
+- 输出边界：事实数据包，不包含预测、概率、投注或 Veto 猜测
 - 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
 ```
+
+A single vague line such as `数据源：HLTV CS2 数据平台` is not a valid execution log. It does not prove the model hydrated structured data. In that case, retry the manifest/index/data-pack path before writing map or player sections.
 
 For debug/audit/JSON output, exact URLs and paths may be included:
 

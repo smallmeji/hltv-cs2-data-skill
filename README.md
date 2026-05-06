@@ -98,13 +98,13 @@ If the user gives a natural-language match request such as `PGL Aurora vs Heroic
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
 
-Minimum valid public path:
+Minimum valid path for the default public raw GitHub source:
 
 ```text
 manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 ```
 
-If `data-pack.json` contains a `markdown` field, use it as the factual skeleton. Do not rebuild an HLTV-only missing-field report.
+For another API/static source, use the equivalent capabilities/search/data-pack flow. If the resolved data pack contains a `markdown` field, use it as the factual skeleton. Do not rebuild an HLTV-only missing-field report.
 
 ## Output Boundary
 
