@@ -1,6 +1,6 @@
 {
   "schema_version": "hltv-cs2-data.static.v1",
-  "generated_at": "2026-05-05T07:30:22.045Z",
+  "generated_at": "2026-05-06T12:45:47.354Z",
   "source_policy": "mysql_tidb_export",
   "date_window": {
     "start": "2026-01-01",
@@ -10,10 +10,7 @@
   "top_limit": 40,
   "team_scope": {
     "top_limit": 40,
-    "requested_extra_team_ids": [
-      12257,
-      11712
-    ],
+    "requested_extra_team_ids": [],
     "exported_extra_team_ids": []
   },
   "entries": [
