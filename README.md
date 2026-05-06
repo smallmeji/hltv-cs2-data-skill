@@ -14,13 +14,7 @@ Required default manifest URL:
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-Deprecated and invalid for this version:
-
-```text
-https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest/manifest.json
-```
-
-If a model reports the deprecated `smallmeji.github.io` source, it is using stale instructions, a stale skill install, or cached context. Reinstall the `.skill` package and ask it to quote the `Current public-data source version`.
+This is the only default public static database entry point. Do not derive or substitute another host from memory. A 404 from any other host is not evidence that the database is unavailable.
 
 ## What It Is For
 
