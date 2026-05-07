@@ -31,7 +31,7 @@ Given a match, team pair, event, map, or historical cutoff, return a multidimens
 
 The same data pack can be used by different users with different strategies.
 
-## Data-Only Boundary
+## Data-Pack Boundary
 
 The data pack must not include model-derived:
 
@@ -43,7 +43,7 @@ The data pack must not include model-derived:
 - Stake sizing.
 - Strategy recommendation.
 
-If the user explicitly asks for probability or judgment, this skill still returns only the data pack and decision inputs. The calling model or user-owned strategy decides the probability or winner outside this skill.
+If the user explicitly asks for probability or judgment, this skill still returns the data pack and decision inputs first. The calling model or user-owned strategy may decide the probability or winner after the skill output, using its own reasoning.
 
 ## Intended User Flow
 
@@ -53,7 +53,7 @@ Example:
 User asks: FaZe + FURIA, who has higher win rate?
 ```
 
-`hltv-cs2-data` should return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. It should not output the final judgment itself.
+`hltv-cs2-data` should return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. The final judgment belongs to the calling model or user-owned strategy after the data pack.
 
 Example:
 

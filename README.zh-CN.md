@@ -2,9 +2,11 @@
 
 [English README](README.md)
 
-`hltv-cs2-data` 是一个只做数据层的 CS2 skill。它把 HLTV 衍生的结构化数据库 / 静态 JSON 记录整理成简洁的数据包，供用户、其他大模型或下游策略系统使用。
+`hltv-cs2-data` 是一个数据优先的 CS2 skill。它把 HLTV 衍生的结构化数据库 / 静态 JSON 记录整理成简洁的数据包，供用户、其他大模型或下游策略系统使用。
 
-它不输出胜率预测、赢家倾向、Veto 猜测、比分预测、投注建议、EV、Kelly 或仓位。
+它本身不内置预测模型。skill 输出的是事实数据包；如果用户原始问题还要求“谁胜率高 / 谁更强 / 预测”，调用它的大模型可以在数据包之后自行判断，并明确说明这不是数据库字段或 skill 内置结论。
+
+投注建议、赔率分析、EV、Kelly、仓位仍不属于本 skill。
 
 ## 结构化数据源模型
 
@@ -139,17 +141,17 @@ manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 7. 特殊 Veto 变量
 8. 给模型的决策输入
 
-如果用户问“谁胜率高 / 谁更强 / 谁更可能赢”，本 skill 仍只输出数据。最终判断由调用它的大模型或用户自己的策略完成。
+如果用户问“谁胜率高 / 谁更强 / 谁更可能赢”，本 skill 仍先输出事实数据包。最终判断由调用它的大模型或用户自己的策略在数据包之后完成。
 
-普通报告里不要出现这些内容：
+普通报告的事实数据包里不要出现这些内容：
 
 - Veto 预测
 - 可能的地图序列
 - 胜率最高 / 具体胜率百分比
-- Model Inference
+- Model Inference / 模型推理
 - 投注、EV、Kelly、仓位
 
-这些属于调用模型或用户策略层，不属于本数据 skill。
+胜负判断、粗略概率、Veto 假设可以作为调用模型的后续推理单独写，但不能混在事实数据表、`decision_inputs` 或 JSON facts 里。投注相关内容仍禁止。
 
 ## 安装
 
@@ -181,7 +183,7 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 - 匹配 `matches/2394116/data-pack.json`
 - 输出里有 Overall/LAN 逐图详情、CT/T、手枪局、首杀后、首死后、Rating 3.0
 - 不显示 raw URL / JSON，除非用户要求 debug
-- 不输出 Veto 预测或胜率判断
+- 不在事实数据包里输出 Veto 预测或胜率判断
 
 如果模型仍然说 `smallmeji.github.io` 返回 404，说明它加载的是旧 skill 或旧上下文，需要重装 skill 并新开对话。
 

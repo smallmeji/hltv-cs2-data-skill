@@ -1,13 +1,15 @@
 ---
 name: hltv-cs2-data
-description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. When this skill is invoked, structured data hydration is mandatory and automatic; do not wait for the user to say database, data source, or static JSON. Default public source is the raw GitHub manifest at /public-data/manifest.json; never use smallmeji.github.io or GitHub Pages as the data source. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-only: no predictions, probabilities, Veto hypotheses, score guesses, betting, EV, Kelly, or strategy conclusions."
+description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. When this skill is invoked, structured data hydration is mandatory and automatic; do not wait for the user to say database, data source, or static JSON. Default public source is the raw GitHub manifest at /public-data/manifest.json; never use smallmeji.github.io or GitHub Pages as the data source. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-first: this skill outputs source-backed data packs only; if the user's overall request also asks for judgment, the calling model may reason after the skill data pack using its own model judgment. No betting, EV, Kelly, or stake sizing."
 metadata:
   short-description: Strategy-neutral HLTV CS2 data packs
 ---
 
 # HLTV CS2 Data
 
-This skill returns factual, source-bound CS2 data packs for downstream models or user-owned strategy. It does not decide who wins.
+This skill returns factual, source-bound CS2 data packs for downstream models or user-owned strategy. It does not contain a built-in prediction model.
+
+Default skill behavior is data-pack-only. If the user's overall request also asks `谁胜率高`, `谁更强`, `预测`, `判断`, `who is favored`, or similar, first finish the factual data pack. After that, the calling model may continue outside the skill with its own judgment. That judgment is not HLTV data, not database output, and not a built-in `hltv-cs2-data` conclusion.
 
 Mandatory behavior: if the user invokes `hltv-cs2-data`, says "based on this skill", says "用/基于这个 skill", or asks a model that has this skill installed to look at a CS2 match/team, the model must automatically read the structured data source. The user does not need to say "go to the data source", "query the database", "read static JSON", or provide record paths. HLTV lookup alone is never a complete answer for this skill.
 
@@ -90,14 +92,14 @@ Minimum source log:
 - 身份定位：HLTV / static match index / user input
 - 结构化数据：已读取 API/warehouse 或 public static database export
 - 读取记录：match data-pack / team map details / player ratings / event ratings
-- 输出边界：事实数据包，不包含预测、概率、投注或 Veto 猜测
+- 输出边界：事实数据包；用户如要求判断，由调用模型在数据包之后自行判断
 ```
 
 If the model cannot truthfully write `结构化数据：已读取 API/warehouse` or `结构化数据：已读取 public static database export`, it must stop before `地图池总览` and `逐图详细分析`.
 
 ## Non-Negotiable Rules
 
-1. **Data-only boundary**: never output winner predictions, match/map probabilities, Veto predictions, score guesses, betting advice, odds analysis, EV, Kelly, stake sizing, or strategy recommendations.
+1. **Data-first boundary**: factual sections must contain only source-backed data. The skill's job is to produce the data pack. If the user's overall request asks for judgment, the calling model may reason after the skill output, but that reasoning is outside the skill and must not be represented as HLTV data, database output, or this skill's built-in model.
 2. **HLTV is identity first**: use HLTV pages to resolve match ID, team IDs, event ID, schedule, format, visible lineup, visible veto, score, or result.
 3. **Structured data first for analysis**: map pools, map detail, CT/T, pistol, first kill/death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact API/warehouse/static JSON records when available.
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
@@ -108,13 +110,15 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 9. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
 10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
 11. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
-12. **Invalid-output triggers**: if a normal report includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, `Veto 预测`, `禁图/选图预测框架`, `可能的地图序列`, `胜率最高`, winner probabilities, or a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, the output is non-compliant and must be retried from the structured source.
+12. **Invalid-output triggers**: if a normal report includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, or judgment/probability/Veto hypotheses mixed into factual sections, the output is non-compliant and must be retried from the structured source. Judgment is allowed only after the data pack as the calling model's own reasoning when the user explicitly requested it.
 
-Boundary sentence when the user asks for judgment:
+Required label if the calling model continues with judgment after the skill data pack:
 
 ```text
-本 skill 只输出数据层；胜率判断由调用模型或用户策略完成。
+以下判断由调用模型基于上述数据自行完成，不是 HLTV 数据库字段，也不是 hltv-cs2-data skill 输出。
 ```
+
+Still forbidden anywhere in this skill output unless another dedicated strategy/betting skill is explicitly invoked: betting advice, odds analysis, EV, Kelly, stake sizing, max buy price, or executable wager recommendations.
 
 ## Query Routing
 
@@ -160,7 +164,7 @@ Do not bulk-load all references.
 
 If a match data-pack contains a `markdown` field, use that Markdown as the canonical factual skeleton. Do not state that CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown are missing when those values are present in the data-pack.
 
-If the user asks for a natural-language judgment such as "谁胜率高", still output only the data pack. Do not add `Veto 预测`, map-sequence hypotheses, model inference, or a winner conclusion.
+If the user asks for a natural-language judgment such as "谁胜率高", first output the data pack. After the data pack is complete, the calling model may continue outside the skill with clearly labeled model reasoning. Do not put model-derived probabilities or conclusions into factual tables.
 
 ## 404 Handling
 
@@ -190,14 +194,18 @@ For Chinese comparison or match requests, use this compact order:
 10. `给模型的决策输入`
 11. `JSON` only when requested
 
-Forbidden normal-report sections:
+Forbidden factual-section content:
 
-- `Veto 预测`
-- `可能的 Veto 流程`
-- `可能的地图序列`
-- `Model Inference`
-- `胜率最高`
 - `推荐投注` / `EV` / `Kelly`
+- model-derived winner lean or probability inside `数据源执行记录`, `地图池总览`, `逐图详细分析`, `Veto / 比分`, `给模型的决策输入`, or JSON facts
+
+Outside the skill data pack, when explicitly requested by the user, the calling model may add:
+
+- `调用模型判断`
+- `Model Judgment`
+- winner lean / relative strength judgment
+- rough match/map probability
+- Veto or map-pool hypothesis, if clearly marked as a hypothesis and not mixed with observed veto facts
 
 For English prompts, mirror the same structure in English.
 
@@ -209,7 +217,7 @@ Normal source log example:
 - HLTV 定位：成功
 - 结构化数据：已读取 public static database export
 - 读取记录：match data-pack + team map details + player ratings
-- 输出边界：事实数据包，不包含预测、概率、投注或 Veto 猜测
+- 输出边界：事实数据包；判断如有，属于调用模型后续推理
 - 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
 ```
 

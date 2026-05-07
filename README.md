@@ -2,9 +2,11 @@
 
 [中文说明](README.zh-CN.md)
 
-`hltv-cs2-data` is a data-only skill for CS2 match and team analysis workflows. It turns HLTV-derived structured records into compact Markdown data packs for a user, another model, or a downstream strategy system.
+`hltv-cs2-data` is a data-first skill for CS2 match and team analysis workflows. It turns HLTV-derived structured records into compact Markdown data packs for a user, another model, or a downstream strategy system.
 
-It does not output predictions, win probabilities, Veto hypotheses, score guesses, betting advice, EV, Kelly, or stake sizing.
+It does not contain a built-in prediction model. The skill output is the factual data pack. If the user's overall request also asks "who is favored" or asks for prediction, the calling model may reason after the data pack and must label that as its own judgment, not as database output or a built-in skill conclusion.
+
+Betting advice, odds analysis, EV, Kelly, and stake sizing remain outside this skill.
 
 ## Structured Source Model
 
@@ -139,17 +141,17 @@ Recommended human report sections:
 7. Special Veto Variables
 8. Decision Inputs
 
-When the user asks "who has the higher win rate" or "who is favored", the skill still provides data only. The calling model or user's strategy layer may make the final judgment outside this skill.
+When the user asks "who has the higher win rate" or "who is favored", the skill still provides the factual data pack first. The calling model or user's strategy layer may make the final judgment after the data pack.
 
-Normal reports must not contain:
+The factual data pack must not contain:
 
 - Veto prediction
 - possible map sequence
 - winner/win-probability conclusion
-- Model Inference
+- Model Inference / model reasoning
 - betting, EV, Kelly, or stake sizing
 
-Those belong to the calling model or user strategy layer, not this data skill.
+Winner judgment, rough probabilities, or Veto hypotheses may be written only as separate calling-model reasoning after the data pack when the user requested them. Betting-related content remains forbidden.
 
 ## Install
 
@@ -181,7 +183,7 @@ Correct behavior:
 - Matches `matches/2394116/data-pack.json`
 - Outputs Overall/LAN per-map detail, CT/T, pistol, first-kill, first-death, and Rating 3.0
 - Does not show raw URLs/JSON unless debug is requested
-- Does not output Veto prediction or winner judgment
+- Does not put Veto prediction or winner judgment inside the factual data pack
 
 If the model still says `smallmeji.github.io` returned 404, it is using stale instructions or stale conversation context. Reinstall/update the skill and start a fresh conversation.
 
