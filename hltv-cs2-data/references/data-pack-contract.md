@@ -108,9 +108,10 @@ All factual numeric cells must be backed by exact rows from the structured recor
 - Team-map stats require exact `team_hltv_id + map_name + data_type`.
 - Player ratings require exact player rows.
 - Event ratings require exact event/player rows.
-- If an exact row is absent, set the field to `missing` / `缺失` / `无数据`.
+- If a player/rating exact row is absent, set the field to `missing` / `缺失` / `无数据`.
+- If a current active-map team row is absent because the team has no current-year sample in the selected filter, normalize it as a zero-sample active-map row: `sample_maps=0`, `wins=0`, `losses=0`, `raw_win_rate=0`, `pick_pct=0`, `ban_pct=0`, `total_rounds_played=0`, `rounds_won=0`, side/pistol/first-kill/first-death rates `0`, and `detail_status=zero_sample`.
 - Do not infer missing team-map values from the opponent, another map, prior roster history, search snippets, or broad team form.
-- A map cannot be marked `数据充分` unless both teams have usable exact rows for that map.
+- A zero-sample active-map row is valid factual data, but it is not `数据充分`. A map cannot be marked `数据充分` unless both teams have non-zero usable exact rows for that map.
 
 ## Mandatory Map Field Mapping
 
@@ -149,6 +150,8 @@ Common wrong mappings are forbidden:
 For normal Chinese output, the minimum per-map detail table should include:
 
 `队伍`, `地图`, `类型(overall/LAN)`, `样本`, `W-L`, `胜率`, `Pick%`, `Ban%`, `S/A/B/C 分布`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`.
+
+For Chinese reports, use Chinese labels or Chinese+standard acronyms. Do not expose raw schema headers such as `Scope`, `sample`, `wr`, `pick_pct`, `ban_pct`, `first_kill`, or `first_death` unless the user asks for JSON/schema/debug output.
 
 If the fetched `matches/<id>/data-pack.json` contains a `markdown` field, treat that Markdown as the canonical pre-rendered data skeleton. You may reformat it for readability, but you must not drop fields that are already rendered there.
 

@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schema_version": "hltv-cs2-data.v1",
-    "requested_at": "2026-05-06T15:39:06.102Z",
+    "requested_at": "2026-05-07T17:40:17.197Z",
     "source_policy": "api_with_legacy_fallback",
     "date_window": {
       "start": "2026-01-01",
@@ -25,6 +25,7 @@
       "data_type": "overall",
       "sample_maps": 14,
       "wins": 11,
+      "draws": 0,
       "losses": 3,
       "raw_win_rate": 0.7857,
       "pick_pct": "0.2760",
@@ -52,6 +53,7 @@
       "pistol_round_win_rate": "0.6430",
       "first_kill_round_win_rate": "0.7220",
       "first_death_round_win_rate": "0.3530",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -61,6 +63,7 @@
       "data_type": "overall",
       "sample_maps": 9,
       "wins": 8,
+      "draws": 0,
       "losses": 1,
       "raw_win_rate": 0.8889,
       "pick_pct": "0.2610",
@@ -88,6 +91,7 @@
       "pistol_round_win_rate": "0.6670",
       "first_kill_round_win_rate": "0.7770",
       "first_death_round_win_rate": "0.3980",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -97,6 +101,7 @@
       "data_type": "overall",
       "sample_maps": 1,
       "wins": 0,
+      "draws": 0,
       "losses": 1,
       "raw_win_rate": 0,
       "pick_pct": "0.0000",
@@ -124,6 +129,7 @@
       "pistol_round_win_rate": "0.0000",
       "first_kill_round_win_rate": "0.4290",
       "first_death_round_win_rate": "0.1820",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -133,6 +139,7 @@
       "data_type": "overall",
       "sample_maps": 23,
       "wins": 17,
+      "draws": 0,
       "losses": 6,
       "raw_win_rate": 0.7391,
       "pick_pct": "0.6250",
@@ -160,6 +167,7 @@
       "pistol_round_win_rate": "0.5430",
       "first_kill_round_win_rate": "0.7860",
       "first_death_round_win_rate": "0.3330",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -169,6 +177,7 @@
       "data_type": "overall",
       "sample_maps": 16,
       "wins": 12,
+      "draws": 0,
       "losses": 4,
       "raw_win_rate": 0.75,
       "pick_pct": "0.3000",
@@ -196,6 +205,7 @@
       "pistol_round_win_rate": "0.6560",
       "first_kill_round_win_rate": "0.7980",
       "first_death_round_win_rate": "0.3510",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -205,6 +215,7 @@
       "data_type": "overall",
       "sample_maps": 17,
       "wins": 10,
+      "draws": 0,
       "losses": 7,
       "raw_win_rate": 0.5882,
       "pick_pct": "0.0670",
@@ -232,6 +243,7 @@
       "pistol_round_win_rate": "0.4710",
       "first_kill_round_win_rate": "0.7860",
       "first_death_round_win_rate": "0.3120",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -241,6 +253,7 @@
       "data_type": "overall",
       "sample_maps": 10,
       "wins": 5,
+      "draws": 0,
       "losses": 5,
       "raw_win_rate": 0.5,
       "pick_pct": "0.0320",
@@ -268,6 +281,7 @@
       "pistol_round_win_rate": "0.4000",
       "first_kill_round_win_rate": "0.7350",
       "first_death_round_win_rate": "0.3420",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     }

@@ -76,7 +76,7 @@ Typical fields:
 - Team identity: HLTV team IDs, names, rankings.
 - Lineup context when visible or exported.
 - Current active-map pool.
-- Map summary: sample, W-D-L, win rate, Pick%, Ban%.
+- Map summary: sample, W-D-L, win rate, Pick%, Ban%. If a current active map has no played sample for the selected team/filter, render it as a zero-sample row (`0 sample / 0-0 / 0%`), not as `missing`.
 - Map detail when exported: CT/T round win rate, pistol rate, first-kill and first-death conversion, rounds played/won.
 - Player ratings: annual and event HLTV Rating 3.0 when exported. JSON uses `rating2` as the compatibility field name; do not use `rating_2_0`.
 - Observed veto, map order, score, and result when available.
@@ -117,6 +117,8 @@ events/<eventId>/player-ratings.json
 If the user gives a natural-language match request such as `PGL Aurora vs Heroic`, use the structured source's match search/index first. When exactly one row matches, fetch the corresponding match data pack. In the default public source, this means `matches/index.json` and that row's `data_pack_path`. Do not downgrade to a missing-field report just because direct HLTV page lookup failed.
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
+
+For Chinese output, use Chinese labels or Chinese plus standard acronyms: `范围`, `队伍`, `地图`, `样本`, `W-L`, `地图胜率`, `Pick%`, `Ban%`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`. Do not expose raw schema headers such as `Scope`, `sample`, `wr`, `pick_pct`, or `ban_pct` unless the user asks for raw JSON/schema/debug output.
 
 Minimum valid flow for the default public raw GitHub source:
 

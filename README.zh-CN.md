@@ -76,7 +76,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 - 队伍信息：HLTV team ID、队名、排名。
 - 阵容上下文：已公开或已导出的首发、替补、教练。
 - 当前 active map pool。
-- 地图 summary：样本、W-D-L、胜率、Pick%、Ban%。
+- 地图 summary：样本、W-D-L、胜率、Pick%、Ban%。当前 active map 但没有出场样本时，显示为 `0样本 / 0-0 / 0%`，不是 `missing`。
 - 地图 detail：CT/T 回合胜率、手枪局、首杀后胜率、首死后胜率、总回合、赢回合。
 - 选手 rating：年度 HLTV Rating 3.0、赛事 HLTV Rating 3.0。JSON 兼容字段名仍是 `rating2`，不要使用 `rating_2_0`。
 - 已公开的 Veto、地图顺序、比分和赛果。
@@ -117,6 +117,8 @@ events/<eventId>/player-ratings.json
 如果用户只给自然语言比赛，例如 `PGL Aurora vs Heroic`，先用结构化源的 match search/index 搜索赛事名和双方队名；匹配到唯一比赛后，读取对应 match data pack。默认公开源中，这一步对应 `matches/index.json` 和该行的 `data_pack_path`。不要在找不到 HLTV 页面时直接降级成缺字段报告。
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
+
+中文输出应使用中文字段名或中文+标准英文缩写，例如 `范围`、`队伍`、`地图`、`样本`、`W-L`、`地图胜率`、`Pick%`、`Ban%`、`CT/T`、`手枪局`、`首杀后`、`首死后`、`回合`。除非用户要求 raw JSON 或 schema，不要把 `Scope`、`sample`、`wr`、`pick_pct`、`ban_pct` 这类内部字段名直接放进报告表头。
 
 默认公开 raw GitHub 数据源的最小合法流程：
 

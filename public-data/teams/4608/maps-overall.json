@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schema_version": "hltv-cs2-data.v1",
-    "requested_at": "2026-05-06T15:38:27.878Z",
+    "requested_at": "2026-05-07T17:39:41.639Z",
     "source_policy": "api_with_legacy_fallback",
     "date_window": {
       "start": "2026-01-01",
@@ -25,6 +25,7 @@
       "data_type": "overall",
       "sample_maps": 13,
       "wins": 10,
+      "draws": 0,
       "losses": 3,
       "raw_win_rate": 0.7692,
       "pick_pct": "0.4740",
@@ -52,6 +53,7 @@
       "pistol_round_win_rate": "0.5000",
       "first_kill_round_win_rate": "0.7470",
       "first_death_round_win_rate": "0.3580",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -61,6 +63,7 @@
       "data_type": "overall",
       "sample_maps": 7,
       "wins": 3,
+      "draws": 0,
       "losses": 4,
       "raw_win_rate": 0.4286,
       "pick_pct": "0.1580",
@@ -88,6 +91,7 @@
       "pistol_round_win_rate": "0.5710",
       "first_kill_round_win_rate": "0.6710",
       "first_death_round_win_rate": "0.3570",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -97,6 +101,7 @@
       "data_type": "overall",
       "sample_maps": 22,
       "wins": 13,
+      "draws": 0,
       "losses": 9,
       "raw_win_rate": 0.5909,
       "pick_pct": "0.0000",
@@ -124,6 +129,7 @@
       "pistol_round_win_rate": "0.3860",
       "first_kill_round_win_rate": "0.7120",
       "first_death_round_win_rate": "0.2710",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -133,6 +139,7 @@
       "data_type": "overall",
       "sample_maps": 13,
       "wins": 7,
+      "draws": 0,
       "losses": 6,
       "raw_win_rate": 0.5385,
       "pick_pct": "0.2000",
@@ -160,6 +167,7 @@
       "pistol_round_win_rate": "0.5380",
       "first_kill_round_win_rate": "0.6870",
       "first_death_round_win_rate": "0.3250",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -169,6 +177,7 @@
       "data_type": "overall",
       "sample_maps": 22,
       "wins": 10,
+      "draws": 0,
       "losses": 12,
       "raw_win_rate": 0.4545,
       "pick_pct": "0.5170",
@@ -196,6 +205,7 @@
       "pistol_round_win_rate": "0.5000",
       "first_kill_round_win_rate": "0.6880",
       "first_death_round_win_rate": "0.2980",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
     },
@@ -205,6 +215,7 @@
       "data_type": "overall",
       "sample_maps": 7,
       "wins": 4,
+      "draws": 0,
       "losses": 3,
       "raw_win_rate": 0.5714,
       "pick_pct": "0.1110",
@@ -232,8 +243,47 @@
       "pistol_round_win_rate": "0.5000",
       "first_kill_round_win_rate": "0.7290",
       "first_death_round_win_rate": "0.2650",
+      "zero_sample": false,
       "side_stats_status": "collected",
       "detail_status": "collected"
+    },
+    {
+      "hltv_team_id": 4608,
+      "map_name": "Overpass",
+      "data_type": "overall",
+      "sample_maps": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "raw_win_rate": 0,
+      "pick_pct": "0.0000",
+      "ban_pct": "0.9390",
+      "data_from": "2026-01-01",
+      "data_to": "2026-12-31",
+      "snapshot_time": "2026-05-04T15:34:59.000Z",
+      "latest_match_at": null,
+      "detail_source_url": "https://www.hltv.org/stats/teams/map/40/4608/natus-vincere?startDate=2026-01-01&endDate=2026-12-31",
+      "event_tier_breakdown": {
+        "S": 0,
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "unknown": 0
+      },
+      "ct_side_win_rate": "0.0000",
+      "t_side_win_rate": "0.0000",
+      "ct_rounds": 0,
+      "t_rounds": 0,
+      "total_rounds_played": 0,
+      "rounds_won": 0,
+      "pistol_rounds": 0,
+      "pistol_rounds_won": 0,
+      "pistol_round_win_rate": "0.0000",
+      "first_kill_round_win_rate": "0.0000",
+      "first_death_round_win_rate": "0.0000",
+      "zero_sample": true,
+      "side_stats_status": "zero_sample",
+      "detail_status": "zero_sample"
     }
   ]
 }
