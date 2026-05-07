@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T20:24:30.441Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 5973,
+  "players": [
+    {
+      "hltv_team_id": 5973,
+      "player_name": "malbsMd",
+      "rating_type": "annual",
+      "rating2": "1.090",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:49.000Z"
+    },
+    {
+      "hltv_team_id": 5973,
+      "player_name": "NAF",
+      "rating_type": "annual",
+      "rating2": "1.050",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:49.000Z"
+    },
+    {
+      "hltv_team_id": 5973,
+      "player_name": "EliGE",
+      "rating_type": "annual",
+      "rating2": "1.040",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:49.000Z"
+    },
+    {
+      "hltv_team_id": 5973,
+      "player_name": "ultimate",
+      "rating_type": "annual",
+      "rating2": "1.000",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:49.000Z"
+    },
+    {
+      "hltv_team_id": 5973,
+      "player_name": "siuhy",
+      "rating_type": "annual",
+      "rating2": "0.890",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:49.000Z"
+    }
+  ]
+}

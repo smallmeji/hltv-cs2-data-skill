@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T20:24:31.814Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 6673,
+  "players": [
+    {
+      "hltv_team_id": 6673,
+      "player_name": "br0",
+      "rating_type": "annual",
+      "rating2": "1.130",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:15.000Z"
+    },
+    {
+      "hltv_team_id": 6673,
+      "player_name": "oSee",
+      "rating_type": "annual",
+      "rating2": "1.080",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:15.000Z"
+    },
+    {
+      "hltv_team_id": 6673,
+      "player_name": "Sonic",
+      "rating_type": "annual",
+      "rating2": "1.060",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:15.000Z"
+    },
+    {
+      "hltv_team_id": 6673,
+      "player_name": "Grim",
+      "rating_type": "annual",
+      "rating2": "1.000",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:15.000Z"
+    },
+    {
+      "hltv_team_id": 6673,
+      "player_name": "nitr0",
+      "rating_type": "annual",
+      "rating2": "0.980",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:51:15.000Z"
+    }
+  ]
+}

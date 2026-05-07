@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "source_policy": "api_with_legacy_fallback",
+    "requested_at": "2026-05-07T20:24:52.431Z",
+    "days": 8,
+    "top": 40,
+    "warnings": []
+  },
+  "matches": [
+    {
+      "id": 1020001,
+      "hltv_match_id": 2394116,
+      "hltv_url": "https://www.hltv.org/matches/2394116/aurora-vs-heroic-pgl-astana-2026",
+      "event_name": "PGL Astana 2026",
+      "event_tier": "S",
+      "team1_hltv_id": 11861,
+      "team1_name": "Aurora",
+      "team1_rank": 5,
+      "team2_hltv_id": 7175,
+      "team2_name": "HEROIC",
+      "team2_rank": 20,
+      "match_format": "bo3",
+      "match_time": "2026-05-09T05:00:00.000Z",
+      "status": "upcoming",
+      "result": null
+    },
+    {
+      "id": 1020002,
+      "hltv_match_id": 2394118,
+      "hltv_url": "https://www.hltv.org/matches/2394118/mouz-vs-gentle-mates-pgl-astana-2026",
+      "event_name": "PGL Astana 2026",
+      "event_tier": "S",
+      "team1_hltv_id": 4494,
+      "team1_name": "MOUZ",
+      "team1_rank": 11,
+      "team2_hltv_id": 13404,
+      "team2_name": "Gentle Mates",
+      "team2_rank": 35,
+      "match_format": "bo3",
+      "match_time": "2026-05-09T08:00:00.000Z",
+      "status": "upcoming",
+      "result": null
+    },
+    {
+      "id": 1020003,
+      "hltv_match_id": 2394122,
+      "hltv_url": "https://www.hltv.org/matches/2394122/furia-vs-monte-pgl-astana-2026",
+      "event_name": "PGL Astana 2026",
+      "event_tier": "S",
+      "team1_hltv_id": 8297,
+      "team1_name": "FURIA",
+      "team1_rank": 3,
+      "team2_hltv_id": 11811,
+      "team2_name": "Monte",
+      "team2_rank": 18,
+      "match_format": "bo3",
+      "match_time": "2026-05-09T14:00:00.000Z",
+      "status": "upcoming",
+      "result": null
+    },
+    {
+      "id": 1020004,
+      "hltv_match_id": 2394123,
+      "hltv_url": "https://www.hltv.org/matches/2394123/parivision-vs-9z-pgl-astana-2026",
+      "event_name": "PGL Astana 2026",
+      "event_tier": "S",
+      "team1_hltv_id": 12467,
+      "team1_name": "PARIVISION",
+      "team1_rank": 8,
+      "team2_hltv_id": 9996,
+      "team2_name": "9z",
+      "team2_rank": 16,
+      "match_format": "bo3",
+      "match_time": "2026-05-09T14:00:00.000Z",
+      "status": "upcoming",
+      "result": null
+    }
+  ]
+}

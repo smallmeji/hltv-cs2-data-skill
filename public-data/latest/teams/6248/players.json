@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T20:24:05.490Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 6248,
+  "players": [
+    {
+      "hltv_team_id": 6248,
+      "player_name": "910",
+      "rating_type": "annual",
+      "rating2": "1.100",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:25.000Z"
+    },
+    {
+      "hltv_team_id": 6248,
+      "player_name": "mzinho",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:25.000Z"
+    },
+    {
+      "hltv_team_id": 6248,
+      "player_name": "cobrazera",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:25.000Z"
+    },
+    {
+      "hltv_team_id": 6248,
+      "player_name": "Techno",
+      "rating_type": "annual",
+      "rating2": "0.960",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:25.000Z"
+    },
+    {
+      "hltv_team_id": 6248,
+      "player_name": "bLitz",
+      "rating_type": "annual",
+      "rating2": "0.920",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:49:25.000Z"
+    }
+  ]
+}
