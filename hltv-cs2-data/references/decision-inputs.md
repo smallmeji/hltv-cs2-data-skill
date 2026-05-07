@@ -63,7 +63,7 @@ Include per-map factors such as:
 - Recent results on the map.
 - Map is unplayed or low sample.
 
-When the user asks for a stronger/weaker or win-rate judgment and map detail data exists, `map_pool` should be organized per playable map rather than only as one summary table. For each map, include:
+When the user asks for a stronger/weaker or win-rate comparison and map detail data exists, `map_pool` should be organized per playable map rather than only as one summary table. For each map, include:
 
 - overall and LAN sample size;
 - W-L and raw win rate;

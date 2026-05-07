@@ -23,7 +23,7 @@ Use this order:
 
 Do not add prediction, probability, Veto hypothesis, score guess, EV, strategy, or betting fields inside the HLTV data pack.
 
-If the user's overall request asks for judgment, this skill still outputs the factual data pack first. Any later judgment belongs to the calling model, not to the data pack.
+If the user's overall request asks for judgment, this skill still only defines the factual data-pack step: the data pack must be output first.
 
 A complete data pack must include proof that the model queried the structured data layer. If no API/warehouse/static JSON record was read after HLTV identity resolution, the output must be marked as partial and must include warning `structured_database_not_queried`.
 
@@ -72,9 +72,9 @@ Default Chinese Markdown structure:
    - Factual data and decision inputs with stable English keys.
    - Include this section only when the user asks for machine-readable output, data pack output, downstream LLM use, debug/audit output, or explicit JSON.
 13. No `模型推理` inside the data pack
-   - This skill is data-pack-first and has no built-in prediction model.
+   - This skill defines only the data layer.
    - Do not put Veto prediction, winner lean, match percentage, map percentage, score guess, strategy, or betting content inside factual sections or JSON facts.
-   - If the user asks for those, finish the data pack first. The calling model may then continue outside the skill with its own labeled judgment.
+   - Anything after the data pack is outside this skill.
 
 Readability rules:
 

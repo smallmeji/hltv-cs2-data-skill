@@ -4,7 +4,7 @@
 
 `hltv-cs2-data` 是一个数据优先的 CS2 skill。它把 HLTV 衍生的结构化数据库 / 静态 JSON 记录整理成简洁的数据包，供用户、其他大模型或下游策略系统使用。
 
-它本身不内置预测模型。skill 输出的是事实数据包；如果用户原始问题还要求“谁胜率高 / 谁更强 / 预测”，调用它的大模型可以在数据包之后自行判断，并明确说明这不是数据库字段或 skill 内置结论。
+它只规定数据层：触发 skill 后必须先输出事实数据包。数据包之后的分析、判断或策略，是使用者自己的事情，不由本 skill 规定。
 
 投注建议、赔率分析、EV、Kelly、仓位仍不属于本 skill。
 
@@ -141,8 +141,6 @@ manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 7. 特殊 Veto 变量
 8. 给模型的决策输入
 
-如果用户问“谁胜率高 / 谁更强 / 谁更可能赢”，本 skill 仍先输出事实数据包。最终判断由调用它的大模型或用户自己的策略在数据包之后完成。
-
 普通报告的事实数据包里不要出现这些内容：
 
 - Veto 预测
@@ -151,7 +149,7 @@ manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 - Model Inference / 模型推理
 - 投注、EV、Kelly、仓位
 
-胜负判断、粗略概率、Veto 假设可以作为调用模型的后续推理单独写，但不能混在事实数据表、`decision_inputs` 或 JSON facts 里。投注相关内容仍禁止。
+数据包之后如何分析，不属于本 skill 的约束范围。投注相关内容仍不属于本 skill。
 
 ## 安装
 

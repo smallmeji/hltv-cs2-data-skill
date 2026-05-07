@@ -103,7 +103,7 @@ Workflow:
 14. Fetch player ratings and lineup if a match is specified and the source is reachable.
 15. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
 16. Build `Decision Inputs` from available facts.
-17. If the user explicitly asks for judgment, first return the factual data pack. The calling model may then judge outside the skill, clearly labeled as its own reasoning.
+17. If the user explicitly asks for judgment, this skill still only defines the data step: return the factual data pack first.
 18. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 Chinese source-log requirement:
@@ -117,7 +117,7 @@ The first normal section must be:
 - 身份定位：HLTV / static match index / user input
 - 结构化数据：已读取 public static database export
 - 读取记录：match data-pack / team map details / player ratings / event ratings
-- 输出边界：事实数据包；用户如要求判断，由调用模型在数据包之后自行判断
+- 输出边界：事实数据包优先；数据包之后不属于本 skill
 ```
 
 Do not replace this with a single sentence such as `数据源：HLTV CS2 数据平台`.
@@ -219,7 +219,7 @@ Workflow:
    - `给模型的决策输入`
 10. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
 11. Keep the source log at the top. A source log at the end is non-compliant.
-12. End the skill data pack before judgment. If the user's overall request asks for judgment, the calling model may continue after the data pack with a clearly labeled model-judgment section.
+12. End the skill data pack after the factual sections. Anything after the data pack is outside this skill.
 
 ## Match URL Query
 
@@ -258,7 +258,7 @@ Workflow:
 14. Fetch head-to-head map rows when reachable; if not reachable, mark `head_to_head` as `未加载`.
 15. Include veto/scores only if available and visible for the requested mode.
 16. For Chinese prompts, output the compact Chinese structure: `数据源执行记录`, `数据状态`, `比赛信息`, `队伍与阵容`, `选手数据`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, `近期记录 / H2H`, `警匪胜率`, `Veto / 比分`, `给模型的决策输入`, `数据缺口`, and optional `JSON` only when requested.
-17. If the user asked for probability or winner judgment, finish this skill's data pack first. The calling model may continue after the data pack with its own labeled judgment.
+17. If the user asked for probability or winner judgment, finish this skill's data pack first. Anything after the data pack is outside this skill.
 
 Concrete record example:
 
@@ -276,7 +276,7 @@ For `https://www.hltv.org/matches/2394118/mouz-vs-gentle-mates-pgl-astana-2026`,
 
 If those records are not read, do not output a full MOUZ vs Gentle Mates report. Correct HLTV starters alone are insufficient.
 
-For stronger/weaker or win-rate judgment requests, replace the single `地图池` section with:
+For stronger/weaker or win-rate comparison requests, replace the single `地图池` section with:
 
 1. `地图池总览`: one compact table across all maps.
 2. `逐图详细分析`: one subsection per playable map. Use overall/LAN sample, W-L, raw win rate, CT/T, pistol, first-kill/first-death, rounds, pick/ban, and data-quality notes.
@@ -327,7 +327,7 @@ Factual-section boundary:
 
 - Do not put `模型推理` inside the factual data pack.
 - Do not put Veto prediction, winner lean, map-win probability, match-win probability, score guess, betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price inside factual tables, `给模型的决策输入`, or JSON facts.
-- If the user's overall request asks for judgment, the calling model may continue after the data pack. The boundary label should be: `以下判断由调用模型基于上述数据自行完成，不是 HLTV 数据库字段，也不是 hltv-cs2-data skill 输出。`
+- Anything after this data pack is outside `hltv-cs2-data`.
 
 ## Event Ratings Query
 
@@ -407,4 +407,4 @@ Workflow:
 2. Build `Decision Inputs` from facts such as map pool, H2H, player form, roster state, match context, and data quality.
 3. If map-detail data is available, include `逐图详细分析` and `特殊 Veto 变量`.
 4. End the skill data pack. Do not place probability, winner lean, Veto prediction, score guess, strategy, or betting content inside factual sections or JSON facts.
-5. If the calling model chooses to answer the judgment part of the user request, it may continue after the skill output with the label: `以下判断由调用模型基于上述数据自行完成，不是 HLTV 数据库字段，也不是 hltv-cs2-data skill 输出。`
+5. Anything after the factual data pack is outside `hltv-cs2-data`.

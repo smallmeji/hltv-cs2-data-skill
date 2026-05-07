@@ -233,7 +233,7 @@ Direct HLTV partial fallback output must still follow the data pack contract whe
 - Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
 - Do not append `Model Inference` as part of the skill data pack. This skill has no built-in prediction model.
 
-If the user asks who is favored or who has higher win rate, return the data pack and decision inputs first. The calling model may continue after the skill output with its own labeled judgment.
+If the user asks who is favored or who has higher win rate, return the data pack and decision inputs first. Anything after the data pack is outside this skill.
 
 Do not call an output a full `hltv-cs2-data` data pack if the database/API/static source was not queried. Use `partial HLTV facts` instead.
 
@@ -257,4 +257,4 @@ Standalone mode is data-pack-first:
 - Even when map summary, map detail, CT/T, pistol, first-kill/first-death, and player ratings are available, do not output a winner, probability, Veto prediction, score guess, betting view, or strategy conclusion inside the skill data pack.
 - If either team's structured current-year map/player records are missing, mark the relevant fields `未加载` and stop before full map-detail sections.
 - If the result relies on search snippets, rankings, market prices, or wiki/news context only, mark `completeness_level=partial` or `blocked`.
-- The calling model or user strategy may use the data to infer win rates after the skill output.
+- Anything after the factual data pack is outside this skill.

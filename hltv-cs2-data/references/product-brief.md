@@ -6,7 +6,7 @@
 
 Provide standardized HLTV CS2 data packs for downstream LLMs, models, analysts, and products. This product is a data layer, not a prediction layer.
 
-The skill supplies data from HLTV. The user-owned model supplies judgment and strategy.
+The skill supplies data from HLTV. Judgment and strategy are outside this skill.
 
 The skill must be usable in two practical forms:
 
@@ -43,7 +43,7 @@ The data pack must not include model-derived:
 - Stake sizing.
 - Strategy recommendation.
 
-If the user explicitly asks for probability or judgment, this skill still returns the data pack and decision inputs first. The calling model or user-owned strategy may decide the probability or winner after the skill output, using its own reasoning.
+If the user explicitly asks for probability or judgment, this skill still returns the data pack and decision inputs first. Anything after the data pack is outside this skill.
 
 ## Intended User Flow
 
@@ -53,7 +53,7 @@ Example:
 User asks: FaZe + FURIA, who has higher win rate?
 ```
 
-`hltv-cs2-data` should return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. The final judgment belongs to the calling model or user-owned strategy after the data pack.
+`hltv-cs2-data` should return the structured data and `Decision Inputs` needed for that judgment, including maps, ratings, recent form, roster notes, and warnings. It does not define what happens after the data pack.
 
 Example:
 
