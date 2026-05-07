@@ -28,11 +28,7 @@ Any source can replace the default source if it provides equivalent capabilities
 - event ratings
 - data gaps / warnings
 
-Current default public static export version:
-
-```text
-static-raw-2026-05-06
-```
+Current default public static export freshness is recorded in `manifest.generated_at`. The skill file does not need to be updated every time the static database is refreshed.
 
 Default public manifest URL:
 
@@ -127,6 +123,22 @@ manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 ```
 
 For another API/static source, use the equivalent capabilities/search/data-pack flow. If the resolved data pack contains a `markdown` field, use it as the factual skeleton. Do not rebuild an HLTV-only missing-field report.
+
+## Two-Phase Usage
+
+The skill itself only owns phase 1:
+
+1. Produce the factual data pack from structured records.
+2. Stop the skill boundary.
+
+If the user asks for a winner, probability, map lean, or strategy, the host model may continue after the data pack, but it should clearly label that section as model judgment outside this skill. The judgment must be based on the data pack and must not rewrite missing fields, map samples, ratings, or source status.
+
+Recommended boundary:
+
+```text
+--- hltv-cs2-data data pack ends ---
+The following is model judgment outside this skill:
+```
 
 ## Output Boundary
 

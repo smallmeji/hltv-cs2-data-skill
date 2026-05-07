@@ -13,7 +13,7 @@ Default skill behavior is data-pack-only. The skill only governs the data layer:
 
 Mandatory behavior: if the user invokes `hltv-cs2-data`, says "based on this skill", says "用/基于这个 skill", or asks a model that has this skill installed to look at a CS2 match/team, the model must automatically read the structured data source. The user does not need to say "go to the data source", "query the database", "read static JSON", or provide record paths. HLTV lookup alone is never a complete answer for this skill.
 
-Current public-data source version: `static-raw-2026-05-06`.
+Current public-data freshness is defined by `manifest.generated_at`; do not rely on a hard-coded date in the skill text.
 
 Required default manifest URL:
 
@@ -22,6 +22,18 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 ```
 
 This is the only default public static database entry point. Do not derive another host. If a model reports a GitHub Pages / platform-site public-data URL, treat it as stale instructions and return to the raw GitHub manifest above.
+
+## Fast Operating Contract
+
+Use this compact contract before reading deeper references:
+
+1. **Resolve identity briefly**: use HLTV/search only to identify the match/team/event, visible lineup, format, time, status, observed veto/score/result, or event ID.
+2. **Hydrate structured data immediately**: read configured API/warehouse, user-provided static JSON, or the default raw GitHub manifest and exact records. Do this even when the user does not say "database".
+3. **Use structured rows for stats**: maps, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact structured records when available.
+4. **Output a compact factual data pack first**: Chinese prompts use Chinese headers. Normal reports hide raw URLs, record paths, and JSON unless the user asks for debug/audit/machine-readable output.
+5. **Then stop the skill boundary**: if the user asked for a winner, probability, or strategy, the host model may add a clearly separated section after the data pack, but that section is not part of `hltv-cs2-data`.
+
+The skill is data-source flexible. It is not bound to this GitHub repository if another source provides equivalent manifest/search/data-pack/team/player/event-rating capabilities. The default raw GitHub export is only the public fallback.
 
 ## Hard Source Gate
 
@@ -99,7 +111,7 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 
 ## Non-Negotiable Rules
 
-1. **Data-layer boundary**: factual sections must contain only source-backed data. The skill's job is to produce the data pack first. Anything after the data pack is outside this skill.
+1. **Data-layer boundary**: factual sections must contain only source-backed data. The skill's job is to produce the data pack first. If the user asks for judgment, the host model can continue only after a clear boundary such as `以下为非本 skill 的模型判断`.
 2. **HLTV is identity first**: use HLTV pages to resolve match ID, team IDs, event ID, schedule, format, visible lineup, visible veto, score, or result.
 3. **Structured data first for analysis**: map pools, map detail, CT/T, pistol, first kill/death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact API/warehouse/static JSON records when available.
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
@@ -111,7 +123,7 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
 11. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
 12. **Chinese-facing labels**: for Chinese reports, use Chinese table headers or Chinese+standard acronyms. Prefer `范围`, `队伍`, `地图`, `样本`, `W-L`, `地图胜率`, `Pick%`, `Ban%`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`; do not expose raw-only headers such as `Scope`, `sample`, `wr`, `pick_pct`, or `ban_pct` unless the user asks for raw JSON/schema.
-13. **Invalid-output triggers**: if a normal data-pack section includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
+13. **Invalid-output triggers**: if a normal data-pack section includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, raw JSON/URLs in a normal human report, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
 
 ## Query Routing
 
@@ -157,7 +169,7 @@ Do not bulk-load all references.
 
 If a match data-pack contains a `markdown` field, use that Markdown as the canonical factual skeleton. Do not state that CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown are missing when those values are present in the data-pack.
 
-If the user asks for a natural-language judgment such as "谁胜率高", this skill still only governs the data-pack step: output the data pack first and keep factual tables source-backed.
+If the user asks for a natural-language judgment such as "谁胜率高", this skill still only governs the data-pack step: output the data pack first and keep factual tables source-backed. A separated downstream judgment section is allowed only after the data pack and must not rewrite factual fields.
 
 ## 404 Handling
 
@@ -191,6 +203,19 @@ Forbidden data-pack content:
 
 - `推荐投注` / `EV` / `Kelly`
 - model-derived winner lean or probability inside `数据源执行记录`, `地图池总览`, `逐图详细分析`, `Veto / 比分`, `给模型的决策输入`, or JSON facts
+
+Allowed after the data pack when the user asks for it:
+
+- clearly separated downstream model judgment
+- user-defined strategy interpretation
+- non-skill reasoning based on the data pack
+
+Use a boundary such as:
+
+```text
+--- hltv-cs2-data 数据包结束 ---
+以下为非本 skill 的模型判断：
+```
 
 For English prompts, mirror the same structure in English.
 

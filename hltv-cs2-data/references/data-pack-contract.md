@@ -23,7 +23,7 @@ Use this order:
 
 Do not add prediction, probability, Veto hypothesis, score guess, EV, strategy, or betting fields inside the HLTV data pack.
 
-If the user's overall request asks for judgment, this skill still only defines the factual data-pack step: the data pack must be output first.
+If the user's overall request asks for judgment, this skill still only defines the factual data-pack step: the data pack must be output first. A host model may continue after a clear boundary, but that later judgment is outside this skill and must not alter source-backed facts.
 
 A complete data pack must include proof that the model queried the structured data layer. If no API/warehouse/static JSON record was read after HLTV identity resolution, the output must be marked as partial and must include warning `structured_database_not_queried`.
 
@@ -74,7 +74,7 @@ Default Chinese Markdown structure:
 13. No `模型推理` inside the data pack
    - This skill defines only the data layer.
    - Do not put Veto prediction, winner lean, match percentage, map percentage, score guess, strategy, or betting content inside factual sections or JSON facts.
-   - Anything after the data pack is outside this skill.
+   - Anything after the data pack is outside this skill. If a model continues, use a visible separator such as `--- hltv-cs2-data 数据包结束 ---`.
 
 Readability rules:
 
@@ -82,6 +82,7 @@ Readability rules:
 - Use `缺失`, `未加载`, `不可见`, `样本不足`, and `重建数据` consistently.
 - Keep the top-level Markdown concise; put full machine-readable detail in JSON.
 - Do not output English headings for a Chinese prompt unless the user asks for English.
+- Do not show raw URLs, static JSON paths, endpoints, or full JSON in normal human-facing reports. Keep them only in debug/audit/JSON output.
 
 ## Phase 1 Fields
 

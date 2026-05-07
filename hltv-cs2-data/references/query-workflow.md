@@ -6,6 +6,14 @@ Use these recipes when preparing data packs.
 
 Do not begin the analytical body from HLTV text alone. HLTV lookup is only the identity step; database hydration is the first data step.
 
+Compact rule for external models:
+
+```text
+HLTV identity -> structured manifest/capabilities -> exact match/team records -> factual data pack -> optional non-skill judgment
+```
+
+Do not invert this order. A correct HLTV lineup, event name, or bracket note does not prove the database was queried.
+
 For every match/team comparison query:
 
 1. Resolve match/team identity from HLTV or from the user's explicit IDs.
@@ -103,7 +111,7 @@ Workflow:
 14. Fetch player ratings and lineup if a match is specified and the source is reachable.
 15. Return a Markdown factual report by default. Include JSON only when the user asks for machine-readable output, data-pack output, downstream LLM use, debug/audit output, or explicit JSON.
 16. Build `Decision Inputs` from available facts.
-17. If the user explicitly asks for judgment, this skill still only defines the data step: return the factual data pack first.
+17. If the user explicitly asks for judgment, this skill still only defines the data step: return the factual data pack first. A clearly separated downstream model judgment may follow after the skill boundary.
 18. Match the user's language in Markdown. For Chinese prompts, use Chinese section titles and table labels, while preserving JSON keys in English.
 
 Chinese source-log requirement:
@@ -219,7 +227,7 @@ Workflow:
    - `给模型的决策输入`
 10. Keep the factual data pack compact and source-bound. Custom descriptive sections such as `赛事参赛分布`, `最近30天状态`, `最近对手质量`, or `地图池深度` are allowed only as derived data summaries after the factual sections, with source labels and calculation windows. If exact rows are missing, mark the metric `未加载`.
 11. Keep the source log at the top. A source log at the end is non-compliant.
-12. End the skill data pack after the factual sections. Anything after the data pack is outside this skill.
+12. End the skill data pack after the factual sections. Anything after the data pack is outside this skill. If the host model continues, add a visible boundary before judgment.
 
 ## Match URL Query
 
@@ -319,6 +327,15 @@ For prompts like `谁胜率高`, `who is favored`, `estimate win rate`, or `判�
 9. `JSON` only when the user requests machine-readable output, data pack output, downstream LLM use, debug/audit output, or explicit JSON.
 
 Do not skip factual sections. If a section's source is missing, output the section with `缺失` / `未加载` and warning codes.
+
+If the host model answers the judgment part, it must add it after a boundary:
+
+```text
+--- hltv-cs2-data 数据包结束 ---
+以下为非本 skill 的模型判断：
+```
+
+That second section may compare strength, but it must not be presented as HLTV fact or overwrite the data pack.
 
 Source display:
 

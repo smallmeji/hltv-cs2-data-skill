@@ -28,11 +28,7 @@
 - event ratings。
 - 数据缺口 / warnings。
 
-当前默认公开静态数据版本：
-
-```text
-static-raw-2026-05-06
-```
+当前默认公开静态数据的新鲜度以 `manifest.generated_at` 为准。每天更新静态数据库时，不需要同步更新 skill 文档本身。
 
 默认公开源 manifest：
 
@@ -127,6 +123,22 @@ manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
 ```
 
 如果换成其他 API / 静态源，使用等价的 capabilities/search/data-pack 流程即可，不要求路径名一样。如果解析到的数据包里有 `markdown` 字段，应优先用它作为事实骨架。不要只用 HLTV 页面重新写一份缺字段报告。
+
+## 两阶段使用方式
+
+本 skill 只负责第一阶段：
+
+1. 从结构化记录输出事实数据包。
+2. 明确结束 skill 边界。
+
+如果用户问“谁胜率高”“哪边更强”“地图怎么倾向”，宿主大模型可以在数据包之后继续判断，但必须清楚标注那是 skill 外的模型判断。判断必须基于数据包，不能改写缺失字段、地图样本、rating 或数据源状态。
+
+推荐边界：
+
+```text
+--- hltv-cs2-data 数据包结束 ---
+以下为非本 skill 的模型判断：
+```
 
 ## 输出边界
 
