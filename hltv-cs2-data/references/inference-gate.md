@@ -11,7 +11,7 @@ Never put these inside factual data sections, `decision_inputs`, or JSON facts:
 - winner lean or favored side;
 - score prediction;
 - Veto prediction or hypothetical map pool;
-- betting advice, odds analysis, EV, Kelly, stake sizing, max buy price, or strategy recommendation.
+- downstream recommendations or conclusions.
 
 If the user asks for prediction or probability, this skill still requires the factual data pack and decision inputs first. Anything after the data pack is outside this skill.
 

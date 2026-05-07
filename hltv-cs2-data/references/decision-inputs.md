@@ -16,7 +16,7 @@ Use these groups when available:
 - `match_context`: event, tier, LAN/online, format, stage, schedule, travel/rest if available.
 - `data_quality`: sample size issues, stale data, missing fields, direct HLTV vs API mode, reconstructed fields.
 
-Do not add model-derived groups such as `winner_prediction`, `edge`, `bet`, or `stake`.
+Do not add model-derived groups such as `winner_prediction`, `edge`, or `recommendation`.
 
 ## Item Shape
 
@@ -158,7 +158,6 @@ Not allowed inside `decision_inputs`:
 
 - "G2 should win Ancient."
 - "FaZe has 58% match win probability."
-- "Bet Over."
-- "This is positive EV."
+- "This is the recommended action."
 
 Those belong outside `hltv-cs2-data`. This skill only returns facts and decision-input context.

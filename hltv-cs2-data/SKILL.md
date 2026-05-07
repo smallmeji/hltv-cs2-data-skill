@@ -40,7 +40,7 @@ Use this compact contract before reading deeper references:
 2. **Hydrate structured data immediately**: read configured API/warehouse, user-provided static JSON, or the default raw GitHub manifest and exact records. Do this even when the user does not say "database".
 3. **Use structured rows for stats**: maps, CT/T, pistol, first-kill/first-death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact structured records when available.
 4. **Output a compact factual data pack first**: Chinese prompts use Chinese headers. Normal reports hide raw URLs, record paths, and JSON unless the user asks for debug/audit/machine-readable output.
-5. **Then stop the skill boundary**: if the user asked for a winner, probability, or strategy, the host model may add a clearly separated section after the data pack, but that section is not part of `hltv-cs2-data`.
+5. **Then end the skill boundary**: after the factual data pack is complete, any further interpretation or use is up to the user and host model. That later section is not HLTV fact.
 
 The skill is data-source flexible. It is not bound to this GitHub repository if another source provides equivalent manifest/search/data-pack/team/player/event-rating capabilities. The default raw GitHub export is only the public fallback.
 
@@ -114,14 +114,14 @@ Minimum source log:
 - 身份定位：HLTV / static match index / user input
 - 结构化数据：已读取 API/warehouse 或 public static database export
 - 读取记录：match data-pack / team map details / player ratings / event ratings
-- 输出边界：事实数据包优先；数据包之后不属于本 skill
+- 输出边界：事实数据包优先；数据包之后由用户和宿主模型自行决定
 ```
 
 If the model cannot truthfully write `结构化数据：已读取 API/warehouse` or `结构化数据：已读取 public static database export`, it must stop before `地图池总览` and `逐图详细分析`.
 
 ## Non-Negotiable Rules
 
-1. **Data-layer boundary**: factual sections must contain only source-backed data. The skill's job is to produce the data pack first. If the user asks for judgment, the host model can continue only after a clear boundary such as `以下为非本 skill 的模型判断`.
+1. **Data-layer boundary**: factual sections must contain only source-backed data. The skill's job is to produce the data pack first. Anything after the data pack is the user or host model's own layer.
 2. **HLTV is identity first**: use HLTV pages to resolve match ID, team IDs, event ID, schedule, format, visible lineup, visible veto, score, or result.
 3. **Structured data first for analysis**: map pools, map detail, CT/T, pistol, first kill/death, Pick/Ban, player ratings, recent rows, H2H, and decision inputs must come from exact API/warehouse/static JSON records when available.
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
@@ -179,7 +179,7 @@ Do not bulk-load all references.
 
 If a match data-pack contains a `markdown` field, use that Markdown as the canonical factual skeleton. Do not state that CT/T, pistol, first-kill, first-death, rounds, Pick/Ban, or tier breakdown are missing when those values are present in the data-pack.
 
-If the user asks for a natural-language judgment such as "谁胜率高", this skill still only governs the data-pack step: output the data pack first and keep factual tables source-backed. A separated downstream judgment section is allowed only after the data pack and must not rewrite factual fields.
+If the user asks for a natural-language judgment such as "谁胜率高" or "哪边更强", this skill still governs the data-pack step first: output the data pack first and keep factual tables source-backed. Anything after the data pack must not rewrite factual fields.
 
 ## 404 Handling
 
@@ -209,15 +209,13 @@ For Chinese comparison or match requests, use this compact order:
 10. `给模型的决策输入`
 11. `JSON` only when requested
 
-Forbidden data-pack content:
+Forbidden inside factual data-pack content:
 
-- `推荐投注` / `EV` / `Kelly`
-- model-derived winner lean or probability inside `数据源执行记录`, `地图池总览`, `逐图详细分析`, `Veto / 比分`, `给模型的决策输入`, or JSON facts
+- model-derived winner lean, probability, prediction, or recommendation inside `数据源执行记录`, `地图池总览`, `逐图详细分析`, `Veto / 比分`, `给模型的决策输入`, or JSON facts
 
 Allowed after the data pack when the user asks for it:
 
-- clearly separated downstream model judgment
-- user-defined strategy interpretation
+- anything the user or host model decides to do with the data
 - non-skill reasoning based on the data pack
 
 Use a boundary such as:

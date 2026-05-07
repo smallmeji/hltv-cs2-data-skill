@@ -4,9 +4,7 @@
 
 `hltv-cs2-data` is a data-first skill for CS2 match and team analysis workflows. It turns HLTV-derived structured records into compact Markdown data packs for a user, another model, or a downstream strategy system.
 
-It only defines the data layer: when the skill is triggered, the factual data pack must be produced first. Any analysis, judgment, or strategy after the data pack is outside this skill.
-
-Betting advice, odds analysis, EV, Kelly, and stake sizing remain outside this skill.
+It only defines the data layer: when the skill is triggered, the factual data pack must be produced first. What happens after the data pack is up to the user and host model.
 
 ## Structured Source Model
 
@@ -171,9 +169,9 @@ The factual data pack must not contain:
 - possible map sequence
 - winner/win-probability conclusion
 - Model Inference / model reasoning
-- betting, EV, Kelly, or stake sizing
+- downstream recommendations or conclusions
 
-Anything after the data pack is outside this skill's scope. Betting-related content remains outside this skill.
+Anything after the data pack is outside this skill's scope.
 
 ## Install
 

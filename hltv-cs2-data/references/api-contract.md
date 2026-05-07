@@ -38,7 +38,7 @@ Returns match context, teams, lineups, ratings, map pool, veto, scores, warnings
 GET /compare?teamA=6667&teamB=8297&tier=S&asOf=2026-04-30T14:00:00Z
 ```
 
-Returns factual team comparison data. Predicted probabilities, winner leans, Veto hypotheses, score guesses, strategy, and betting fields must not be returned by this API/skill layer.
+Returns factual team comparison data. Predicted probabilities, winner leans, Veto hypotheses, score guesses, and recommendations must not be returned by this API/skill layer.
 
 Responses should include `decision_inputs` when enough factual data is available. These are model-ready factual factors, not predictions.
 
@@ -109,7 +109,6 @@ The API should not expose:
 
 - Database credentials.
 - Internal scraper browser mode.
-- Private betting framework fields.
 - Private correction numbers, private prediction logs, or hidden strategy-framework fields.
 
 ## API Coverage Boundary

@@ -39,8 +39,6 @@ The data pack must not include model-derived:
 - Match win probability.
 - Winner prediction.
 - Score prediction.
-- Betting EV.
-- Stake sizing.
 - Strategy recommendation.
 
 If the user explicitly asks for probability or judgment, this skill still returns the data pack and decision inputs first. Anything after the data pack is outside this skill.

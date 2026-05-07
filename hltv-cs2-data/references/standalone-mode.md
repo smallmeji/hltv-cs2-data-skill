@@ -111,7 +111,7 @@ For normal human-facing reports, use compact status:
 - HLTV 定位：成功
 - 结构化数据：已读取 public static database export
 - 读取记录：match data-pack + team map details + player ratings
-- 输出边界：事实数据包，不包含预测、概率、投注或 Veto 猜测
+- 输出边界：事实数据包，只包含结构化来源里的事实数据
 - 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
 ```
 
@@ -238,7 +238,7 @@ Direct HLTV partial fallback output must still follow the data pack contract whe
 - `数据源执行记录` / `source_execution_log` before analysis.
 - JSON summary or full JSON only when requested.
 - `Decision Inputs` summarizing factual factors for downstream models.
-- Factual fields must not contain model-derived probability, prediction, strategy, EV, or stake fields.
+- Factual fields must not contain model-derived probability, prediction, or recommendation fields.
 - Do not append `Model Inference` as part of the skill data pack. This skill has no built-in prediction model.
 
 If the user asks who is favored or who has higher win rate, return the data pack and decision inputs first. Anything after the data pack is outside this skill.
@@ -262,7 +262,7 @@ When these are needed, recommend API/warehouse mode rather than inventing missin
 
 Standalone mode is data-pack-first:
 
-- Even when map summary, map detail, CT/T, pistol, first-kill/first-death, and player ratings are available, do not output a winner, probability, Veto prediction, score guess, betting view, or strategy conclusion inside the skill data pack.
+- Even when map summary, map detail, CT/T, pistol, first-kill/first-death, and player ratings are available, do not output a winner, probability, Veto prediction, score guess, or downstream conclusion inside the skill data pack.
 - If either team's structured current-year map/player records are missing, mark the relevant fields `未加载` and stop before full map-detail sections.
 - If the result relies on search snippets, rankings, market prices, or wiki/news context only, mark `completeness_level=partial` or `blocked`.
 - Anything after the factual data pack is outside this skill.

@@ -21,7 +21,7 @@ Use this order:
 13. Data warnings.
 14. Optional JSON block for factual data and decision inputs, only when requested.
 
-Do not add prediction, probability, Veto hypothesis, score guess, EV, strategy, or betting fields inside the HLTV data pack.
+Do not add model-derived predictions, probabilities, Veto hypotheses, score guesses, recommendations, or conclusions inside the HLTV data pack.
 
 If the user's overall request asks for judgment, this skill still only defines the factual data-pack step: the data pack must be output first. A host model may continue after a clear boundary, but that later judgment is outside this skill and must not alter source-backed facts.
 
@@ -40,7 +40,7 @@ Default Chinese Markdown structure:
 2. `数据状态 / 数据缺口`
    - One compact table: source mode, retrieval time, data cutoff, completeness, high-impact missing fields.
    - Include date window. Default is current calendar year, e.g. `2026-01-01 至 2026-12-31`.
-   - Start with a short sentence such as: `这是事实数据包，不包含预测、投注建议、EV 或仓位。`
+   - Start with a short sentence such as: `这是事实数据包，只包含结构化来源里的事实数据。`
 3. `比赛信息`
    - Match ID, event, tier, LAN/online, BO format, schedule, status.
 4. `队伍与阵容`
@@ -73,7 +73,7 @@ Default Chinese Markdown structure:
    - Include this section only when the user asks for machine-readable output, data pack output, downstream LLM use, debug/audit output, or explicit JSON.
 13. No `模型推理` inside the data pack
    - This skill defines only the data layer.
-   - Do not put Veto prediction, winner lean, match percentage, map percentage, score guess, strategy, or betting content inside factual sections or JSON facts.
+   - Do not put Veto prediction, winner lean, match percentage, map percentage, score guess, recommendation, or conclusion inside factual sections or JSON facts.
    - Anything after the data pack is outside this skill. If a model continues, use a visible separator such as `--- hltv-cs2-data 数据包结束 ---`.
 
 Readability rules:
@@ -347,9 +347,7 @@ Phase 2 can add these fields after collector and warehouse support exists:
     "winner_prediction",
     "veto_prediction",
     "score_prediction",
-    "strategy_recommendation",
-    "betting_ev",
-    "stake_sizing"
+    "strategy_recommendation"
   ]
 }
 ```
@@ -407,8 +405,4 @@ Do not output model-derived values anywhere in this skill, including:
 - `winner_lean`
 - `veto_hypothesis`
 - `score_prediction`
-- `fair_odds`
-- `ev`
-- `stake`
-
-Betting-specific fields remain outside this skill.
+- `recommendation`

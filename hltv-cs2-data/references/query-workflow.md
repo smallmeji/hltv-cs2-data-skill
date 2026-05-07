@@ -42,7 +42,7 @@ Invalid-output guard:
 
 - If the report says `公开数据源 smallmeji.github.io/hltv-cs2-data-platform 返回 404`, retry with an accepted `hltv-cs2-data-skill` manifest. Do not continue.
 - If a structured match data pack exists, using only HLTV data is non-compliant.
-- If the factual data pack contains `Veto 预测`, `禁图/选图预测框架`, possible map sequence, winner probability, or betting/EV language, it is outside this skill.
+- If the factual data pack contains `Veto 预测`, `禁图/选图预测框架`, possible map sequence, winner probability, or downstream recommendations, it is outside this skill.
 - If the report labels player ratings as `Rating 2.0`, retry and label them `Rating 3.0`.
 - If the report source line only says `HLTV CS2 数据平台` or another vague source label without `已读取 public static database export` or `已读取 API/warehouse`, retry the source execution log and structured fetch.
 - If the report says CT/T, pistol, first-kill, first-death, Pick/Ban, or map details are missing while a fetched structured match data pack contains them, retry from the data-pack/record.
@@ -160,7 +160,7 @@ Workflow:
 5. If a real event ID is explicitly known, attempt `/events/<eventId>/player-ratings.json`; otherwise mark event rating `not_applicable_without_event_id`.
 6. Output `数据源执行记录`, `假设条件`, `数据状态 / 数据缺口`, `队伍与选手 Rating 3.0`, `地图池总览`, `逐图详细分析`, `特殊 Veto 变量`, and `给模型的决策输入`.
 7. Mark Veto, map order, score, match status, and official lineup as `not_applicable` unless the user supplied them or a real match page was resolved.
-8. Do not put winner lean, probability, Veto prediction, score guess, or betting content inside the factual data pack.
+8. Do not put winner lean, probability, Veto prediction, score guess, or downstream recommendations inside the factual data pack.
 
 ## Single-Team Query
 
@@ -348,7 +348,7 @@ Source display:
 Factual-section boundary:
 
 - Do not put `模型推理` inside the factual data pack.
-- Do not put Veto prediction, winner lean, map-win probability, match-win probability, score guess, betting advice, odds analysis, EV, Kelly, stake sizing, or max buy price inside factual tables, `给模型的决策输入`, or JSON facts.
+- Do not put Veto prediction, winner lean, map-win probability, match-win probability, score guess, or downstream recommendations inside factual tables, `给模型的决策输入`, or JSON facts.
 - Anything after this data pack is outside `hltv-cs2-data`.
 
 ## Event Ratings Query
@@ -428,5 +428,5 @@ Workflow:
 1. Produce the HLTV factual data pack.
 2. Build `Decision Inputs` from facts such as map pool, H2H, player form, roster state, match context, and data quality.
 3. If map-detail data is available, include `逐图详细分析` and `特殊 Veto 变量`.
-4. End the skill data pack. Do not place probability, winner lean, Veto prediction, score guess, strategy, or betting content inside factual sections or JSON facts.
+4. End the skill data pack. Do not place probability, winner lean, Veto prediction, score guess, or downstream recommendations inside factual sections or JSON facts.
 5. Anything after the factual data pack is outside `hltv-cs2-data`.
