@@ -109,6 +109,10 @@ Ancient, Anubis, Dust2, Inferno, Mirage, Nuke, Overpass
 
 ```text
 matches/index.json
+matches/by-date/<YYYY-MM-DD>.json
+matches/by-date/index.json
+events/index.json
+teams/aliases.json
 teams/<hltvTeamId>/summary.json
 teams/<hltvTeamId>/players.json
 teams/<hltvTeamId>/maps-overall.json
@@ -118,7 +122,9 @@ matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
 
-如果用户只给自然语言比赛，例如 `PGL Aurora vs Heroic`，先用结构化源的 match search/index 搜索赛事名和双方队名；匹配到唯一比赛后，读取对应 match data pack。默认公开源中，这一步对应 `matches/index.json` 和该行的 `data_pack_path`。不要在找不到 HLTV 页面时直接降级成缺字段报告。
+如果用户只给自然语言比赛，例如 `5月10号 PGL Aurora vs Heroic`，先用结构化源的日期索引和 match search/index 搜索日期、赛事名和双方队名；匹配到唯一比赛后，读取对应 match data pack。默认公开源中，这一步优先对应 `matches/by-date/<YYYY-MM-DD>.json`，再回退到 `matches/index.json` 和该行的 `data_pack_path`。不要要求用户先提供 event ID 或 match ID，也不要在找不到 HLTV 页面时直接降级成缺字段报告。
+
+赛事 rating 的 ID 也应自动解析：先从 match data pack 或 match index 的 `event_id` 读取，再尝试 `events/<eventId>/player-ratings.json`。如果新赛事第一天还没有赛事 rating，输出 `赛事 Rating：尚未采集/尚不可用`，继续保留年度 Rating 3.0 和地图数据。
 
 不要用搜索摘要、wiki、盘口页面、新闻片段或模型记忆补齐地图 / 选手 / 详细数据。
 
@@ -127,7 +133,7 @@ events/<eventId>/player-ratings.json
 默认公开 raw GitHub 数据源的最小合法流程：
 
 ```text
-manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+manifest.json -> matches/by-date/<YYYY-MM-DD>.json（有日期时）-> matches/index.json -> matches/<matchId>/data-pack.json -> events/<eventId>/player-ratings.json（有 event ID 时）
 ```
 
 如果换成其他 API / 静态源，使用等价的 capabilities/search/data-pack 流程即可，不要求路径名一样。如果解析到的数据包里有 `markdown` 字段，应优先用它作为事实骨架。不要只用 HLTV 页面重新写一份缺字段报告。

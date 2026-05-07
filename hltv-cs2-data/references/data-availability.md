@@ -83,8 +83,9 @@ For a match URL:
 3. Resolve match ID, team IDs, slugs, event ID, format, time, status, lineup/veto/score when visible.
 4. If API/warehouse is configured, use it to hydrate structured fields after identity resolution.
 5. Otherwise read configured static JSON or the default public static manifest as the public database export.
-6. For natural-language match lookup, use the selected source's match search/index before team-only records. In the default public source this is `matches/index.json`; when a clear match exists, read that row's match data-pack reference such as `data_pack_path`.
-7. Hydrate team maps, map details, player ratings, event ratings, match packs, and compare-ready fields from the database export when present.
-8. If the database export is unavailable or missing a field, then attempt direct HLTV current-year team map summary stats, current-year team player stats, and event player ratings as supplemental fallback.
-9. Merge database fields into the data pack with `source=static_database` or `source=api_warehouse`; preserve direct HLTV fields with `source=direct_hltv`.
-10. If full coverage is required and static/API is still missing fields, recommend API/warehouse mode.
+6. For natural-language match lookup, use the selected source's date/match search index before team-only records. In the default public source, try `matches/by-date/<YYYY-MM-DD>.json` when a date is present, then `matches/index.json`; when a clear match exists, read that row's match data-pack reference such as `data_pack_path`.
+7. Resolve event rating through the match record. Use `event_id` from the match data pack or match index, then attempt `events/<eventId>/player-ratings.json`. Do not ask the user for event ID first.
+8. Hydrate team maps, map details, player ratings, event ratings, match packs, and compare-ready fields from the database export when present.
+9. If the database export is unavailable or missing a field, then attempt direct HLTV current-year team map summary stats, current-year team player stats, and event player ratings as supplemental fallback.
+10. Merge database fields into the data pack with `source=static_database` or `source=api_warehouse`; preserve direct HLTV fields with `source=direct_hltv`.
+11. If full coverage is required and static/API is still missing fields, recommend API/warehouse mode.

@@ -109,6 +109,10 @@ Default public static source record examples:
 
 ```text
 matches/index.json
+matches/by-date/<YYYY-MM-DD>.json
+matches/by-date/index.json
+events/index.json
+teams/aliases.json
 teams/<hltvTeamId>/summary.json
 teams/<hltvTeamId>/players.json
 teams/<hltvTeamId>/maps-overall.json
@@ -118,7 +122,9 @@ matches/<hltvMatchId>/data-pack.json
 events/<eventId>/player-ratings.json
 ```
 
-If the user gives a natural-language match request such as `PGL Aurora vs Heroic`, use the structured source's match search/index first. When exactly one row matches, fetch the corresponding match data pack. In the default public source, this means `matches/index.json` and that row's `data_pack_path`. Do not downgrade to a missing-field report just because direct HLTV page lookup failed.
+If the user gives a natural-language match request such as `May 10 PGL Aurora vs Heroic`, use the structured source's date index and match search/index first. Match date, event text, and both team aliases. When exactly one row matches, fetch the corresponding match data pack. In the default public source, this means `matches/by-date/<YYYY-MM-DD>.json` first, then `matches/index.json` and that row's `data_pack_path`. Do not ask the user for event ID or match ID first, and do not downgrade to a missing-field report just because direct HLTV page lookup failed.
+
+Event rating IDs should also be resolved automatically: read `event_id` from the match data pack or match index, then try `events/<eventId>/player-ratings.json`. If a new event has no event ratings yet, output `event rating: not collected / not available yet`, and keep annual Rating 3.0 plus map data.
 
 Do not fill missing map/player/detail fields from search summaries, wiki pages, market pages, news snippets, or model memory.
 
@@ -127,7 +133,7 @@ For Chinese output, use Chinese labels or Chinese plus standard acronyms: `èŒƒå›
 Minimum valid flow for the default public raw GitHub source:
 
 ```text
-manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+manifest.json -> matches/by-date/<YYYY-MM-DD>.json when a date is present -> matches/index.json -> matches/<matchId>/data-pack.json -> events/<eventId>/player-ratings.json when event ID exists
 ```
 
 For another API/static source, use the equivalent capabilities/search/data-pack flow. If the resolved data pack contains a `markdown` field, use it as the factual skeleton. Do not rebuild an HLTV-only missing-field report.

@@ -70,7 +70,7 @@ If the output would say the public source is `smallmeji.github.io/hltv-cs2-data-
 For the default public raw GitHub source, natural-language match lookup uses:
 
 ```text
-manifest.json -> matches/index.json -> matches/<matchId>/data-pack.json
+manifest.json -> matches/by-date/<YYYY-MM-DD>.json when a date is present -> matches/index.json -> matches/<matchId>/data-pack.json
 ```
 
 For an alternate API/static source, use the equivalent flow:
@@ -78,6 +78,8 @@ For an alternate API/static source, use the equivalent flow:
 ```text
 capabilities/manifest -> match search/index -> match data pack
 ```
+
+Natural-language event/match resolution must not require the user to know `event_id` or `match_id`. If the user says `5 月 10 号 PGL Aurora vs Heroic`, first search the structured match index using date, event text, and team aliases. After one match is resolved, read the match data pack and use its `event_id` to attempt event ratings.
 
 If the resolved match data pack contains a rendered Markdown field, use that Markdown as the canonical factual skeleton. Do not rebuild the report from HLTV alone.
 
@@ -127,13 +129,15 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 4. **Manifest gate**: before writing map tables, player ratings, per-map detail, or decision inputs, fetch the manifest and at least one exact JSON/API record.
 5. **No user cue required**: never wait for the user to explicitly request the database or data source. A request that names this skill, says "this skill", or asks for a CS2 match/team while the skill is active is already permission and instruction to hydrate structured data.
 6. **Match index for natural language**: if the user gives event/team names without a match URL, use the selected structured source's match search/index after the capabilities/manifest step and search it before falling back to team-only comparison. In the default public source this is `matches/index.json`. When a single matching row is found, fetch that row's match data-pack reference first, such as `data_pack_path`.
-7. **Fail closed**: if manifest plus exact records cannot be read, output partial HLTV facts only with `structured_database_not_queried`.
-8. **Exact rows only**: if a player/rating row is absent, write `missing` / `无数据`. For a current active map that a team has not played in the selected year/filter, output a zero-sample row (`样本=0`, `W-L=0-0`, rates/Pick/Ban/rounds=`0`) and mark `状态=0样本`; do not infer it from opponent data, another map, rankings, snippets, or memory.
-9. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
-10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
-11. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
-12. **Chinese-facing labels**: for Chinese reports, use Chinese table headers or Chinese+standard acronyms. Prefer `范围`, `队伍`, `地图`, `样本`, `W-L`, `地图胜率`, `Pick%`, `Ban%`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`; do not expose raw-only headers such as `Scope`, `sample`, `wr`, `pick_pct`, or `ban_pct` unless the user asks for raw JSON/schema.
-13. **Invalid-output triggers**: if a normal data-pack section includes `hltv-cs2-data-platform` as a public data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, raw JSON/URLs in a normal human report, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
+7. **Date index for date prompts**: if a date is present, search the source's date index first when available. In the default public source this is `matches/by-date/<YYYY-MM-DD>.json`; otherwise fall back to `matches/index.json`.
+8. **Event ID auto-resolution**: do not ask the user for event ID first. Resolve `event_id` from the match data pack or match index. If the event ID is known, attempt `events/<eventId>/player-ratings.json`; if unavailable, mark `赛事 Rating=尚未采集/尚不可用` and keep annual ratings.
+9. **Fail closed**: if manifest plus exact records cannot be read, output partial HLTV facts only with `structured_database_not_queried`.
+10. **Exact rows only**: if a player/rating row is absent, write `missing` / `无数据`. For a current active map that a team has not played in the selected year/filter, output a zero-sample row (`样本=0`, `W-L=0-0`, rates/Pick/Ban/rounds=`0`) and mark `状态=0样本`; do not infer it from opponent data, another map, rankings, snippets, or memory.
+11. **Current active map pool only**: for 2026, use `Ancient`, `Anubis`, `Dust2`, `Inferno`, `Mirage`, `Nuke`, `Overpass` unless structured records explicitly say otherwise.
+12. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
+13. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
+14. **Chinese-facing labels**: for Chinese reports, use Chinese table headers or Chinese+standard acronyms. Prefer `范围`, `队伍`, `地图`, `样本`, `W-L`, `地图胜率`, `Pick%`, `Ban%`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`; do not expose raw-only headers such as `Scope`, `sample`, `wr`, `pick_pct`, or `ban_pct` unless the user asks for raw JSON/schema.
+15. **Invalid-output triggers**: if a normal data-pack section includes `hltv-cs2-data-platform` as a public data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, raw JSON/URLs in a normal human report, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
 
 ## Query Routing
 
@@ -163,6 +167,7 @@ Do not bulk-load all references.
    - Otherwise use a user-provided static JSON source when available.
    - Otherwise use the default raw GitHub public export. Fetch its manifest exactly. If needed, use an accepted `hltv-cs2-data-skill` compatibility alias. Do not fetch `hltv-cs2-data-platform`, platform-site URLs, or the raw directory URL as the structured source.
    - For natural-language match lookup, use the source's match search/index. In the default public export this is `matches/index.json`; if exactly one row matches the event/team context, fetch its `data_pack_path`.
+   - If the prompt includes a date, try the source's date index first. In the default public export this is `matches/by-date/<YYYY-MM-DD>.json`; if absent or ambiguous, use `matches/index.json`.
    - Prefer the resolved match data pack for known matches. In the default public export this is `matches/<matchId>/data-pack.json`.
    - Fetch exact team records as needed:
      - `teams/<id>/summary.json`
@@ -171,7 +176,7 @@ Do not bulk-load all references.
      - `teams/<id>/map-details-overall.json`
      - `teams/<id>/map-details-lan.json`
      - `teams/<id>/players.json`
-   - If event ID is known, attempt `events/<eventId>/player-ratings.json`.
+   - If event ID is known, attempt `events/<eventId>/player-ratings.json`. If the file or rows are absent, keep `event_rating_status=not_available_yet` or `event_rating_status=not_collected` and continue with annual ratings.
 3. Write a compact `数据源执行记录` before analysis.
 4. Use database/API/static rows for factual tables.
 5. Mark missing or not-applicable fields explicitly.
