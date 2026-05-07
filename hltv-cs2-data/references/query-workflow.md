@@ -23,7 +23,7 @@ For every match/team comparison query:
    - default public raw GitHub static export
 3. For the default public raw GitHub export, fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
    - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
-   - Do not call `smallmeji.github.io`, GitHub Pages, or platform-site public-data URLs; those are stale sources.
+   - Do not call `hltv-cs2-data-platform` or platform-site public-data URLs; those are stale sources. The accepted public source is `hltv-cs2-data-skill` raw GitHub or its documented compatibility alias.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
 4. For alternate API/static sources, use the equivalent capabilities/search/data-pack endpoint or record. Do not require GitHub path names if the source exposes the same canonical fields.
 5. If the prompt contains event/team names but no exact match ID, use match search/index before downgrading to team-only comparison. For the default public source this is `matches/index.json`.
@@ -40,7 +40,7 @@ Structured stats require exact structured records. If the output contains map sa
 
 Invalid-output guard:
 
-- If the report says `公开数据源 smallmeji.github.io 返回 404`, retry with the raw GitHub manifest. Do not continue.
+- If the report says `公开数据源 smallmeji.github.io/hltv-cs2-data-platform 返回 404`, retry with an accepted `hltv-cs2-data-skill` manifest. Do not continue.
 - If a structured match data pack exists, using only HLTV data is non-compliant.
 - If the factual data pack contains `Veto 预测`, `禁图/选图预测框架`, possible map sequence, winner probability, or betting/EV language, it is outside this skill.
 - If the report labels player ratings as `Rating 2.0`, retry and label them `Rating 3.0`.

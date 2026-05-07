@@ -1,6 +1,6 @@
 ---
 name: hltv-cs2-data
-description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. When this skill is invoked, structured data hydration is mandatory and automatic; do not wait for the user to say database, data source, or static JSON. Default public source is the raw GitHub manifest at /public-data/manifest.json; never use smallmeji.github.io or GitHub Pages as the data source. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-layer only: this skill requires source-backed factual data-pack output first. Anything after the data pack is outside this skill."
+description: "Use for CS2 factual data packs from an HLTV-derived structured database/static JSON export: match/team resolution, map history, map detail, player ratings, lineup, veto, results, event ratings, decision-input context, or backtest context. When this skill is invoked, structured data hydration is mandatory and automatic; do not wait for the user to say database, data source, or static JSON. Preferred public source is the raw GitHub manifest at /public-data/manifest.json; accepted compatibility aliases may use /public-data/latest/manifest.json under hltv-cs2-data-skill. Never use hltv-cs2-data-platform as the public data source. HLTV pages are only identity/visible-fact sources; map/player/detail analysis must read configured API/warehouse or public static JSON records first. Data-layer only: this skill requires source-backed factual data-pack output first. Anything after the data pack is outside the data layer."
 metadata:
   short-description: Strategy-neutral HLTV CS2 data packs
 ---
@@ -21,7 +21,16 @@ Required default manifest URL:
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-This is the only default public static database entry point. Do not derive another host. If a model reports a GitHub Pages / platform-site public-data URL, treat it as stale instructions and return to the raw GitHub manifest above.
+This is the preferred default public static database entry point. Do not derive another repository or host. Compatibility aliases may exist, but the repository must still be `smallmeji/hltv-cs2-data-skill`, not `hltv-cs2-data-platform`.
+
+Accepted compatibility manifest aliases when the preferred raw URL is not readable:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+```
+
+If a model reports `https://smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` or any `hltv-cs2-data-platform` public-data URL, treat it as stale instructions. Retry one of the accepted URLs above.
 
 ## Fast Operating Contract
 
@@ -49,13 +58,14 @@ The default public source uses raw GitHub manifest/index/data-pack paths, but al
 
 Forbidden as structured data sources:
 
-- `smallmeji.github.io`
-- GitHub Pages URLs
+- `smallmeji.github.io` URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
+- GitHub Pages URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
 - platform website URLs
+- `smallmeji.github.io/hltv-cs2-data-platform` or any `hltv-cs2-data-platform` public-data URL
 - the raw `/public-data` directory URL without `manifest.json`
 - search snippets, wiki pages, market pages, or model memory
 
-If the output would say the public source is `smallmeji.github.io` or GitHub Pages and returned `404`, that is stale-source leakage. Retry the raw manifest URL above. If the raw manifest cannot be read, stop at partial HLTV facts; do not write a complete report.
+If the output would say the public source is `smallmeji.github.io/hltv-cs2-data-platform` and returned `404`, that is stale-source leakage. Retry the accepted `hltv-cs2-data-skill` URLs above. If none can be read, stop at partial HLTV facts; do not write a complete report.
 
 For the default public raw GitHub source, natural-language match lookup uses:
 
@@ -123,7 +133,7 @@ If the model cannot truthfully write `结构化数据：已读取 API/warehouse`
 10. **Normal reports hide raw paths**: include compact source status. Show exact URLs, record paths/endpoints, and JSON only for debug/audit/machine-readable requests.
 11. **Rating field and label**: structured JSON currently stores player rating in `rating2` for compatibility. Treat `rating2` as the exported HLTV `Rating 3.0` value unless a record explicitly says otherwise. Do not look for or emit `rating_2_0`; human reports should label the column `Rating 3.0`.
 12. **Chinese-facing labels**: for Chinese reports, use Chinese table headers or Chinese+standard acronyms. Prefer `范围`, `队伍`, `地图`, `样本`, `W-L`, `地图胜率`, `Pick%`, `Ban%`, `CT/T`, `手枪局`, `首杀后`, `首死后`, `回合`; do not expose raw-only headers such as `Scope`, `sample`, `wr`, `pick_pct`, or `ban_pct` unless the user asks for raw JSON/schema.
-13. **Invalid-output triggers**: if a normal data-pack section includes `smallmeji.github.io`, GitHub Pages as the data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, raw JSON/URLs in a normal human report, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
+13. **Invalid-output triggers**: if a normal data-pack section includes `hltv-cs2-data-platform` as a public data source, vague source-only text such as `HLTV CS2 数据平台` without `已读取 public static database export` or `已读取 API/warehouse`, `Rating 2.0`, merged/mixed Overall-LAN map rows, active current-map rows shown as `missing` instead of zero-sample records, raw English-only table headers in a Chinese report, a claim that CT/T/pistol/first-kill/first-death are missing while a structured match data pack was available, raw JSON/URLs in a normal human report, or model-derived judgment/probability/Veto hypotheses mixed into factual sections, the data-pack output is non-compliant and must be retried from the structured source.
 
 ## Query Routing
 
@@ -151,7 +161,7 @@ Do not bulk-load all references.
 2. Fetch structured data:
    - Use configured API/warehouse first when available.
    - Otherwise use a user-provided static JSON source when available.
-   - Otherwise use the default raw GitHub public export. Fetch its manifest exactly. Do not fetch `smallmeji.github.io`, GitHub Pages, platform-site URLs, or the raw directory URL as the structured source.
+   - Otherwise use the default raw GitHub public export. Fetch its manifest exactly. If needed, use an accepted `hltv-cs2-data-skill` compatibility alias. Do not fetch `hltv-cs2-data-platform`, platform-site URLs, or the raw directory URL as the structured source.
    - For natural-language match lookup, use the source's match search/index. In the default public export this is `matches/index.json`; if exactly one row matches the event/team context, fetch its `data_pack_path`.
    - Prefer the resolved match data pack for known matches. In the default public export this is `matches/<matchId>/data-pack.json`.
    - Fetch exact team records as needed:
@@ -176,7 +186,7 @@ If the user asks for a natural-language judgment such as "谁胜率高", this sk
 When a public-data request returns `404`:
 
 1. If the URL is the raw GitHub `/public-data` directory, retry exact `/public-data/manifest.json`.
-2. If the URL contains `smallmeji.github.io`, GitHub Pages, or a platform-site public-data path, treat it as stale instructions, not as database failure. Replace it with the required raw GitHub manifest URL.
+2. If the URL contains `hltv-cs2-data-platform`, treat it as stale instructions, not as database failure. Replace it with the required raw GitHub manifest URL or an accepted compatibility alias.
 3. If the URL is not the required raw GitHub manifest host/path, treat it as stale instructions and do not use it.
 4. If `manifest.json` works but an exact default-source record path 404s, use manifest/index files to discover available records. For alternate sources, use the equivalent source capabilities/index.
 5. If `manifest.json` cannot be read, stop with `structured_database_unavailable` / `structured_database_not_queried`.

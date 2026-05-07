@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:40:09.490Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 4863,
+  "players": [
+    {
+      "hltv_team_id": 4863,
+      "player_name": "JamYoung",
+      "rating_type": "annual",
+      "rating2": "1.240",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:22.000Z"
+    },
+    {
+      "hltv_team_id": 4863,
+      "player_name": "Moseyuh",
+      "rating_type": "annual",
+      "rating2": "1.180",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:22.000Z"
+    },
+    {
+      "hltv_team_id": 4863,
+      "player_name": "Jee",
+      "rating_type": "annual",
+      "rating2": "1.170",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:22.000Z"
+    },
+    {
+      "hltv_team_id": 4863,
+      "player_name": "Mercury",
+      "rating_type": "annual",
+      "rating2": "1.100",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:22.000Z"
+    },
+    {
+      "hltv_team_id": 4863,
+      "player_name": "Zero",
+      "rating_type": "annual",
+      "rating2": "1.090",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:22.000Z"
+    }
+  ]
+}

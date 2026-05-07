@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:40:05.310Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 11811,
+  "players": [
+    {
+      "hltv_team_id": 11811,
+      "player_name": "afro",
+      "rating_type": "annual",
+      "rating2": "1.200",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 11811,
+      "player_name": "Rainwaker",
+      "rating_type": "annual",
+      "rating2": "1.150",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 11811,
+      "player_name": "Bymas",
+      "rating_type": "annual",
+      "rating2": "1.020",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 11811,
+      "player_name": "Gizmy",
+      "rating_type": "annual",
+      "rating2": "0.950",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 11811,
+      "player_name": "AZUWU",
+      "rating_type": "annual",
+      "rating2": "0.930",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    }
+  ]
+}

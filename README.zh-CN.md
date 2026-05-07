@@ -36,13 +36,23 @@
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-这是当前仓库内置的默认公开入口。它不是唯一可用数据源；如果用户配置了 API 或提供了其他静态 JSON 源，应优先使用配置源。
+这是当前仓库内置的首选公开入口。它不是唯一可用数据源；如果用户配置了 API 或提供了其他静态 JSON 源，应优先使用配置源。
+
+如果宿主模型无法读取 raw GitHub，可以尝试这些兼容入口：
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+```
+
+注意：`hltv-cs2-data-platform` 是旧平台仓库名，不是公开数据源。任何 `smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` 的 404 都是旧路径问题，不代表数据源不可用。
 
 明确禁止作为结构化数据源：
 
-- `smallmeji.github.io`
-- GitHub Pages
+- 非兼容入口的 `smallmeji.github.io` URL
+- 非兼容入口的 GitHub Pages URL
 - 平台网站页面
+- `hltv-cs2-data-platform` 的 public-data 路径
 - `https://raw.githubusercontent.com/.../public-data` 目录本身
 - 搜索摘要、wiki、盘口页面、新闻片段或模型记忆
 
@@ -53,7 +63,7 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 | `/public-data` 目录 | 目录不是 JSON 文件 | 改读 `/public-data/manifest.json` |
 | `/manifest.json` | 必须读取的默认入口 | 失败则标记结构化数据不可用 |
 | 具体 JSON 文件 | 该记录可能未导出 | 回到 manifest/index 查可用路径 |
-| `smallmeji.github.io` / GitHub Pages / 平台站点 URL | 旧文档或缓存记忆 | 改读 raw GitHub manifest；仍然使用旧地址则重装 skill |
+| `smallmeji.github.io/hltv-cs2-data-platform/...` | 旧文档或缓存记忆 | 改读 `hltv-cs2-data-skill` 的 raw manifest 或兼容入口；仍然使用旧地址则重装 skill |
 
 ## 能做什么
 
@@ -197,7 +207,7 @@ https://www.hltv.org/matches/2393346/g2-vs-faze-blast-rivals-2026-season-1
 - 不显示 raw URL / JSON，除非用户要求 debug
 - 不在事实数据包里输出 Veto 预测或胜率判断
 
-如果模型仍然说 `smallmeji.github.io` 返回 404，说明它加载的是旧 skill 或旧上下文，需要重装 skill 并新开对话。
+如果模型仍然说 `smallmeji.github.io/hltv-cs2-data-platform` 返回 404，说明它加载的是旧 skill 或旧上下文，需要重装 skill 并新开对话。
 
 ## 示例提示词
 

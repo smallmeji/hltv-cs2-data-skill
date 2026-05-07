@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:40:08.090Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 12474,
+  "players": [
+    {
+      "hltv_team_id": 12474,
+      "player_name": "MaiL09",
+      "rating_type": "annual",
+      "rating2": "1.210",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:46.000Z"
+    },
+    {
+      "hltv_team_id": 12474,
+      "player_name": "eraa",
+      "rating_type": "annual",
+      "rating2": "1.170",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:46.000Z"
+    },
+    {
+      "hltv_team_id": 12474,
+      "player_name": "avid",
+      "rating_type": "annual",
+      "rating2": "1.110",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:46.000Z"
+    },
+    {
+      "hltv_team_id": 12474,
+      "player_name": "twist",
+      "rating_type": "annual",
+      "rating2": "1.000",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:46.000Z"
+    },
+    {
+      "hltv_team_id": 12474,
+      "player_name": "upE",
+      "rating_type": "annual",
+      "rating2": "0.960",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:46.000Z"
+    }
+  ]
+}

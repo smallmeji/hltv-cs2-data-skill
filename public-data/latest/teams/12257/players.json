@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:40:34.911Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 12257,
+  "players": [
+    {
+      "hltv_team_id": 12257,
+      "player_name": "HexT",
+      "rating_type": "annual",
+      "rating2": "1.160",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:52:11.000Z"
+    },
+    {
+      "hltv_team_id": 12257,
+      "player_name": "mhL",
+      "rating_type": "annual",
+      "rating2": "1.150",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:52:11.000Z"
+    },
+    {
+      "hltv_team_id": 12257,
+      "player_name": "nEMANHA",
+      "rating_type": "annual",
+      "rating2": "1.150",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:52:11.000Z"
+    },
+    {
+      "hltv_team_id": 12257,
+      "player_name": "reck",
+      "rating_type": "annual",
+      "rating2": "1.040",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:52:11.000Z"
+    },
+    {
+      "hltv_team_id": 12257,
+      "player_name": "Cxzi",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:52:11.000Z"
+    }
+  ]
+}

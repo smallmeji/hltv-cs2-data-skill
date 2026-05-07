@@ -36,13 +36,23 @@ Default public manifest URL:
 https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
 ```
 
-This is the built-in public fallback for this repository. It is not the only possible source. If the user configures an API or provides another static JSON source, use the configured source first.
+This is the preferred built-in public fallback for this repository. It is not the only possible source. If the user configures an API or provides another static JSON source, use the configured source first.
+
+If the host model cannot read raw GitHub, these compatibility manifest aliases may be used:
+
+```text
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+```
+
+Important: `hltv-cs2-data-platform` is an old platform repository name, not the public data source. A `404` from `smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` is stale-path usage, not database unavailability.
 
 Forbidden as structured data sources:
 
-- `smallmeji.github.io`
-- GitHub Pages
+- `smallmeji.github.io` URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
+- GitHub Pages URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
 - platform website pages
+- `hltv-cs2-data-platform` public-data paths
 - the raw `https://raw.githubusercontent.com/.../public-data` directory itself
 - search snippets, wiki pages, market pages, news snippets, or model memory
 
@@ -53,7 +63,7 @@ If a model reports a `404`, first check what it fetched:
 | `/public-data` directory | Directories are not JSON files | Fetch `/public-data/manifest.json` |
 | `/manifest.json` | Required public entry point | If this fails, mark structured data unavailable |
 | Exact JSON file | That record may be absent | Use manifest/indexes to find available paths |
-| `smallmeji.github.io` / GitHub Pages / platform URL | Stale docs or cached model memory | Use the raw GitHub manifest; reinstall/update if it still uses the stale URL |
+| `smallmeji.github.io/hltv-cs2-data-platform/...` | Stale docs or cached model memory | Use the `hltv-cs2-data-skill` raw manifest or compatibility alias; reinstall/update if it still uses the stale URL |
 
 ## What It Does
 
@@ -197,7 +207,7 @@ Correct behavior:
 - Does not show raw URLs/JSON unless debug is requested
 - Does not put Veto prediction or winner judgment inside the factual data pack
 
-If the model still says `smallmeji.github.io` returned 404, it is using stale instructions or stale conversation context. Reinstall/update the skill and start a fresh conversation.
+If the model still says `smallmeji.github.io/hltv-cs2-data-platform` returned 404, it is using stale instructions or stale conversation context. Reinstall/update the skill and start a fresh conversation.
 
 ## Example Prompts
 

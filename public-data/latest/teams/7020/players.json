@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:39:47.220Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 7020,
+  "players": [
+    {
+      "hltv_team_id": 7020,
+      "player_name": "donk",
+      "rating_type": "annual",
+      "rating2": "1.360",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:58.000Z"
+    },
+    {
+      "hltv_team_id": 7020,
+      "player_name": "sh1ro",
+      "rating_type": "annual",
+      "rating2": "1.160",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:58.000Z"
+    },
+    {
+      "hltv_team_id": 7020,
+      "player_name": "tN1R",
+      "rating_type": "annual",
+      "rating2": "1.030",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:58.000Z"
+    },
+    {
+      "hltv_team_id": 7020,
+      "player_name": "magixx",
+      "rating_type": "annual",
+      "rating2": "0.990",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:58.000Z"
+    },
+    {
+      "hltv_team_id": 7020,
+      "player_name": "zont1x",
+      "rating_type": "annual",
+      "rating2": "0.960",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:48:58.000Z"
+    }
+  ]
+}

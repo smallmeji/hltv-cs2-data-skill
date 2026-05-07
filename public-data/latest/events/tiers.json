@@ -1,0 +1,1634 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:40:46.476Z",
+    "source_policy": "mysql_tidb_export",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "event_count": 101,
+    "warnings": []
+  },
+  "events": [
+    {
+      "event_name": "BLAST Bounty 2026 Season 1 Finals",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 36,
+      "map_records": 72,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:56:19.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BLAST Open Rotterdam 2026",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 140,
+      "map_records": 280,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:58.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BLAST Rivals 2026 Season 1",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 64,
+      "map_records": 128,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-05-04T15:35:02.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Pro League Season 23 Finals",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 46,
+      "map_records": 92,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:55:30.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Pro League Season 23 Stage 1",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 71,
+      "map_records": 142,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:00.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Pro League Season 23 Stage 2",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 81,
+      "map_records": 162,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:55:14.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Kraków 2026",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 148,
+      "map_records": 296,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:01.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Kraków 2026 Stage 1",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 96,
+      "map_records": 192,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:26.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Rio 2026",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 140,
+      "map_records": 280,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:21.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Astana 2026",
+      "tier": "S",
+      "manual_tier": true,
+      "manual_source": "manual",
+      "notes": null,
+      "manual_updated_at": "2026-05-04T18:30:13.000Z",
+      "display_count": 4,
+      "map_records": 0,
+      "normalized_matches": 0,
+      "calendar_matches": 4,
+      "latest_at": "2026-05-09T14:00:00.000Z",
+      "sources": [
+        "event_tiers",
+        "match_calendar"
+      ]
+    },
+    {
+      "event_name": "PGL Cluj-Napoca 2026",
+      "tier": "S",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 204,
+      "map_records": 408,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:55:54.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BLAST Bounty 2026 Season 1",
+      "tier": "A",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 52,
+      "map_records": 103,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Atlanta 2026 Closed Qualifier",
+      "tier": "A",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 26,
+      "map_records": 51,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:48.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Rio 2026 Closed Qualifier",
+      "tier": "A",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 38,
+      "map_records": 76,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026",
+      "tier": "A",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 182,
+      "map_records": 364,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:45.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Stake Ranked Episode 1",
+      "tier": "A",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 66,
+      "map_records": 132,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:21.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Ace NA Masters 2026 Season 1 - BLAST Premier Rising Event",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 11,
+      "map_records": 21,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:37.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Ace SA Masters 2026 Season 1 - BLAST Premier Rising Event",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 12,
+      "map_records": 24,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:14.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BC Game Masters Championship Season 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 74,
+      "map_records": 148,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:21.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom Circuit X Mayhem São Paulo 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 27,
+      "map_records": 54,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom Circuit X Pantanal Cuiabá 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 56,
+      "map_records": 112,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom Circuit X Redemption Curitiba 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 42,
+      "map_records": 84,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom RUSH B Summit Season 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 46,
+      "map_records": 92,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:55.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom RUSH B Summit Season 2",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 37,
+      "map_records": 74,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Global Finals 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 60,
+      "map_records": 120,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:35:51.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 13",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 11,
+      "map_records": 21,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:44.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 14",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 13,
+      "map_records": 25,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 15",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 9,
+      "map_records": 18,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:48.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 16",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 14,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:48.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 17",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 6,
+      "map_records": 11,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:03.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 18",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 10,
+      "map_records": 19,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:47.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 Europe Series 20",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 14,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:24.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 South America Series 7",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 6,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:56:03.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CCT Season 3 South America Series 8",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 14,
+      "map_records": 27,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:14.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "CS Asia Championships 2026 Asia Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 4,
+      "map_records": 7,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:31.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Digital Crusade DraculaN Season 5",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 36,
+      "map_records": 72,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:40.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Digital Crusade DraculaN Season 6",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 108,
+      "map_records": 216,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:50.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 Europe Cup 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 10,
+      "map_records": 19,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:11.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 Europe Cup 4",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 6,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-25T14:36:08.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 North America Cup 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 6,
+      "map_records": 12,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:00.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 North America Cup 4",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 6,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-05-04T15:38:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 South America Cup 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 20,
+      "map_records": 39,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:15.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 South America Cup 4",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 5,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:35:42.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "FERJEE In House 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 71,
+      "map_records": 142,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "FiRe CONTER Season 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 64,
+      "map_records": 128,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:23.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "fl0m Mythical LAN Las Vegas 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 16,
+      "map_records": 32,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:17.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "FRAG 20",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 40,
+      "map_records": 80,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Atlanta 2026 Americas Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 11,
+      "map_records": 22,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Rio 2026 Americas Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 19,
+      "map_records": 37,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:14.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "JB Pro League Season 2",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 4,
+      "map_records": 7,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "LORGAR RANKINGS Season 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 21,
+      "map_records": 42,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-27T12:54:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "NODWIN Clutch Series 4",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 14,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "NODWIN Clutch Series 5",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 8,
+      "map_records": 16,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:57.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "NODWIN Clutch Series 7",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 8,
+      "map_records": 15,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:07.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Odyssey Cup Brazil 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 5,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:35:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Astana 2026 Europe Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 10,
+      "map_records": 20,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Astana 2026 South America Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 6,
+      "map_records": 11,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:26.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 Europe Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 29,
+      "map_records": 58,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 Europe Open Qualifier 1",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 2,
+      "map_records": 4,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:45.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 Europe Open Qualifier 2",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 2,
+      "map_records": 4,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:34.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 North America Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 13,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 South America Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 12,
+      "map_records": 24,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:10.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "RES Showdown 3: BLAST Premier Rising Event",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 15,
+      "map_records": 29,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:11.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ROG JOURNEY Spring 2026",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 33,
+      "map_records": 66,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:35.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Roman Imperium Cup V",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 70,
+      "map_records": 140,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-14T15:26:35.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Stake Ranked Episode 1 Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 16,
+      "map_records": 32,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Stake Ranked Episode 2 Closed Qualifier",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 14,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-05-04T01:51:42.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Thunderpick World Championship 2026 North America",
+      "tier": "B",
+      "manual_tier": true,
+      "manual_source": "manual",
+      "notes": null,
+      "manual_updated_at": "2026-05-04T18:30:19.000Z",
+      "display_count": 2,
+      "map_records": 4,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-05-04T18:30:19.000Z",
+      "sources": [
+        "event_tiers",
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Yuqilin Pinnacle of Battle Season 2 - BLAST Premier Rising Event",
+      "tier": "B",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 3,
+      "map_records": 6,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:34.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "BetBoom RUSH B Summit Season 3",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 24,
+      "map_records": 48,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-27T12:54:17.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Copenhagen Gaming Week Showdown 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 12,
+      "map_records": 24,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:48.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Dust2.us Eagle Masters Series 6",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 5,
+      "map_records": 10,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "ESL Challenger League Season 51 Asia-Pacific Cup 4",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 8,
+      "map_records": 16,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-05-04T01:50:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "European Pro League Series 4",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 5,
+      "map_records": 10,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "European Pro League Series 5",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 5,
+      "map_records": 10,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:41.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Fragadelphia Miami 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 51,
+      "map_records": 102,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "HLC Belgrade PRO 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 24,
+      "map_records": 48,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:11.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "HyperX Roman Imperium Cup VI",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 56,
+      "map_records": 112,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:21.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Atlanta 2026 Americas Open Qualifier",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 1,
+      "map_records": 2,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IEM Rio 2026 Americas Open Qualifier",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 5,
+      "map_records": 9,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:13.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "IstanbuLAN 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 24,
+      "map_records": 48,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-21T15:33:21.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "META Cup Season 3",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 18,
+      "map_records": 36,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:42.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "MPKBK CIS LAN Season 4",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 8,
+      "map_records": 16,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:23.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "MySkill Pro League Series 1",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 22,
+      "map_records": 44,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:47.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Myskill Pro League Series 2",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 9,
+      "map_records": 18,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:28.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "NSTLGA Washington Open 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 4,
+      "map_records": 8,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:58:27.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Parken Challenger Championship Season 1",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 54,
+      "map_records": 108,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:50.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Parken Challenger Championship Season 2",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 29,
+      "map_records": 58,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:49.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Parken Challenger Championship Season 3",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 51,
+      "map_records": 102,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:45.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PGL Bucharest 2026 North America Open Qualifier 1",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 1,
+      "map_records": 2,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:38.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "PLAYR Masters Season 1",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 7,
+      "map_records": 14,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:50.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "POWER Ligaen Season 31",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 9,
+      "map_records": 18,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:50.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Radio Popular Roman Imperium Cup VII",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 51,
+      "map_records": 102,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Roman Imperium Cup IV",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 9,
+      "map_records": 18,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:15.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Tipsport Conquest of Prague 2026",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 14,
+      "map_records": 27,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-30T12:41:22.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "United21 Esplay Challenge Season 1",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 17,
+      "map_records": 34,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:33.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "United21 League Season 44",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 2,
+      "map_records": 3,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:07.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Urban Riga Open Season 3",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 23,
+      "map_records": 46,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-28T17:36:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Urban Riga Open Season 4",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 19,
+      "map_records": 38,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:59:44.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "XSE GangKui Cup Season 2 Finals",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 14,
+      "map_records": 28,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    },
+    {
+      "event_name": "Yuqilin Pinnacle of Battle Season 3",
+      "tier": "C",
+      "manual_tier": false,
+      "manual_source": null,
+      "notes": null,
+      "manual_updated_at": null,
+      "display_count": 9,
+      "map_records": 18,
+      "normalized_matches": 0,
+      "calendar_matches": 0,
+      "latest_at": "2026-04-09T02:57:46.000Z",
+      "sources": [
+        "map_matches"
+      ]
+    }
+  ]
+}

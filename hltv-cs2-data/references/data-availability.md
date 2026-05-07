@@ -13,7 +13,7 @@ This reference defines which data can be expected from each access mode. It prev
 | Static JSON database export | Hosted or local exported JSON data packs. Default public manifest: `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json` | Required public structured-data source after HLTV identity resolution |
 | API / warehouse | API key and hosted data service | Stable data packs, backtests, repeated use |
 
-`smallmeji.github.io`, GitHub Pages, and product website pages are not access modes for structured data. If a model uses one of those URLs and receives 404, that is stale-source usage, not evidence that the static database is unavailable.
+`hltv-cs2-data-platform` public-data paths and product website pages are not access modes for structured data. If a model uses one of those URLs and receives 404, that is stale-source usage, not evidence that the static database is unavailable. The accepted public source is the `hltv-cs2-data-skill` raw GitHub manifest or its documented compatibility alias.
 
 ## What Each Mode Can Provide
 

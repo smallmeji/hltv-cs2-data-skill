@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "schema_version": "hltv-cs2-data.v1",
+    "requested_at": "2026-05-07T17:39:56.725Z",
+    "source_policy": "api_with_legacy_fallback",
+    "date_window": {
+      "start": "2026-01-01",
+      "end": "2026-12-31",
+      "policy": "calendar_year"
+    },
+    "warnings": []
+  },
+  "team_hltv_id": 6667,
+  "players": [
+    {
+      "hltv_team_id": 6667,
+      "player_name": "frozen",
+      "rating_type": "annual",
+      "rating2": "1.170",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 6667,
+      "player_name": "Twistzz",
+      "rating_type": "annual",
+      "rating2": "1.070",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 6667,
+      "player_name": "broky",
+      "rating_type": "annual",
+      "rating2": "0.980",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    },
+    {
+      "hltv_team_id": 6667,
+      "player_name": "jcobbb",
+      "rating_type": "annual",
+      "rating2": "0.940",
+      "data_from": "2026-01-01",
+      "data_to": "2026-05-04",
+      "snapshot_time": "2026-05-04T18:50:21.000Z"
+    }
+  ]
+}
