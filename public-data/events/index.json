@@ -1,0 +1,1019 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-07T20:25:01.943Z",
+    "event_count": 101,
+    "source": "matches/index.json + events/tiers.json"
+  },
+  "events": [
+    {
+      "event_id": null,
+      "event_name": "PGL Astana 2026",
+      "event_tier": "S",
+      "match_count": 4,
+      "first_scheduled_at": "2026-05-09T05:00:00.000Z",
+      "last_scheduled_at": "2026-05-09T14:00:00.000Z",
+      "rating_path": null,
+      "search_text": "pgl astana 2026 s 2026-05-09t05:00:00.000z 2026-05-09t14:00:00.000z"
+    },
+    {
+      "event_id": null,
+      "event_name": "Ace NA Masters 2026 Season 1 - BLAST Premier Rising Event",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "ace na masters 2026 season 1 - blast premier rising event b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Ace SA Masters 2026 Season 1 - BLAST Premier Rising Event",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "ace sa masters 2026 season 1 - blast premier rising event b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BC Game Masters Championship Season 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "bc game masters championship season 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom Circuit X Mayhem São Paulo 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom circuit x mayhem são paulo 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom Circuit X Pantanal Cuiabá 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom circuit x pantanal cuiabá 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom Circuit X Redemption Curitiba 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom circuit x redemption curitiba 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom RUSH B Summit Season 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom rush b summit season 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom RUSH B Summit Season 2",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom rush b summit season 2 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "BetBoom RUSH B Summit Season 3",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "betboom rush b summit season 3 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "BLAST Bounty 2026 Season 1",
+      "event_tier": "A",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "blast bounty 2026 season 1 a"
+    },
+    {
+      "event_id": null,
+      "event_name": "BLAST Bounty 2026 Season 1 Finals",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "blast bounty 2026 season 1 finals s"
+    },
+    {
+      "event_id": null,
+      "event_name": "BLAST Open Rotterdam 2026",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "blast open rotterdam 2026 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "BLAST Rivals 2026 Season 1",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "blast rivals 2026 season 1 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Global Finals 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct global finals 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 13",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 13 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 14",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 14 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 15",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 15 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 16",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 16 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 17",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 17 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 18",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 18 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 Europe Series 20",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 europe series 20 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 South America Series 7",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 south america series 7 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "CCT Season 3 South America Series 8",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cct season 3 south america series 8 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Copenhagen Gaming Week Showdown 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "copenhagen gaming week showdown 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "CS Asia Championships 2026 Asia Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "cs asia championships 2026 asia closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Digital Crusade DraculaN Season 5",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "digital crusade draculan season 5 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Digital Crusade DraculaN Season 6",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "digital crusade draculan season 6 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Dust2.us Eagle Masters Series 6",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "dust2.us eagle masters series 6 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 Asia-Pacific Cup 4",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 asia-pacific cup 4 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 Europe Cup 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 europe cup 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 Europe Cup 4",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 europe cup 4 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 North America Cup 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 north america cup 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 North America Cup 4",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 north america cup 4 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 South America Cup 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 south america cup 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Challenger League Season 51 South America Cup 4",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl challenger league season 51 south america cup 4 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Pro League Season 23 Finals",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl pro league season 23 finals s"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Pro League Season 23 Stage 1",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl pro league season 23 stage 1 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "ESL Pro League Season 23 Stage 2",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "esl pro league season 23 stage 2 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "European Pro League Series 4",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "european pro league series 4 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "European Pro League Series 5",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "european pro league series 5 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "FERJEE In House 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "ferjee in house 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "FiRe CONTER Season 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "fire conter season 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "fl0m Mythical LAN Las Vegas 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "fl0m mythical lan las vegas 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "FRAG 20",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "frag 20 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Fragadelphia Miami 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "fragadelphia miami 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "HLC Belgrade PRO 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "hlc belgrade pro 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "HyperX Roman Imperium Cup VI",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "hyperx roman imperium cup vi c"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Atlanta 2026 Americas Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem atlanta 2026 americas closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Atlanta 2026 Americas Open Qualifier",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem atlanta 2026 americas open qualifier c"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Atlanta 2026 Closed Qualifier",
+      "event_tier": "A",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem atlanta 2026 closed qualifier a"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Kraków 2026",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem kraków 2026 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Kraków 2026 Stage 1",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem kraków 2026 stage 1 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Rio 2026",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem rio 2026 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Rio 2026 Americas Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem rio 2026 americas closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Rio 2026 Americas Open Qualifier",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem rio 2026 americas open qualifier c"
+    },
+    {
+      "event_id": null,
+      "event_name": "IEM Rio 2026 Closed Qualifier",
+      "event_tier": "A",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "iem rio 2026 closed qualifier a"
+    },
+    {
+      "event_id": null,
+      "event_name": "IstanbuLAN 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "istanbulan 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "JB Pro League Season 2",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "jb pro league season 2 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "LORGAR RANKINGS Season 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "lorgar rankings season 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "META Cup Season 3",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "meta cup season 3 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "MPKBK CIS LAN Season 4",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "mpkbk cis lan season 4 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "MySkill Pro League Series 1",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "myskill pro league series 1 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Myskill Pro League Series 2",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "myskill pro league series 2 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "NODWIN Clutch Series 4",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "nodwin clutch series 4 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "NODWIN Clutch Series 5",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "nodwin clutch series 5 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "NODWIN Clutch Series 7",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "nodwin clutch series 7 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "NSTLGA Washington Open 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "nstlga washington open 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Odyssey Cup Brazil 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "odyssey cup brazil 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Parken Challenger Championship Season 1",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "parken challenger championship season 1 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Parken Challenger Championship Season 2",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "parken challenger championship season 2 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Parken Challenger Championship Season 3",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "parken challenger championship season 3 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Astana 2026 Europe Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl astana 2026 europe closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Astana 2026 South America Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl astana 2026 south america closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026",
+      "event_tier": "A",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 a"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 Europe Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 europe closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 Europe Open Qualifier 1",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 europe open qualifier 1 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 Europe Open Qualifier 2",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 europe open qualifier 2 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 North America Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 north america closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 North America Open Qualifier 1",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 north america open qualifier 1 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Bucharest 2026 South America Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl bucharest 2026 south america closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "PGL Cluj-Napoca 2026",
+      "event_tier": "S",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "pgl cluj-napoca 2026 s"
+    },
+    {
+      "event_id": null,
+      "event_name": "PLAYR Masters Season 1",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "playr masters season 1 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "POWER Ligaen Season 31",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "power ligaen season 31 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Radio Popular Roman Imperium Cup VII",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "radio popular roman imperium cup vii c"
+    },
+    {
+      "event_id": null,
+      "event_name": "RES Showdown 3: BLAST Premier Rising Event",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "res showdown 3: blast premier rising event b"
+    },
+    {
+      "event_id": null,
+      "event_name": "ROG JOURNEY Spring 2026",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "rog journey spring 2026 b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Roman Imperium Cup IV",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "roman imperium cup iv c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Roman Imperium Cup V",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "roman imperium cup v b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Stake Ranked Episode 1",
+      "event_tier": "A",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "stake ranked episode 1 a"
+    },
+    {
+      "event_id": null,
+      "event_name": "Stake Ranked Episode 1 Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "stake ranked episode 1 closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Stake Ranked Episode 2 Closed Qualifier",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "stake ranked episode 2 closed qualifier b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Thunderpick World Championship 2026 North America",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "thunderpick world championship 2026 north america b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Tipsport Conquest of Prague 2026",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "tipsport conquest of prague 2026 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "United21 Esplay Challenge Season 1",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "united21 esplay challenge season 1 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "United21 League Season 44",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "united21 league season 44 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Urban Riga Open Season 3",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "urban riga open season 3 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Urban Riga Open Season 4",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "urban riga open season 4 c"
+    },
+    {
+      "event_id": null,
+      "event_name": "XSE GangKui Cup Season 2 Finals",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "xse gangkui cup season 2 finals c"
+    },
+    {
+      "event_id": null,
+      "event_name": "Yuqilin Pinnacle of Battle Season 2 - BLAST Premier Rising Event",
+      "event_tier": "B",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "yuqilin pinnacle of battle season 2 - blast premier rising event b"
+    },
+    {
+      "event_id": null,
+      "event_name": "Yuqilin Pinnacle of Battle Season 3",
+      "event_tier": "C",
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": null,
+      "search_text": "yuqilin pinnacle of battle season 3 c"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "hltv-cs2-data.static.v1",
-  "generated_at": "2026-05-07T17:39:32.440Z",
+  "generated_at": "2026-05-07T20:23:47.021Z",
   "source_policy": "mysql_tidb_export",
   "date_window": {
     "start": "2026-01-01",
@@ -26,6 +26,11 @@
       "type": "teams",
       "key": "teams/index",
       "path": "teams/index.json"
+    },
+    {
+      "type": "teams",
+      "key": "teams/aliases",
+      "path": "teams/aliases.json"
     },
     {
       "type": "teams",
@@ -1658,9 +1663,24 @@
       "path": "matches/index.json"
     },
     {
+      "type": "matches",
+      "key": "matches/by-date/2026-05-09",
+      "path": "matches/by-date/2026-05-09.json"
+    },
+    {
+      "type": "matches",
+      "key": "matches/by-date/index",
+      "path": "matches/by-date/index.json"
+    },
+    {
       "type": "events",
       "key": "events/tiers",
       "path": "events/tiers.json"
+    },
+    {
+      "type": "events",
+      "key": "events/index",
+      "path": "events/index.json"
     },
     {
       "type": "manifest",

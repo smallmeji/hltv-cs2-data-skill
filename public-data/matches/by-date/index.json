@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-07T20:25:00.138Z",
+    "date_count": 1,
+    "source": "matches/index.json"
+  },
+  "dates": [
+    {
+      "date": "2026-05-09",
+      "path": "matches/by-date/2026-05-09.json",
+      "match_count": 4
+    }
+  ]
+}

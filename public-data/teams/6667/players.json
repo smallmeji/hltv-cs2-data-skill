@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schema_version": "hltv-cs2-data.v1",
-    "requested_at": "2026-05-07T17:39:56.725Z",
+    "requested_at": "2026-05-07T20:24:12.697Z",
     "source_policy": "api_with_legacy_fallback",
     "date_window": {
       "start": "2026-01-01",
