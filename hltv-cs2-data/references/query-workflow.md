@@ -21,9 +21,9 @@ For every match/team comparison query:
    - configured API / warehouse
    - user-provided static JSON export
    - default public raw GitHub static export
-3. For the default public raw GitHub export, fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
-   - Do not call `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data` directly; raw GitHub directories can return `404`.
-   - Do not call `hltv-cs2-data-platform` or platform-site public-data URLs; those are stale sources. The accepted public source is `hltv-cs2-data-skill` raw GitHub or its documented compatibility alias.
+3. For the default public raw GitHub export, fetch `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json`.
+   - Do not call old `hltv-cs2-data-skill/public-data` paths; the skill repository no longer carries live static data.
+   - Do not call `hltv-cs2-data-platform` or platform-site public-data URLs; those are stale sources. The accepted public source is `hltv-cs2-data-public` raw GitHub or its documented compatibility alias.
    - A directory `404` is not evidence that the database is unavailable. Try the manifest and exact files.
 4. For alternate API/static sources, use the equivalent capabilities/search/data-pack endpoint or record. Do not require GitHub path names if the source exposes the same canonical fields.
 5. If the prompt contains event/team names but no exact match ID, use match search/index before downgrading to team-only comparison. For the default public source this is `matches/index.json`.
@@ -42,7 +42,7 @@ Structured stats require exact structured records. If the output contains map sa
 
 Invalid-output guard:
 
-- If the report says `公开数据源 smallmeji.github.io/hltv-cs2-data-platform 返回 404`, retry with an accepted `hltv-cs2-data-skill` manifest. Do not continue.
+- If the report says `公开数据源 smallmeji.github.io/hltv-cs2-data-platform 返回 404`, retry with an accepted `hltv-cs2-data-public` manifest. Do not continue.
 - If a structured match data pack exists, using only HLTV data is non-compliant.
 - If the factual data pack contains `Veto 预测`, `禁图/选图预测框架`, possible map sequence, winner probability, or downstream recommendations, it is outside this skill.
 - If the report labels player ratings as `Rating 2.0`, retry and label them `Rating 3.0`.
@@ -89,7 +89,7 @@ Workflow:
 1. If the prompt includes an event context, such as `PGL 上 Aurora 和 Heroic`, search/read HLTV event, upcoming, result, and match pages first to locate the exact match page.
 2. If no exact match page is implied, resolve both teams from HLTV team pages and/or the structured source's team resolver/index.
 3. After match/team IDs are known, immediately hydrate structured stats from the selected structured source. Source priority is configured API/warehouse, then user-provided static JSON, then default public raw GitHub export.
-4. If the selected source exposes capabilities or a manifest, read it first. For the default public source, the manifest URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json`.
+4. If the selected source exposes capabilities or a manifest, read it first. For the default public source, the manifest URL is `https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json`.
 5. If the prompt includes event context, use the source's match search/index and try to locate a single exact exported match. For the default public source:
    - if a date is present, first try `/matches/by-date/<YYYY-MM-DD>.json`;
    - then fall back to `/matches/index.json`;

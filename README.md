@@ -31,7 +31,7 @@ Current default public static export freshness is recorded in `manifest.generate
 Default public manifest URL:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json
 ```
 
 This is the preferred built-in public fallback for this repository. It is not the only possible source. If the user configures an API or provides another static JSON source, use the configured source first.
@@ -39,18 +39,19 @@ This is the preferred built-in public fallback for this repository. It is not th
 If the host model cannot read raw GitHub, these compatibility manifest aliases may be used:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
-https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-public/latest/manifest.json
 ```
 
-Important: `hltv-cs2-data-platform` is an old platform repository name, not the public data source. A `404` from `smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` is stale-path usage, not database unavailability.
+Important: the skill package and the public data export are now split. `hltv-cs2-data-skill` contains instructions only. `hltv-cs2-data-public` contains the static JSON data. A `404` from `hltv-cs2-data-platform/public-data` or the old `hltv-cs2-data-skill/public-data` path is stale-path usage, not database unavailability.
 
 Forbidden as structured data sources:
 
-- `smallmeji.github.io` URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
-- GitHub Pages URLs outside the accepted `hltv-cs2-data-skill` compatibility alias
+- `smallmeji.github.io` URLs outside the accepted `hltv-cs2-data-public` compatibility alias
+- GitHub Pages URLs outside the accepted `hltv-cs2-data-public` compatibility alias
 - platform website pages
 - `hltv-cs2-data-platform` public-data paths
+- `hltv-cs2-data-skill` public-data paths after the repository split
 - the raw `https://raw.githubusercontent.com/.../public-data` directory itself
 - search snippets, wiki pages, market pages, news snippets, or model memory
 
@@ -58,10 +59,17 @@ If a model reports a `404`, first check what it fetched:
 
 | Fetched target | Meaning | Correct action |
 |:--|:--|:--|
-| `/public-data` directory | Directories are not JSON files | Fetch `/public-data/manifest.json` |
+| `/public-data` directory | Old repository layout or a directory URL, not a JSON file | Fetch the `hltv-cs2-data-public` manifest |
 | `/manifest.json` | Required public entry point | If this fails, mark structured data unavailable |
 | Exact JSON file | That record may be absent | Use manifest/indexes to find available paths |
-| `smallmeji.github.io/hltv-cs2-data-platform/...` | Stale docs or cached model memory | Use the `hltv-cs2-data-skill` raw manifest or compatibility alias; reinstall/update if it still uses the stale URL |
+| `smallmeji.github.io/hltv-cs2-data-platform/...` or `hltv-cs2-data-skill/public-data/...` | Stale docs or cached model memory | Use the `hltv-cs2-data-public` raw manifest or compatibility alias; reinstall/update if it still uses the stale URL |
+
+## Repository Split
+
+- `hltv-cs2-data-skill`: skill instructions, examples, and package only.
+- `hltv-cs2-data-public`: generated static JSON data only.
+- Updating match/team/event data updates the public data repository, not this skill repository.
+- Users only need to update the skill when instructions or the data contract changes.
 
 ## What It Does
 

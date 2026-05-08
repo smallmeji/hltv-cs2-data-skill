@@ -31,7 +31,7 @@
 默认公开源 manifest：
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json
 ```
 
 这是当前仓库内置的首选公开入口。它不是唯一可用数据源；如果用户配置了 API 或提供了其他静态 JSON 源，应优先使用配置源。
@@ -39,11 +39,11 @@ https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data
 如果宿主模型无法读取 raw GitHub，可以尝试这些兼容入口：
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
-https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-public/latest/manifest.json
 ```
 
-注意：`hltv-cs2-data-platform` 是旧平台仓库名，不是公开数据源。任何 `smallmeji.github.io/hltv-cs2-data-platform/public-data/latest` 的 404 都是旧路径问题，不代表数据源不可用。
+注意：skill 包和公开数据导出现在已经拆开。`hltv-cs2-data-skill` 只放说明书；`hltv-cs2-data-public` 放静态 JSON 数据。任何 `hltv-cs2-data-platform/public-data` 或旧的 `hltv-cs2-data-skill/public-data` 404 都是旧路径问题，不代表数据源不可用。
 
 明确禁止作为结构化数据源：
 
@@ -51,6 +51,7 @@ https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
 - 非兼容入口的 GitHub Pages URL
 - 平台网站页面
 - `hltv-cs2-data-platform` 的 public-data 路径
+- 仓库拆分后的 `hltv-cs2-data-skill` public-data 路径
 - `https://raw.githubusercontent.com/.../public-data` 目录本身
 - 搜索摘要、wiki、盘口页面、新闻片段或模型记忆
 
@@ -58,10 +59,17 @@ https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
 
 | 访问目标 | 含义 | 正确处理 |
 |:--|:--|:--|
-| `/public-data` 目录 | 目录不是 JSON 文件 | 改读 `/public-data/manifest.json` |
+| `/public-data` 目录 | 旧仓库结构或目录 URL，不是 JSON 文件 | 改读 `hltv-cs2-data-public` manifest |
 | `/manifest.json` | 必须读取的默认入口 | 失败则标记结构化数据不可用 |
 | 具体 JSON 文件 | 该记录可能未导出 | 回到 manifest/index 查可用路径 |
-| `smallmeji.github.io/hltv-cs2-data-platform/...` | 旧文档或缓存记忆 | 改读 `hltv-cs2-data-skill` 的 raw manifest 或兼容入口；仍然使用旧地址则重装 skill |
+| `smallmeji.github.io/hltv-cs2-data-platform/...` 或 `hltv-cs2-data-skill/public-data/...` | 旧文档或缓存记忆 | 改读 `hltv-cs2-data-public` 的 raw manifest 或兼容入口；仍然使用旧地址则重装 skill |
+
+## 仓库拆分
+
+- `hltv-cs2-data-skill`：只放 skill 说明、示例和安装包。
+- `hltv-cs2-data-public`：只放生成出来的静态 JSON 数据。
+- 更新比赛、队伍、赛事数据时，只更新公开数据仓库，不更新 skill 仓库。
+- 用户只有在说明书或数据契约变化时才需要更新 skill。
 
 ## 能做什么
 

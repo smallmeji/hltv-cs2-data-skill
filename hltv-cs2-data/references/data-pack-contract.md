@@ -192,7 +192,7 @@ Phase 2 can add these fields after collector and warehouse support exists:
     },
     "structured_source": {
       "mode": "static_database",
-      "capabilities_url": "https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json",
+      "capabilities_url": "https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json",
       "capabilities_status": "success",
       "record_references": [
         "matches/2393335/data-pack.json",

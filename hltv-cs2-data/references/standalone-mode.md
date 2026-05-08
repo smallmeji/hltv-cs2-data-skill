@@ -17,21 +17,21 @@ External public sources are allowed for match-background facts only. Use them to
 The first structured fetch must be this exact manifest URL:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json
 ```
 
 If raw GitHub is not readable by the host model, these compatibility aliases may be attempted:
 
 ```text
-https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/latest/manifest.json
-https://smallmeji.github.io/hltv-cs2-data-skill/public-data/latest/manifest.json
+https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/latest/manifest.json
+https://smallmeji.github.io/hltv-cs2-data-public/latest/manifest.json
 ```
 
 Do not fetch the raw `/public-data` directory URL as a data document. It is only a path prefix and may return 404. Do not use the product website or any `hltv-cs2-data-platform` public-data path as the public database source.
 
 If an external model reports "data source returned 404", first check whether it fetched the base directory instead of `/manifest.json` or an exact JSON file. Directory 404 is a client error, not a database miss.
 
-If the fetched URL is `smallmeji.github.io/hltv-cs2-data-platform`, a platform-site derived URL, or any `hltv-cs2-data-platform` public-data URL, it is stale instruction leakage. Do not use it, do not retry it, and do not treat its 404 as database unavailability. Return to an accepted `hltv-cs2-data-skill` manifest URL.
+If the fetched URL is `smallmeji.github.io/hltv-cs2-data-platform`, a platform-site derived URL, any `hltv-cs2-data-platform` public-data URL, or the old `hltv-cs2-data-skill/public-data` path, it is stale instruction leakage. Do not use it, do not retry it, and do not treat its 404 as database unavailability. Return to an accepted `hltv-cs2-data-public` manifest URL.
 
 Expected files include:
 
@@ -93,7 +93,7 @@ Expected normal source log:
 
 Incorrect outputs:
 
-- Mentions `smallmeji.github.io` or GitHub Pages as the data source without using the accepted `hltv-cs2-data-skill/public-data/latest/manifest.json` compatibility alias.
+- Mentions `smallmeji.github.io` or GitHub Pages as the data source without using the accepted `hltv-cs2-data-public/latest/manifest.json` compatibility alias.
 - Mentions `hltv-cs2-data-platform` as the public data source.
 - Says the public static source returned 404 without trying the raw manifest.
 - Uses only HLTV pages and says map detail/player rating/CT-T fields are missing when `matches/2394116/data-pack.json` exists.
@@ -122,7 +122,7 @@ For debug/audit/JSON output, exact URLs and paths may be included:
 ```text
 数据源执行记录：
 - HLTV 定位：成功 / 失败，URL: ...
-- 静态数据库 manifest：成功 / 失败，URL: https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-skill/main/public-data/manifest.json
+- 静态数据库 manifest：成功 / 失败，URL: https://raw.githubusercontent.com/smallmeji/hltv-cs2-data-public/main/manifest.json
 - 已读取数据库记录：matches/2394116/data-pack.json, teams/11861/map-details-overall.json, ...
 - 字段来源：地图详情=static_database，赛事信息=direct_hltv，Veto=missing
 ```
