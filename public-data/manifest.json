@@ -1,6 +1,6 @@
 {
   "schema_version": "hltv-cs2-data.static.v1",
-  "generated_at": "2026-05-07T20:23:47.021Z",
+  "generated_at": "2026-05-08T07:10:52.370Z",
   "source_policy": "mysql_tidb_export",
   "date_window": {
     "start": "2026-01-01",
@@ -1681,6 +1681,11 @@
       "type": "events",
       "key": "events/index",
       "path": "events/index.json"
+    },
+    {
+      "type": "events",
+      "key": "events/8250/player-ratings",
+      "path": "events/8250/player-ratings.json"
     },
     {
       "type": "manifest",

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-05-07T20:23:52.217Z",
+    "generated_at": "2026-05-08T07:10:55.933Z",
     "alias_count": 96,
     "source": "teams/index.json"
   },
@@ -382,6 +382,60 @@
       "name_zh": "9z",
       "slug": "9z",
       "rank": 18
+    },
+    {
+      "alias": "天禄",
+      "normalized": "天禄",
+      "hltv_id": 4863,
+      "name": "TYLOO",
+      "name_zh": "天禄",
+      "slug": "tyloo",
+      "rank": 22
+    },
+    {
+      "alias": "玩家军团",
+      "normalized": "玩家军团",
+      "hltv_id": 9928,
+      "name": "Gamerlegion",
+      "name_zh": "玩家军团",
+      "slug": "gamerlegion",
+      "rank": 14
+    },
+    {
+      "alias": "液体",
+      "normalized": "液体",
+      "hltv_id": 5973,
+      "name": "Liquid",
+      "name_zh": "液体",
+      "slug": "liquid",
+      "rank": 25
+    },
+    {
+      "alias": "猎鹰",
+      "normalized": "猎鹰",
+      "hltv_id": 11283,
+      "name": "Falcons",
+      "name_zh": "猎鹰",
+      "slug": "falcons",
+      "rank": 5
+    },
+    {
+      "alias": "菊花队",
+      "normalized": "菊花队",
+      "hltv_id": 12468,
+      "name": "Legacy",
+      "name_zh": "菊花队",
+      "slug": "legacy",
+      "rank": 17
+    },
+    {
+      "alias": "蜜蜂",
+      "normalized": "蜜蜂",
+      "hltv_id": 9565,
+      "name": "Vitality",
+      "name_zh": "蜜蜂",
+      "slug": "vitality",
+      "rank": 1
     },
     {
       "alias": "Alliance",
@@ -814,60 +868,6 @@
       "name_zh": "Wildcard",
       "slug": "wildcard",
       "rank": 40
-    },
-    {
-      "alias": "天禄",
-      "normalized": "天禄",
-      "hltv_id": 4863,
-      "name": "TYLOO",
-      "name_zh": "天禄",
-      "slug": "tyloo",
-      "rank": 22
-    },
-    {
-      "alias": "液体",
-      "normalized": "液体",
-      "hltv_id": 5973,
-      "name": "Liquid",
-      "name_zh": "液体",
-      "slug": "liquid",
-      "rank": 25
-    },
-    {
-      "alias": "猎鹰",
-      "normalized": "猎鹰",
-      "hltv_id": 11283,
-      "name": "Falcons",
-      "name_zh": "猎鹰",
-      "slug": "falcons",
-      "rank": 5
-    },
-    {
-      "alias": "玩家军团",
-      "normalized": "玩家军团",
-      "hltv_id": 9928,
-      "name": "Gamerlegion",
-      "name_zh": "玩家军团",
-      "slug": "gamerlegion",
-      "rank": 14
-    },
-    {
-      "alias": "菊花队",
-      "normalized": "菊花队",
-      "hltv_id": 12468,
-      "name": "Legacy",
-      "name_zh": "菊花队",
-      "slug": "legacy",
-      "rank": 17
-    },
-    {
-      "alias": "蜜蜂",
-      "normalized": "蜜蜂",
-      "hltv_id": 9565,
-      "name": "Vitality",
-      "name_zh": "蜜蜂",
-      "slug": "vitality",
-      "rank": 1
     }
   ]
 }

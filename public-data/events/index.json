@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-05-07T20:25:01.943Z",
-    "event_count": 101,
+    "generated_at": "2026-05-08T07:12:04.951Z",
+    "event_count": 102,
     "source": "matches/index.json + events/tiers.json"
   },
   "events": [
@@ -14,6 +14,16 @@
       "last_scheduled_at": "2026-05-09T14:00:00.000Z",
       "rating_path": null,
       "search_text": "pgl astana 2026 s 2026-05-09t05:00:00.000z 2026-05-09t14:00:00.000z"
+    },
+    {
+      "event_id": 8250,
+      "event_name": null,
+      "event_tier": null,
+      "match_count": 0,
+      "first_scheduled_at": null,
+      "last_scheduled_at": null,
+      "rating_path": "events/8250/player-ratings.json",
+      "search_text": "8250"
     },
     {
       "event_id": null,
